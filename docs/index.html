@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="按关键词权重筛选的期刊论文每日推荐。">
+  <meta name="theme-color" content="#f4f0e8">
+  <title>今日推荐 · Scholarly Tracker</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="today">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Scholarly Tracker 首页">
+      <span class="brand-mark" aria-hidden="true">ST</span>
+      <span><strong>Scholarly Tracker</strong><small>期刊追踪</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="index.html" aria-current="page">今日推荐</a>
+      <a href="papers.html">全部论文</a>
+      <a href="status.html">运行状态</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow" id="today-label">DAILY READING · 昨日更新</p>
+        <h1>少一点噪声，<br>多一点值得读的。</h1>
+        <p class="hero-copy">每天只处理上海时区昨天 00:00 至今天 00:00 更新或上线的论文，以可解释的关键词权重排序，并通过 Crossref 补全 DOI 与书目信息。</p>
+      </div>
+      <div class="hero-seal" aria-hidden="true"><span>Curated</span><strong id="hero-count">—</strong><span>papers</span></div>
+    </section>
+
+    <section class="summary-strip" aria-label="今日摘要">
+      <div><span>窗口内文章</span><strong id="new-count">—</strong></div>
+      <div><span>今日推荐</span><strong id="recommend-count">—</strong></div>
+      <div><span>累计论文</span><strong id="total-count">—</strong></div>
+      <div><span>最近更新</span><strong id="updated-at">读取中</strong></div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">EDITOR'S LIST</p><h2>今日推荐</h2></div>
+        <p>得分来自命中的关键词及其所在字段；标题命中的权重更高。</p>
+      </div>
+      <div id="today-list" class="paper-list" aria-live="polite">
+        <div class="loading">正在读取今日论文…</div>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>Scholarly Tracker</span><span>RSS · Crossref · GitHub Pages</span></footer>
+</body>
+</html>

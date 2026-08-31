@@ -1,0 +1,68 @@
+{
+  "user_agent": "ScholarlyTracker/1.0",
+  "request_timeout_seconds": 30,
+  "max_articles": 2000,
+  "window": {
+    "enabled": true,
+    "timezone": "Asia/Shanghai"
+  },
+  "journals": [
+    {
+      "id": "jslw",
+      "name": "Journal of Second Language Writing",
+      "publisher": "Elsevier",
+      "feed_url": "https://rss.sciencedirect.com/publication/science/10603743",
+      "site_url": "https://www.sciencedirect.com/journal/journal-of-second-language-writing",
+      "enabled": true
+    },
+    {
+      "id": "ltr",
+      "name": "Language Teaching Research",
+      "publisher": "SAGE",
+      "feed_url": "https://journals.sagepub.com/action/showFeed?ui=0&mi=ehikzz&ai=2b4&jc=ltr&type=axatoc&feed=rss",
+      "site_url": "https://journals.sagepub.com/home/ltr",
+      "enabled": true
+    },
+    {
+      "id": "aeh",
+      "name": "Assessment & Evaluation in Higher Education",
+      "publisher": "Taylor & Francis",
+      "feed_url": "https://www.tandfonline.com/feed/rss/caeh20",
+      "site_url": "https://www.tandfonline.com/journals/caeh20",
+      "enabled": true
+    }
+  ],
+  "crossref": {
+    "enabled": true,
+    "contact_email": "",
+    "max_lookups_per_run": 60,
+    "title_match_threshold": 0.86,
+    "delay_seconds": 0.15
+  },
+  "ranking": {
+    "title_multiplier": 2.0,
+    "details_multiplier": 1.0,
+    "keywords": [
+      { "term": "second language writing", "weight": 6 },
+      { "term": "L2 writing", "weight": 6 },
+      { "term": "academic writing", "weight": 5 },
+      { "term": "written corrective feedback", "weight": 5 },
+      { "term": "feedback", "weight": 3 },
+      { "term": "assessment", "weight": 3 },
+      { "term": "generative AI", "weight": 4 },
+      { "term": "ChatGPT", "weight": 4 },
+      { "term": "automated writing evaluation", "weight": 5 },
+      { "term": "learner corpus", "weight": 3 },
+      { "term": "genre", "weight": 2 },
+      { "term": "teacher education", "weight": 2 },
+      { "term": "editorial", "weight": -6 },
+      { "term": "book review", "weight": -8 },
+      { "term": "corrigendum", "weight": -10 },
+      { "term": "retraction", "weight": -10 }
+    ]
+  },
+  "recommendations": {
+    "minimum_score": 3,
+    "limit": 12
+  }
+}

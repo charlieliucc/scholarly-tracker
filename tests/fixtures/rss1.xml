@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://purl.org/rss/1.0/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:prism="http://prismstandard.org/namespaces/basic/2.0/">
+  <channel rdf:about="https://example.org"><title>Test feed</title></channel>
+  <item rdf:about="https://example.org/doi/full/10.1080/1234">
+    <title>Assessment literacy in higher education</title>
+    <link>/doi/full/10.1080/02602938.2026.1234567</link>
+    <dc:creator>Jane Doe</dc:creator>
+    <dc:date>2026-08-20</dc:date>
+    <prism:publicationName>Assessment Journal</prism:publicationName>
+    <prism:doi>10.1080/02602938.2026.1234567</prism:doi>
+    <description>Short abstract.</description>
+  </item>
+</rdf:RDF>
+

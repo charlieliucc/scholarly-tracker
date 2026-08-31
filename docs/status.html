@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Scholarly Tracker 自动更新运行状态。">
+  <meta name="theme-color" content="#f4f0e8">
+  <title>运行状态 · Scholarly Tracker</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="status">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Scholarly Tracker 首页">
+      <span class="brand-mark" aria-hidden="true">ST</span>
+      <span><strong>Scholarly Tracker</strong><small>期刊追踪</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="index.html">今日推荐</a>
+      <a href="papers.html">全部论文</a>
+      <a href="status.html" aria-current="page">运行状态</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-title status-title">
+      <div><p class="eyebrow">SYSTEM HEALTH</p><h1>运行状态</h1><p>昨日时间窗口、RSS 抓取、Crossref 补全和数据规模一览。</p></div>
+      <div id="overall-status" class="status-orb pending"><span></span><strong>读取中</strong></div>
+    </section>
+    <section id="status-summary" class="status-summary" aria-live="polite"></section>
+    <section class="content-section compact">
+      <div class="section-heading"><div><p class="eyebrow">FEED SOURCES</p><h2>RSS 数据源</h2></div></div>
+      <div id="feed-status" class="feed-grid"><div class="loading">正在读取运行记录…</div></div>
+    </section>
+    <section class="content-section compact">
+      <div class="section-heading"><div><p class="eyebrow">ENRICHMENT</p><h2>Crossref 补全</h2></div></div>
+      <div id="crossref-status" class="crossref-panel"></div>
+    </section>
+    <aside class="manual-note">
+      <span aria-hidden="true">↻</span>
+      <div><strong>需要立即更新？</strong><p>在仓库的 Actions 页面打开 “Update scholarly tracker”，点击 “Run workflow” 即可手动重新运行。</p></div>
+    </aside>
+  </main>
+
+  <footer><span>Scholarly Tracker</span><span>RSS · Crossref · GitHub Pages</span></footer>
+</body>
+</html>

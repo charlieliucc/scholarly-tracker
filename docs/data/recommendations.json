@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-08-31T02:01:39Z",
+  "date": "2026-08-31",
+  "window": {
+    "timezone": "Asia/Shanghai",
+    "start": "2026-08-30T00:00:00+08:00",
+    "end": "2026-08-31T00:00:00+08:00"
+  },
+  "articles": [
+    {
+      "id": "a14ea381a043396fcc0c",
+      "title": "From Corrective Preferences to Corrective Practice: A Critical Review of Attitudinal Studies on Oral Corrective Feedback",
+      "url": "https://journals.sagepub.com/doi/abs/10.1177/13621688261476299?ai=2b4&mi=ehikzz&af=R",
+      "guid": "doi:10.1177/13621688261476299",
+      "doi": "10.1177/13621688261476299",
+      "authors": [
+        "Sajjad Sepehrinia"
+      ],
+      "abstract": "Language Teaching Research, Ahead of Print. Studies on oral corrective feedback (OCF) have been lately tilted toward examining preferences for correction motivated by the belief that they are connected to emotional comfort, learning motivation and outcomes. Some have compared teachers’ preferences ...",
+      "published": "2026-01-01",
+      "feed_timestamp": "2026-08-30T04:19:24Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "ltr",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-08-31T02:01:39Z",
+      "last_seen": "2026-08-31T02:01:39Z",
+      "metadata_source": "rss",
+      "score": 9.0,
+      "matched_keywords": [
+        {
+          "keyword": "feedback",
+          "weight": 3.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 9.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1177/13621688261476299"
+    }
+  ]
+}

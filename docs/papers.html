@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Scholarly Tracker 收录的全部期刊论文。">
+  <meta name="theme-color" content="#f4f0e8">
+  <title>全部论文 · Scholarly Tracker</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="papers">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Scholarly Tracker 首页">
+      <span class="brand-mark" aria-hidden="true">ST</span>
+      <span><strong>Scholarly Tracker</strong><small>期刊追踪</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="index.html">今日推荐</a>
+      <a href="papers.html" aria-current="page">全部论文</a>
+      <a href="status.html">运行状态</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-title">
+      <p class="eyebrow">THE ARCHIVE</p>
+      <h1>全部论文</h1>
+      <p>检索标题、摘要、作者或 DOI，并按期刊和推荐得分筛选。</p>
+    </section>
+    <section class="filters" aria-label="论文筛选">
+      <label class="search-field"><span>检索</span><input id="paper-search" type="search" placeholder="输入标题、作者、关键词或 DOI…" autocomplete="off"></label>
+      <label><span>期刊</span><select id="journal-filter"><option value="">全部期刊</option></select></label>
+      <label><span>排序</span><select id="sort-filter"><option value="date">最新发表</option><option value="score">推荐得分</option><option value="seen">最新收录</option></select></label>
+    </section>
+    <div class="result-meta"><span id="result-count">读取中…</span><span id="archive-updated"></span></div>
+    <section id="paper-list" class="paper-list" aria-live="polite"><div class="loading">正在读取论文库…</div></section>
+    <div class="load-more-wrap"><button id="load-more" class="button secondary" type="button" hidden>显示更多</button></div>
+  </main>
+
+  <footer><span>Scholarly Tracker</span><span>RSS · Crossref · GitHub Pages</span></footer>
+</body>
+</html>
+

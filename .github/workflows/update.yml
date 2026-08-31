@@ -1,0 +1,102 @@
+name: Update scholarly tracker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/update.yml"
+      - "config/**"
+      - "scripts/**"
+      - "tests/**"
+      - "docs/**"
+  schedule:
+    - cron: "17 6 * * *"
+      timezone: "Asia/Shanghai"
+  workflow_dispatch:
+    inputs:
+      persist_data:
+        description: "同时把本次最新数据提交到默认分支"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: scholarly-tracker-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      should_persist: ${{ steps.snapshot.outputs.persist }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Restore data from the last deployment
+        run: python scripts/restore_previous.py "${{ steps.pages.outputs.base_url }}" docs/data
+
+      - name: Fetch, enrich, and rank papers
+        run: python scripts/update.py --config config/journals.json --output docs/data
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Decide whether to persist this snapshot
+        id: snapshot
+        env:
+          FORCE_PERSIST: ${{ inputs.persist_data || 'false' }}
+          TZ: Asia/Shanghai
+        run: |
+          if [ "$FORCE_PERSIST" = "true" ] || { [ "${{ github.event_name }}" = "schedule" ] && [ "$(date +%d)" = "01" ]; }; then
+            echo "persist=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "persist=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit monthly data snapshot
+        if: steps.snapshot.outputs.persist == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "data: monthly scholarly snapshot [skip ci]"
+            git push
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
