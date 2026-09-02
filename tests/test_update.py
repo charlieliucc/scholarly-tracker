@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.update import authors_need_replacement, build, merge_articles, parse_feed, score_article
+from scripts.update import CrossrefClient, authors_need_replacement, build, merge_articles, parse_feed, score_article
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -67,6 +67,19 @@ class RankingTests(unittest.TestCase):
         value = ["Jane Doe Department of Education, Example University. Jane is a professor whose research interests include assessment."]
         self.assertTrue(authors_need_replacement(value))
         self.assertFalse(authors_need_replacement(["Jane Doe", "Li Ming"]))
+
+
+class CrossrefClientTests(unittest.TestCase):
+    def test_update_window_uses_crossref_timestamp_format_without_z(self) -> None:
+        client = CrossrefClient(contact_email="", user_agent="test")
+        start = datetime(2026, 9, 1, tzinfo=timezone.utc)
+        end = datetime(2026, 9, 2, tzinfo=timezone.utc)
+        with patch.object(client, "_get_json", return_value={"message": {"items": []}}) as get_json:
+            client.journal_updates("0260-2938", start, end)
+        filters = get_json.call_args.args[1]["filter"]
+        self.assertIn("from-update-date:2026-09-01T00:00:00", filters)
+        self.assertIn("until-update-date:2026-09-01T23:59:59", filters)
+        self.assertNotIn("Z", filters)
 
 
 class BuildTests(unittest.TestCase):

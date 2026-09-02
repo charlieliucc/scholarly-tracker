@@ -336,7 +336,9 @@ class CrossrefClient:
         # Crossref's until filter is inclusive; subtract one second to preserve
         # this project's half-open [start, end) window.
         end_utc = (end.astimezone(timezone.utc) - timedelta(seconds=1)).replace(microsecond=0)
-        crossref_time = lambda value: value.isoformat().replace("+00:00", "Z")
+        # Crossref interprets these timestamps as UTC but rejects an explicit
+        # trailing Z in date-filter values.
+        crossref_time = lambda value: value.replace(tzinfo=None).isoformat()
         filters = ",".join(
             (
                 f"issn:{issn}",
