@@ -10,12 +10,17 @@ on:
       - "tests/**"
       - "docs/**"
   schedule:
-    - cron: "17 6 * * *"
+    - cron: "0 7 * * *"
       timezone: "Asia/Shanghai"
   workflow_dispatch:
     inputs:
       persist_data:
         description: "同时把本次最新数据提交到默认分支"
+        required: false
+        default: false
+        type: boolean
+      reset_history:
+        description: "一次性：清空现有档案与 feed 状态，从空库重建"
         required: false
         default: false
         type: boolean
@@ -49,8 +54,17 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Restore data from the last deployment
-        run: python scripts/restore_previous.py "${{ steps.pages.outputs.base_url }}" docs/data
+      - name: Reset or restore data for this build
+        env:
+          RESET: ${{ inputs.reset_history || 'false' }}
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          if [ "$RESET" = "true" ]; then
+            echo "reset_history=true: clearing archive & feed state, starting from empty."
+            rm -f docs/data/papers.json docs/data/status.json docs/data/history.json docs/data/recommendations.json docs/data/feed-state.json
+          else
+            python scripts/restore_previous.py "$BASE_URL" docs/data
+          fi
 
       - name: Fetch, enrich, and rank papers
         run: python scripts/update.py --config config/journals.json --output docs/data
