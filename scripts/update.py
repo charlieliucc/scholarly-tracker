@@ -1045,6 +1045,11 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
     recommended = [article for article in processed_articles if article.get("score", 0) >= float(recommendation_config.get("minimum_score", 1))]
     recommended.sort(key=lambda article: (article.get("score", 0), article.get("published", "")), reverse=True)
     recommended = recommended[: int(recommendation_config.get("limit", 12))]
+    recommended_ids = {str(article.get("id", "")) for article in recommended}
+    other_articles = [
+        article for article in processed_articles if str(article.get("id", "")) not in recommended_ids
+    ]
+    other_articles.sort(key=lambda article: (article.get("score", 0), article.get("published", "")), reverse=True)
     failures = sum(1 for source in source_status if source["status"] == "error")
     if source_status and failures == len(source_status):
         outcome = "error" if not articles else "stale"
@@ -1071,6 +1076,7 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
             "new_today": new_count,
             "items_in_window": len(fetched),
             "recommended_today": len(recommended),
+            "other_today": len(other_articles),
             "all_articles": len(articles),
         },
     }
@@ -1082,6 +1088,7 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
             "date": local_today.isoformat(),
             "window": status_payload["window"],
             "articles": recommended,
+            "other_articles": other_articles,
         },
     )
     write_json(output_dir / "status.json", status_payload)

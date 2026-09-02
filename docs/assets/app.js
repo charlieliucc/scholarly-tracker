@@ -92,6 +92,31 @@ function articleCard(article, index) {
   return card;
 }
 
+function compactArticleCard(article) {
+  const card = element("article", "paper-card compact-paper-card");
+  const body = element("div", "paper-body");
+  const meta = element("div", "paper-meta");
+  meta.append(element("span", "journal-label", article.journal || "未知期刊"));
+  if (article.published || article.feed_timestamp) {
+    const published = element("span", "published", formatPublicationDate(article));
+    if (article.publication_text) published.title = `来源标注：${article.publication_text}`;
+    meta.append(published);
+  }
+  const title = element("h3");
+  const articleUrl = article.url || article.doi_url;
+  title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
+  const rawAuthors = (article.authors || []).join(" · ") || "作者信息待补全";
+  const authorText = rawAuthors.length > 260 ? `${rawAuthors.slice(0, 257).trim()}…` : rawAuthors;
+  const authors = element("p", "authors", authorText);
+  if (authorText !== rawAuthors) authors.title = rawAuthors;
+  const actions = element("div", "paper-actions");
+  if (article.doi) actions.append(externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link"));
+  actions.append(element("span", `score ${Number(article.score) < 0 ? "negative" : ""}`, `${scoreLabel(article.score)} 分`));
+  body.append(meta, title, authors, actions);
+  card.append(body);
+  return card;
+}
+
 function errorState(message) {
   const box = element("div", "empty-state");
   box.append(element("strong", "", "数据暂时无法读取"), element("p", "", message));
@@ -106,12 +131,14 @@ function emptyState(title, message) {
 
 async function initToday() {
   const list = $("#today-list");
+  const otherList = $("#other-list");
   try {
     const [recommendations, status] = await Promise.all([fetchJson("data/recommendations.json"), fetchJson("data/status.json")]);
     const articles = recommendations.articles || [];
+    const otherArticles = recommendations.other_articles || [];
     const windowDate = recommendations.window?.start?.slice(0, 10) || recommendations.date;
     $("#today-label").textContent = `DAILY READING · ${formatDate(windowDate)} 日更`;
-    $("#hero-count").textContent = articles.length;
+    $("#hero-count").textContent = articles.length + otherArticles.length;
     $("#new-count").textContent = status.counts?.items_in_window ?? status.counts?.new_today ?? "—";
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
     $("#total-count").textContent = status.counts?.all_articles ?? "—";
@@ -119,11 +146,18 @@ async function initToday() {
     list.replaceChildren();
     if (!articles.length) {
       list.append(emptyState("本次日更没有命中推荐", "精确日期来源的昨日条目和 GUID 来源的本次新增条目中，没有论文达到最低关键词得分。你仍可前往“全部论文”浏览累计记录。"));
-      return;
+    } else {
+      articles.forEach((article, index) => list.append(articleCard(article, index)));
     }
-    articles.forEach((article, index) => list.append(articleCard(article, index)));
+    otherList.replaceChildren();
+    if (!otherArticles.length) {
+      otherList.append(emptyState("没有其他新论文", "本次日更处理的论文都已进入推荐区，或没有新增记录。"));
+    } else {
+      otherArticles.forEach((article) => otherList.append(compactArticleCard(article)));
+    }
   } catch (error) {
     list.replaceChildren(errorState(`请稍后重试。${error.message}`));
+    otherList.replaceChildren(errorState(`请稍后重试。${error.message}`));
   }
 }
 

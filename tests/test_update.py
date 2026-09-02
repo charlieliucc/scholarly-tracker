@@ -268,6 +268,31 @@ class BuildTests(unittest.TestCase):
             article_id = json.loads((root / "data" / "papers.json").read_text(encoding="utf-8"))["articles"][0]["id"]
             self.assertEqual(history["days"]["2026-08-22"]["article_ids"], [article_id])
 
+    def test_homepage_data_keeps_unrecommended_articles_in_other_articles(self) -> None:
+        config = {
+            "journals": [{"id": "test", "name": "Test Journal", "publisher": "Test", "feed_url": "https://example.org/rss"}],
+            "crossref": {"enabled": False},
+            "ranking": {"title_multiplier": 2, "keywords": [{"term": "feedback", "weight": 4}]},
+            "recommendations": {"minimum_score": 1, "limit": 5},
+        }
+        feed = b"""<?xml version="1.0"?>
+        <rss><channel>
+          <item><title>Feedback study</title><description>Publication date: 22 August 2026</description><creator>Jane Doe</creator><pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate><link>https://example.org/feedback</link></item>
+          <item><title>Unrelated study</title><description>Publication date: 22 August 2026</description><creator>John Doe</creator><pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate><link>https://example.org/unrelated</link></item>
+        </channel></rss>"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with patch("scripts.update.request_bytes", return_value=feed):
+                status = build(config_path, root / "data", now=datetime(2026, 8, 23, 1, tzinfo=timezone.utc))
+            homepage = json.loads((root / "data" / "recommendations.json").read_text(encoding="utf-8"))
+            self.assertEqual(status["counts"]["recommended_today"], 1)
+            self.assertEqual(status["counts"]["other_today"], 1)
+            self.assertEqual(len(homepage["articles"]), 1)
+            self.assertEqual(len(homepage["other_articles"]), 1)
+            self.assertEqual(homepage["other_articles"][0]["title"], "Unrelated study")
+
     def test_build_skips_entries_outside_yesterday_window(self) -> None:
         config = {
             "journals": [{"id": "test", "name": "Test Journal", "publisher": "Test", "feed_url": "https://example.org/rss"}],

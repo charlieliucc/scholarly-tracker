@@ -44,5 +44,34 @@
       ],
       "doi_url": "https://doi.org/10.1177/13621688261476299"
     }
+  ],
+  "other_articles": [
+    {
+      "id": "623712f8b8fd4687c70c",
+      "title": "Developing and Validating a University Language Teacher Belief Scale for AI-Assisted Instruction",
+      "url": "https://journals.sagepub.com/doi/abs/10.1177/13621688261478927?ai=2b4&mi=ehikzz&af=R",
+      "guid": "doi:10.1177/13621688261478927",
+      "doi": "10.1177/13621688261478927",
+      "authors": [
+        "Xiaochen Wang, Yang Gao, Barry Lee Reynolds"
+      ],
+      "abstract": "Language Teaching Research, Ahead of Print. Teachers’ beliefs play a critical role in shaping how AI tools are interpreted and used in instruction, yet these beliefs have rarely been systematically assessed in university language teaching. This study aims to develop and validate a measurement ...",
+      "published": "2026-01-01",
+      "feed_timestamp": "2026-08-30T05:32:50Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "ltr",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-08-31T02:01:39Z",
+      "last_seen": "2026-08-31T02:01:39Z",
+      "metadata_source": "rss",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1177/13621688261478927"
+    }
   ]
 }

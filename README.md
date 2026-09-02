@@ -2,7 +2,8 @@
 
 一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天读取 RSS：有逐条精确日期的来源只处理上海时区“昨天 00:00（含）至今天 00:00（不含）”的条目；没有逐条更新日期的 ScienceDirect 则处理上次成功抓取后首次出现的 GUID。随后在需要时通过 Crossref 补全 DOI 和书目信息，再按可配置的关键词权重生成：
 
-- 今日推荐：本次日更发现且达到最低得分的论文；
+- 今日推荐：本次日更发现且达到最低得分的论文，展示完整卡片；
+- 其他新论文：本次日更发现但未进入推荐区的论文，首页保留期刊、日期、标题、作者、DOI 和分数；
 - 历史记录：按日查看已经生成过的日更批次，避免错过前一天的推送；
 - 全部论文：可检索、筛选和排序的累积档案；
 - 运行状态：每个 RSS 源、Crossref 补全和收录数量的运行记录。
@@ -40,6 +41,7 @@
 - `title_multiplier`：关键词出现在标题中的权重倍率。
 - `recommendations.minimum_score`：进入今日推荐的最低分。
 - `recommendations.limit`：今日推荐最多显示的篇数。
+- `recommendations.json` 的 `articles` 保存完整推荐卡片数据，`other_articles` 保存同批次未推荐论文数据。
 - `crossref.max_lookups_per_run`：单次运行最多发出的 Crossref 查询数。
 - `crossref.doi_page_enabled`：Crossref 摘要缺失或被截断时，是否读取 DOI 页面 `<head>` 中的公开摘要元数据；不读取正文或 PDF。
 - `crossref.max_doi_page_lookups_per_run`：单次运行最多读取的 DOI 页面数量。

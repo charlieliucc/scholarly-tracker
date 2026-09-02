@@ -54,6 +54,7 @@
     "new_today": 2,
     "items_in_window": 2,
     "recommended_today": 1,
+    "other_today": 1,
     "all_articles": 2
   }
 }

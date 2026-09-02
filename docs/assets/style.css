@@ -79,11 +79,13 @@ main { width: min(1180px, calc(100% - 48px)); margin: 0 auto; min-height: calc(1
 
 .paper-list { border-top: 1px solid var(--ink); }
 .paper-card { display: grid; grid-template-columns: 64px 1fr; gap: 22px; padding: 34px 0; border-bottom: 1px solid var(--line); }
+.compact-paper-card { grid-template-columns: 1fr; gap: 0; padding: 22px 0; }
 .paper-rank { padding-top: 2px; color: var(--orange); font: italic 18px/1 Georgia, serif; }
 .paper-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; color: var(--muted); font-size: 12px; }
 .journal-label { color: var(--green); font-weight: 700; letter-spacing: 0.02em; }
 .published::before { content: "·"; margin-right: 12px; }
 .paper-card h3 { max-width: 940px; margin: 11px 0 10px; font: 500 clamp(21px, 2.5vw, 29px)/1.35 Georgia, "Songti SC", serif; letter-spacing: -0.018em; }
+.compact-paper-card h3 { margin-top: 8px; font-size: clamp(18px, 2vw, 23px); }
 .paper-card h3 a { text-decoration: none; background-image: linear-gradient(var(--orange), var(--orange)); background-size: 0 1px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size 220ms ease; }
 .paper-card h3 a:hover { background-size: 100% 1px; }
 .authors { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
