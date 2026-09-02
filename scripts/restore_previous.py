@@ -20,7 +20,7 @@ def main() -> int:
         print("No deployed Pages URL is available; starting from repository data.")
         return 0
     restored = 0
-    for name in ("papers.json", "status.json"):
+    for name in ("papers.json", "status.json", "feed-state.json", "history.json"):
         url = f"{base}/data/{name}"
         try:
             request = urllib.request.Request(url, headers={"User-Agent": "ScholarlyTracker/1.0"})
@@ -37,4 +37,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

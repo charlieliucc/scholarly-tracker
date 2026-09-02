@@ -18,6 +18,7 @@
     </a>
     <nav aria-label="主导航">
       <a href="index.html" aria-current="page">今日推荐</a>
+      <a href="history.html">历史</a>
       <a href="papers.html">全部论文</a>
       <a href="status.html">运行状态</a>
     </nav>
@@ -26,15 +27,15 @@
   <main>
     <section class="hero">
       <div>
-        <p class="eyebrow" id="today-label">DAILY READING · 昨日更新</p>
+        <p class="eyebrow" id="today-label">DAILY READING · 日更批次</p>
         <h1>少一点噪声，<br>多一点值得读的。</h1>
-        <p class="hero-copy">每天只处理上海时区昨天 00:00 至今天 00:00 更新或上线的论文，以可解释的关键词权重排序，并通过 Crossref 补全 DOI 与书目信息。</p>
+        <p class="hero-copy">每天处理上海时区昨日窗口内有精确日期的论文；对没有逐条更新日期的 ScienceDirect，则只处理上次成功抓取后首次出现的条目。结果以可解释的关键词权重排序，并通过 Crossref 补全 DOI 与书目信息。</p>
       </div>
       <div class="hero-seal" aria-hidden="true"><span>Curated</span><strong id="hero-count">—</strong><span>papers</span></div>
     </section>
 
     <section class="summary-strip" aria-label="今日摘要">
-      <div><span>窗口内文章</span><strong id="new-count">—</strong></div>
+      <div><span>本次处理</span><strong id="new-count">—</strong></div>
       <div><span>今日推荐</span><strong id="recommend-count">—</strong></div>
       <div><span>累计论文</span><strong id="total-count">—</strong></div>
       <div><span>最近更新</span><strong id="updated-at">读取中</strong></div>

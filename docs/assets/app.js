@@ -19,6 +19,17 @@ function formatDate(value, includeTime = false) {
   ).format(date);
 }
 
+function formatPublicationDate(article) {
+  const precision = article.date_precision;
+  const value = String(article.feed_timestamp || article.published || "");
+  if (precision === "month" && /^\d{4}-\d{2}$/.test(value)) {
+    const [year, month] = value.split("-");
+    return `${year}年${Number(month)}月`;
+  }
+  if (precision === "year" && /^\d{4}$/.test(value)) return `${value}年`;
+  return formatDate(article.published || value);
+}
+
 async function fetchJson(path) {
   const response = await fetch(path, { cache: "no-store" });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
@@ -44,7 +55,11 @@ function articleCard(article, index) {
   const body = element("div", "paper-body");
   const meta = element("div", "paper-meta");
   meta.append(element("span", "journal-label", article.journal || "未知期刊"));
-  if (article.published) meta.append(element("span", "published", formatDate(article.published)));
+  if (article.published || article.feed_timestamp) {
+    const published = element("span", "published", formatPublicationDate(article));
+    if (article.publication_text) published.title = `来源标注：${article.publication_text}`;
+    meta.append(published);
+  }
   const title = element("h3");
   const articleUrl = article.url || article.doi_url;
   title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
@@ -95,7 +110,7 @@ async function initToday() {
     const [recommendations, status] = await Promise.all([fetchJson("data/recommendations.json"), fetchJson("data/status.json")]);
     const articles = recommendations.articles || [];
     const windowDate = recommendations.window?.start?.slice(0, 10) || recommendations.date;
-    $("#today-label").textContent = `DAILY READING · ${formatDate(windowDate)} 更新`;
+    $("#today-label").textContent = `DAILY READING · ${formatDate(windowDate)} 日更`;
     $("#hero-count").textContent = articles.length;
     $("#new-count").textContent = status.counts?.items_in_window ?? status.counts?.new_today ?? "—";
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
@@ -103,7 +118,7 @@ async function initToday() {
     $("#updated-at").textContent = formatDate(status.generated_at, true);
     list.replaceChildren();
     if (!articles.length) {
-      list.append(emptyState("昨日窗口没有命中推荐", "昨天 00:00 至今天 00:00 更新的论文中，没有条目达到最低关键词得分。你仍可前往“全部论文”浏览累计记录。"));
+      list.append(emptyState("本次日更没有命中推荐", "精确日期来源的昨日条目和 GUID 来源的本次新增条目中，没有论文达到最低关键词得分。你仍可前往“全部论文”浏览累计记录。"));
       return;
     }
     articles.forEach((article, index) => list.append(articleCard(article, index)));
@@ -159,6 +174,44 @@ async function initPapers() {
   render();
 }
 
+async function initHistory() {
+  const list = $("#history-list");
+  const dateSelect = $("#history-date");
+  try {
+    const [history, papers] = await Promise.all([fetchJson("data/history.json"), fetchJson("data/papers.json")]);
+    const all = papers.articles || [];
+    const byId = new Map(all.map((article) => [String(article.id), article]));
+    const days = history.days || {};
+    const dates = Object.keys(days).sort().reverse();
+    if (!dates.length) {
+      list.replaceChildren(emptyState("还没有历史记录", "首次成功完成日更后，这里会保留按日期查看的记录。"));
+      $("#history-count").textContent = "0 篇论文";
+      return;
+    }
+    dates.forEach((date) => dateSelect.append(element("option", "", formatDate(date))));
+    dates.forEach((date, index) => { dateSelect.options[index].value = date; });
+
+    function render() {
+      const date = dateSelect.value;
+      const day = days[date] || {};
+      const articles = (day.article_ids || []).map((id) => byId.get(String(id))).filter(Boolean);
+      $("#history-count").textContent = `${articles.length} 篇论文 · ${formatDate(date)}`;
+      $("#history-updated").textContent = day.generated_at ? `记录生成于 ${formatDate(day.generated_at, true)}` : "";
+      list.replaceChildren();
+      if (!articles.length) {
+        list.append(emptyState("这一天没有收录记录", "当日数据可能没有命中，或来源暂时没有成功返回。"));
+        return;
+      }
+      articles.forEach((article, index) => list.append(articleCard(article, index)));
+    }
+
+    dateSelect.addEventListener("change", render);
+    render();
+  } catch (error) {
+    list.replaceChildren(errorState(`请稍后重试。${error.message}`));
+  }
+}
+
 function metric(label, value, detail) {
   const box = element("div", "status-metric");
   box.append(element("span", "", label), element("strong", "", String(value ?? "—")), element("small", "", detail));
@@ -174,10 +227,10 @@ async function initStatus() {
     orb.querySelector("strong").textContent = names[status.outcome] || status.outcome;
     const counts = status.counts || {};
     const windowLabel = status.window?.start
-      ? `${formatDate(status.window.start, true)} → ${formatDate(status.window.end, true)} · ${status.window.timezone}`
-      : "昨天 00:00 至今天 00:00";
+      ? `${formatDate(status.window.start, true)} → ${formatDate(status.window.end, true)} · ${status.window.timezone}；GUID 源按首次出现`
+      : "精确日期源按昨日窗口；GUID 源按首次出现";
     $("#status-summary").append(
-      metric("窗口内文章", counts.items_in_window ?? counts.fetched_this_run, windowLabel),
+      metric("本次处理", counts.processed_this_run ?? counts.items_in_window ?? counts.fetched_this_run, windowLabel),
       metric("首次收录", counts.new_today, "篇新增记录"),
       metric("累计论文", counts.all_articles, "篇可检索记录"),
       metric("生成时间", formatDate(status.generated_at, true), `上次完全成功：${formatDate(status.last_success_at, true)}`)
@@ -189,12 +242,17 @@ async function initStatus() {
       const head = element("div", "feed-head");
       head.append(element("span", "status-dot"), element("strong", "", feed.name));
       const feedMessage = feed.status === "ok"
-        ? `窗口内 ${feed.items} 篇 · Feed 共 ${feed.received ?? feed.items} 篇 · 日期不精确跳过 ${feed.missing_precise_date || 0} 篇`
+        ? feed.discovery_mode === "guid_diff"
+          ? feed.baseline_created
+            ? `已建立基线 ${feed.known_items || 0} 篇 · 本次不补录历史文章 · 日期不精确 ${feed.imprecise_dates || 0} 篇`
+            : `本次新发现 ${feed.new_items || 0} 篇 · Feed 共 ${feed.received ?? 0} 篇 · 累计识别 ${feed.known_items || 0} 篇 · 日期不精确 ${feed.imprecise_dates || 0} 篇（按 GUID 处理） · 元数据变化 ${feed.updated_items || 0} 篇 · 移出 Feed ${feed.removed_items || 0} 篇`
+          : `窗口内 ${feed.items} 篇 · Feed 共 ${feed.received ?? feed.items} 篇 · 日期不精确跳过 ${feed.missing_precise_date || 0} 篇 · 窗口外 ${feed.outside_window || 0} 篇`
         : feed.status === "fallback"
           ? `RSS 被来源站拒绝，已用 Crossref 同窗口回退 · 获取 ${feed.items} 篇`
           : (feed.error || "抓取失败");
       card.append(head, element("p", "", feedMessage));
-      const timing = element("small", "", `${feed.duration_ms ?? 0} ms · `);
+      const buildTime = feed.last_build_date ? ` · Feed 更新 ${formatDate(feed.last_build_date, true)}` : "";
+      const timing = element("small", "", `${feed.duration_ms ?? 0} ms${buildTime} · `);
       timing.append(externalLink(feed.url, "查看 RSS"));
       card.append(timing);
       feedGrid.append(card);
@@ -213,5 +271,6 @@ async function initStatus() {
 
 const page = document.body.dataset.page;
 if (page === "today") initToday();
+if (page === "history") initHistory();
 if (page === "papers") initPapers();
 if (page === "status") initStatus();

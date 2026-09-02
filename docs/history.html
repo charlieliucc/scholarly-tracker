@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Scholarly Tracker 的历史日更记录。">
+  <meta name="theme-color" content="#f4f0e8">
+  <title>历史记录 · Scholarly Tracker</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css?v=1.1.0">
+  <script src="assets/app.js?v=1.1.0" defer></script>
+</head>
+<body data-page="history">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Scholarly Tracker 首页">
+      <span class="brand-mark" aria-hidden="true">ST</span>
+      <span><strong>Scholarly Tracker</strong><small>期刊追踪</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="index.html">今日推荐</a>
+      <a href="history.html" aria-current="page">历史</a>
+      <a href="papers.html">全部论文</a>
+      <a href="status.html">运行状态</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-title">
+      <p class="eyebrow">DAILY HISTORY</p>
+      <h1>历史记录</h1>
+      <p>错过某一天的推送？选择日期查看当次日更发现的论文。精确日期来源按昨日窗口归档；ScienceDirect 按该批次首次发现归档。</p>
+    </section>
+    <section class="filters history-filters" aria-label="历史日期筛选">
+      <label><span>日更日期</span><select id="history-date"></select></label>
+    </section>
+    <div class="result-meta"><span id="history-count">读取中…</span><span id="history-updated"></span></div>
+    <section id="history-list" class="paper-list" aria-live="polite"><div class="loading">正在读取历史记录…</div></section>
+  </main>
+
+  <footer><span>Scholarly Tracker</span><span>RSS · Crossref · GitHub Pages</span></footer>
+</body>
+</html>

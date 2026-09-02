@@ -107,6 +107,7 @@ main { width: min(1180px, calc(100% - 48px)); margin: 0 auto; min-height: calc(1
 .filters label > span { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
 .filters input, .filters select { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 2px; outline: none; background: var(--card); color: var(--ink); }
 .filters input:focus, .filters select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(24,57,47,0.1); }
+.history-filters { grid-template-columns: 260px; }
 .result-meta { padding: 0 0 18px; display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
 .load-more-wrap { padding: 30px 0 70px; text-align: center; }
 .button { border: 0; border-radius: 999px; padding: 12px 24px; cursor: pointer; }

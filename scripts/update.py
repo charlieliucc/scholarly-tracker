@@ -60,6 +60,10 @@ def clean_html(value: Any) -> str:
     return SPACE_RE.sub(" ", html.unescape(text)).strip()
 
 
+def element_text(element: ET.Element) -> str:
+    return "".join(element.itertext()).strip()
+
+
 def local_name(tag: str) -> str:
     return tag.rsplit("}", 1)[-1].lower()
 
@@ -67,18 +71,22 @@ def local_name(tag: str) -> str:
 def child_text(element: ET.Element, *names: str) -> str:
     wanted = {name.lower() for name in names}
     for child in element:
-        if local_name(child.tag) in wanted and child.text:
-            return child.text.strip()
+        if local_name(child.tag) in wanted:
+            value = element_text(child)
+            if value:
+                return value
     return ""
 
 
 def all_child_text(element: ET.Element, *names: str) -> list[str]:
     wanted = {name.lower() for name in names}
-    return [
-        child.text.strip()
-        for child in element
-        if local_name(child.tag) in wanted and child.text and child.text.strip()
-    ]
+    values = []
+    for child in element:
+        if local_name(child.tag) in wanted:
+            value = element_text(child)
+            if value:
+                values.append(value)
+    return values
 
 
 def normalize_doi(value: str) -> str:
@@ -167,8 +175,46 @@ def extract_description_metadata(description: str) -> dict[str, Any]:
     publication_match = re.search(r"Publication date:\s*(.+?)(?=\s+Source:|$)", text, re.IGNORECASE)
     if publication_match:
         result["publication_text"] = publication_match.group(1)
-        result["published"] = parse_date(publication_match.group(1))
+    result["abstract"] = re.sub(
+        r"^\s*Publication date:\s*.*?(?=\s+Source:|$)",
+        "",
+        result.get("abstract", ""),
+        flags=re.IGNORECASE,
+    )
+    result["abstract"] = re.sub(r"^\s*Source:\s*.*$", "", result.get("abstract", ""), flags=re.IGNORECASE)
+    result["abstract"] = result.get("abstract", "").strip(" ;")
     return result
+
+
+def abstract_candidates(element: ET.Element) -> list[str]:
+    values = all_child_text(element, "description", "summary", "abstract", "encoded")
+    cleaned = []
+    for value in values:
+        text = clean_html(value)
+        if text:
+            cleaned.append(text)
+    return cleaned
+
+
+def select_abstract(element: ET.Element) -> dict[str, Any]:
+    candidates = abstract_candidates(element)
+    if not candidates:
+        return {"abstract": ""}
+    parsed = [extract_description_metadata(value) for value in candidates]
+    selected = max(parsed, key=lambda value: len(value.get("abstract", "")))
+    selected["abstract"] = clean_html(selected.get("abstract", ""))
+    return selected
+
+
+def abstract_needs_fallback(value: str) -> bool:
+    value = clean_html(value)
+    return not value or value.endswith("...") or value.endswith("…")
+
+
+def abstract_is_longer(candidate: str, current: str) -> bool:
+    candidate = clean_html(candidate)
+    current = clean_html(current)
+    return bool(candidate) and len(candidate) > len(current)
 
 
 def parse_feed(xml_bytes: bytes, journal: dict[str, Any], fetched_at: str) -> list[dict[str, Any]]:
@@ -193,14 +239,14 @@ def parse_feed(xml_bytes: bytes, journal: dict[str, Any], fetched_at: str) -> li
         if link.startswith("/"):
             link = urllib.parse.urljoin(journal.get("site_url") or journal["feed_url"], link)
         guid = child_text(item, "guid", "identifier")
-        description = child_text(item, "description", "summary", "abstract", "encoded")
-        desc_meta = extract_description_metadata(description)
+        desc_meta = select_abstract(item)
+        description = " ".join(abstract_candidates(item))
         creators = all_child_text(item, "creator", "author")
         authors = creators or desc_meta.get("authors", [])
         raw_date = child_text(item, "date", "publicationdate", "coverdate", "pubdate", "published", "updated")
         publication_text = raw_date or desc_meta.get("publication_text", "")
         feed_timestamp, date_precision = parse_feed_timestamp(publication_text)
-        published = parse_date(raw_date) or desc_meta.get("published", "")
+        published = parse_date(publication_text) if date_precision == "time" else feed_timestamp
         doi = normalize_doi(child_text(item, "doi", "identifier") or guid or link or description)
         journal_name = clean_html(child_text(item, "publicationname")) or feed_journal
         stable_source = doi or guid or link or f"{journal_name}|{title}"
@@ -214,7 +260,9 @@ def parse_feed(xml_bytes: bytes, journal: dict[str, Any], fetched_at: str) -> li
                 "doi": doi,
                 "authors": authors,
                 "abstract": desc_meta.get("abstract", ""),
+                "abstract_source": "rss" if desc_meta.get("abstract") else "",
                 "published": published,
+                "publication_text": publication_text,
                 "feed_timestamp": feed_timestamp,
                 "date_precision": date_precision,
                 "journal": journal_name,
@@ -232,6 +280,32 @@ def parse_feed(xml_bytes: bytes, journal: dict[str, Any], fetched_at: str) -> li
     return articles
 
 
+def feed_channel_metadata(xml_bytes: bytes) -> dict[str, str]:
+    root = ET.fromstring(xml_bytes)
+    channel = next((node for node in root.iter() if local_name(node.tag) == "channel"), root)
+    raw_last_build = child_text(channel, "lastbuilddate", "updated")
+    last_build, precision = parse_feed_timestamp(raw_last_build)
+    return {
+        "last_build_date": last_build,
+        "last_build_date_raw": clean_html(raw_last_build),
+        "last_build_date_precision": precision,
+    }
+
+
+def article_content_hash(article: dict[str, Any]) -> str:
+    tracked = {
+        "title": article.get("title", ""),
+        "url": article.get("url", ""),
+        "guid": article.get("guid", ""),
+        "authors": article.get("authors", []),
+        "abstract": article.get("abstract", ""),
+        "publication_text": article.get("publication_text", ""),
+        "journal": article.get("journal", ""),
+    }
+    encoded = json.dumps(tracked, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:20]
+
+
 def request_bytes(url: str, user_agent: str, timeout: int = 30) -> bytes:
     request = urllib.request.Request(
         url,
@@ -242,6 +316,104 @@ def request_bytes(url: str, user_agent: str, timeout: int = 30) -> bytes:
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return response.read()
+
+
+class HeadMetadataParser(HTMLParser):
+    ABSTRACT_META_NAMES = {
+        "citation_abstract",
+        "dc.description",
+        "dcterms.abstract",
+        "eprints.abstract",
+    }
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.in_head = False
+        self.head_ended = False
+        self.in_jsonld = False
+        self.jsonld_parts: list[str] = []
+        self.abstracts: list[str] = []
+        self.jsonld_documents: list[Any] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, Optional[str]]]) -> None:
+        tag = tag.lower()
+        attributes = {key.lower(): value or "" for key, value in attrs}
+        if tag == "head":
+            self.in_head = True
+            return
+        if not self.in_head:
+            return
+        if tag == "meta":
+            name = attributes.get("name", "").strip().casefold()
+            itemprop = attributes.get("itemprop", "").strip().casefold()
+            content = clean_html(attributes.get("content", ""))
+            if content and (name in self.ABSTRACT_META_NAMES or itemprop == "abstract"):
+                self.abstracts.append(content)
+        elif tag == "script" and attributes.get("type", "").split(";", 1)[0].strip().casefold() == "application/ld+json":
+            self.in_jsonld = True
+            self.jsonld_parts = []
+
+    def handle_data(self, data: str) -> None:
+        if self.in_head and self.in_jsonld:
+            self.jsonld_parts.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.lower()
+        if tag == "script" and self.in_jsonld:
+            raw = "".join(self.jsonld_parts).strip()
+            if raw:
+                try:
+                    self.jsonld_documents.append(json.loads(raw))
+                except json.JSONDecodeError:
+                    pass
+            self.in_jsonld = False
+            self.jsonld_parts = []
+        elif tag == "head":
+            self.in_head = False
+            self.head_ended = True
+
+
+def jsonld_abstracts(value: Any) -> list[str]:
+    found: list[str] = []
+    if isinstance(value, dict):
+        abstract = value.get("abstract")
+        if isinstance(abstract, str) and clean_html(abstract):
+            found.append(clean_html(abstract))
+        for child in value.values():
+            found.extend(jsonld_abstracts(child))
+    elif isinstance(value, list):
+        for child in value:
+            found.extend(jsonld_abstracts(child))
+    return found
+
+
+def fetch_doi_page_abstract(doi: str, user_agent: str, timeout: int, max_bytes: int) -> str:
+    url = f"https://doi.org/{urllib.parse.quote(normalize_doi(doi), safe='')}"
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": user_agent,
+            "Accept": "text/html, application/xhtml+xml",
+        },
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        content_type = response.headers.get_content_type().casefold()
+        if content_type not in {"text/html", "application/xhtml+xml"}:
+            return ""
+        parser = HeadMetadataParser()
+        remaining = max(1, int(max_bytes))
+        while remaining > 0 and not parser.head_ended:
+            chunk = response.read(min(8192, remaining))
+            if not chunk:
+                break
+            remaining -= len(chunk)
+            parser.feed(chunk.decode(response.headers.get_content_charset() or "utf-8", errors="replace"))
+        parser.close()
+    candidates = [*parser.abstracts]
+    for document in parser.jsonld_documents:
+        candidates.extend(jsonld_abstracts(document))
+    cleaned = [clean_html(value) for value in candidates]
+    return max((value for value in cleaned if value), key=len, default="")
 
 
 def crossref_date(message: dict[str, Any]) -> str:
@@ -373,6 +545,7 @@ def articles_from_crossref_updates(
                 "doi": doi,
                 "authors": metadata.get("authors", []),
                 "abstract": metadata.get("abstract", ""),
+                "abstract_source": "crossref" if metadata.get("abstract") else "",
                 "published": metadata.get("published", ""),
                 "feed_timestamp": feed_timestamp,
                 "date_precision": date_precision,
@@ -391,10 +564,17 @@ def articles_from_crossref_updates(
     return articles
 
 
-def merge_crossref(article: dict[str, Any], metadata: dict[str, Any]) -> None:
-    for key in ("doi", "authors", "abstract", "published", "journal", "publisher", "volume", "issue", "pages", "type"):
+def merge_crossref(article: dict[str, Any], metadata: dict[str, Any]) -> bool:
+    abstract_replaced = False
+    for key in ("doi", "authors", "published", "journal", "publisher", "volume", "issue", "pages", "type"):
         if not article.get(key) and metadata.get(key):
             article[key] = metadata[key]
+    if abstract_needs_fallback(article.get("abstract", "")) and abstract_is_longer(
+        metadata.get("abstract", ""), article.get("abstract", "")
+    ):
+        article["abstract"] = clean_html(metadata["abstract"])
+        article["abstract_source"] = "crossref"
+        abstract_replaced = True
     if authors_need_replacement(article.get("authors", [])) and metadata.get("authors"):
         article["authors"] = metadata["authors"]
     if metadata.get("doi"):
@@ -403,6 +583,16 @@ def merge_crossref(article: dict[str, Any], metadata: dict[str, Any]) -> None:
     if not article.get("url") and metadata.get("url"):
         article["url"] = metadata["url"]
     article["metadata_source"] = "rss+crossref"
+    return abstract_replaced
+
+
+def merge_abstract(article: dict[str, Any], abstract: str, source: str) -> bool:
+    current = article.get("abstract", "")
+    if not abstract_needs_fallback(current) or not abstract_is_longer(abstract, current):
+        return False
+    article["abstract"] = clean_html(abstract)
+    article["abstract_source"] = source
+    return True
 
 
 def authors_need_replacement(authors: list[str]) -> bool:
@@ -432,6 +622,11 @@ def timestamp_in_window(article: dict[str, Any], start: datetime, end: datetime,
             return False
         return start <= moment < end
     return False
+
+
+def history_date_for_batch(batch_date: date) -> str:
+    """Return the date used to group records in the daily history."""
+    return batch_date.isoformat()
 
 
 def score_article(article: dict[str, Any], settings: dict[str, Any]) -> tuple[float, list[dict[str, Any]]]:
@@ -470,6 +665,9 @@ def score_article(article: dict[str, Any], settings: dict[str, Any]) -> tuple[fl
 
 def identity_keys(article: dict[str, Any]) -> list[str]:
     keys = []
+    article_id = str(article.get("id", "")).strip()
+    if article_id:
+        keys.append(f"id:{article_id}")
     doi = normalize_doi(article.get("doi", ""))
     if doi:
         keys.append(f"doi:{doi}")
@@ -494,7 +692,7 @@ def merge_articles(previous: Iterable[dict[str, Any]], incoming: Iterable[dict[s
             records.append(dict(article))
         else:
             old = records[position]
-            first_seen = old.get("first_seen") or article["first_seen"]
+            first_seen = old.get("first_seen") or article.get("first_seen", "")
             merged = dict(old)
             for key, value in article.items():
                 if value not in (None, "", []):
@@ -538,8 +736,20 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
     local_today = now.astimezone(zone).date()
     window_end = datetime.combine(local_today, datetime_time.min, tzinfo=zone)
     window_start = window_end - timedelta(days=1)
+    batch_date = window_start.date() if window_enabled else local_today
     previous_payload = load_json(output_dir / "papers.json", {"articles": []})
     previous = previous_payload.get("articles", []) if isinstance(previous_payload, dict) else []
+    previous_history_payload = load_json(output_dir / "history.json", {"version": 1, "days": {}})
+    history_days = previous_history_payload.get("days", {}) if isinstance(previous_history_payload, dict) else {}
+    if not isinstance(history_days, dict):
+        history_days = {}
+    feed_state_path = output_dir / "feed-state.json"
+    loaded_feed_state = load_json(feed_state_path, {"version": 1, "feeds": {}})
+    feed_state_payload = loaded_feed_state if isinstance(loaded_feed_state, dict) else {"version": 1, "feeds": {}}
+    if not isinstance(feed_state_payload.get("feeds"), dict):
+        feed_state_payload["feeds"] = {}
+    feed_state_payload["version"] = 1
+    feed_state_changed = False
     user_agent = config.get("user_agent", "ScholarlyTracker/1.0")
     email = config.get("crossref", {}).get("contact_email", "").strip()
     if email and "mailto:" not in user_agent:
@@ -552,6 +762,8 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
     )
     source_status = []
     fetched: list[dict[str, Any]] = []
+    metadata_updates: list[dict[str, Any]] = []
+    previous_article_ids = {str(article.get("id", "")) for article in previous if article.get("id")}
     for journal in config.get("journals", []):
         if not journal.get("enabled", True):
             continue
@@ -572,12 +784,88 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
             payload = request_bytes(journal["feed_url"], user_agent, int(config.get("request_timeout_seconds", 30)))
             entries = parse_feed(payload, journal, run_at)
             status["received"] = len(entries)
-            if window_enabled:
+            discovery_mode = journal.get("discovery_mode", "publication_date")
+            if discovery_mode == "guid_diff":
+                status["discovery_mode"] = "guid_diff"
+                channel_metadata = feed_channel_metadata(payload)
+                status.update(channel_metadata)
+                status["imprecise_dates"] = sum(
+                    1 for entry in entries if entry.get("date_precision") not in {"time", "day"}
+                )
+                old_feed_state = feed_state_payload["feeds"].get(journal["id"], {})
+                initialized = isinstance(old_feed_state, dict) and isinstance(old_feed_state.get("seen"), dict)
+                old_seen = old_feed_state.get("seen", {}) if initialized else {}
+                old_present_ids = old_feed_state.get("present_ids", []) if initialized else []
+                old_present = set(old_present_ids) if isinstance(old_present_ids, list) else set()
+                current_ids = {entry["id"] for entry in entries}
+                eligible = []
+                changed_entries = []
+                updated_seen = dict(old_seen)
+                for entry in entries:
+                    entry_id = entry["id"]
+                    content_hash = article_content_hash(entry)
+                    old_record = old_seen.get(entry_id, {}) if isinstance(old_seen.get(entry_id), dict) else {}
+                    if initialized and entry_id not in old_seen:
+                        entry["discovered_at"] = run_at
+                        entry["history_date"] = history_date_for_batch(batch_date)
+                        eligible.append(entry)
+                    elif initialized and old_record.get("content_hash") != content_hash:
+                        changed_entries.append(entry)
+                    updated_seen[entry_id] = {
+                        "first_seen": old_record.get("first_seen") or run_at,
+                        "last_seen": run_at,
+                        "content_hash": content_hash,
+                    }
+                metadata_updates.extend(
+                    {
+                        key: value
+                        for key, value in entry.items()
+                        if key
+                        in {
+                            "id",
+                            "title",
+                            "url",
+                            "guid",
+                            "authors",
+                            "abstract",
+                            "abstract_source",
+                            "published",
+                            "publication_text",
+                            "feed_timestamp",
+                            "date_precision",
+                            "journal",
+                            "journal_id",
+                            "publisher",
+                            "last_seen",
+                        }
+                    }
+                    for entry in changed_entries
+                    if entry.get("id") in previous_article_ids
+                )
+                initialized_at = old_feed_state.get("initialized_at", "") if initialized else run_at
+                feed_state_payload["feeds"][journal["id"]] = {
+                    "mode": "guid_diff",
+                    "initialized_at": initialized_at or run_at,
+                    "last_success_at": run_at,
+                    "last_build_date": channel_metadata.get("last_build_date", ""),
+                    "present_ids": sorted(current_ids),
+                    "seen": updated_seen,
+                }
+                feed_state_changed = True
+                status["baseline_created"] = not initialized
+                status["new_items"] = len(eligible)
+                status["updated_items"] = len(changed_entries)
+                status["removed_items"] = len(old_present - current_ids) if initialized else 0
+                status["known_items"] = len(updated_seen)
+            elif discovery_mode != "publication_date":
+                raise ValueError(f"Unsupported discovery_mode for {journal['id']}: {discovery_mode}")
+            elif window_enabled:
                 eligible = []
                 for entry in entries:
                     if entry.get("date_precision") not in {"time", "day"}:
                         status["missing_precise_date"] += 1
                     elif timestamp_in_window(entry, window_start, window_end, zone):
+                        entry["history_date"] = history_date_for_batch(batch_date)
                         eligible.append(entry)
                     else:
                         status["outside_window"] += 1
@@ -591,6 +879,8 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
                 try:
                     messages = crossref.journal_updates(fallback_issn, window_start, window_end)
                     entries = articles_from_crossref_updates(messages, journal, run_at)
+                    for entry in entries:
+                        entry["history_date"] = history_date_for_batch(batch_date)
                     fetched.extend(entries)
                     status["status"] = "fallback"
                     status["fallback"] = "crossref"
@@ -617,17 +907,37 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
             new_count += 1
         seen_incoming.update(keys)
     processed_keys = {key for article in fetched for key in identity_keys(article)}
-    articles = merge_articles(previous, fetched)
+    articles = merge_articles(previous, [*metadata_updates, *fetched])
     processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
     keyword_settings = config.get("ranking", {})
     for article in processed_articles:
         article["score"], article["matched_keywords"] = score_article(article, keyword_settings)
 
     crossref_status = {"attempted": 0, "matched": 0, "not_found": 0, "errors": 0, "skipped": 0}
+    abstract_status = {
+        "crossref_attempted": 0,
+        "crossref_replaced": 0,
+        "doi_page_attempted": 0,
+        "doi_page_replaced": 0,
+        "doi_page_unavailable": 0,
+        "doi_page_errors": 0,
+    }
+    crossref_attempted_ids: set[str] = set()
     crossref_config = config.get("crossref", {})
     if crossref_config.get("enabled", True) and not offline:
         limit = int(crossref_config.get("max_lookups_per_run", 60))
         threshold = float(crossref_config.get("title_match_threshold", 0.86))
+        abstract_candidates = [
+            article
+            for article in processed_articles
+            if abstract_needs_fallback(article.get("abstract", "")) and article.get("doi")
+        ]
+        abstract_candidate_ids = {str(article.get("id", "")) for article in abstract_candidates}
+        crossref_attempted_ids.update(
+            str(article.get("id", ""))
+            for article in abstract_candidates
+            if article.get("metadata_source") == "crossref-fallback"
+        )
         # Only enrich records from this window. Missing DOI is highest priority,
         # followed by malformed feed author strings and other incomplete fields.
         candidates = [
@@ -654,16 +964,67 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
                 crossref_status["skipped"] += 1
                 continue
             crossref_status["attempted"] += 1
+            crossref_attempted_ids.add(str(article.get("id", "")))
+            if str(article.get("id", "")) in abstract_candidate_ids:
+                abstract_status["crossref_attempted"] += 1
             try:
                 metadata = crossref.lookup(article, threshold)
                 if metadata:
-                    merge_crossref(article, metadata)
+                    if merge_crossref(article, metadata):
+                        abstract_status["crossref_replaced"] += 1
                     crossref_status["matched"] += 1
                 else:
                     crossref_status["not_found"] += 1
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError, ValueError) as error:
                 crossref_status["errors"] += 1
                 article["crossref_error"] = f"{type(error).__name__}: {error}"
+
+        for article in abstract_candidates:
+            article_id = str(article.get("id", ""))
+            if article_id in crossref_attempted_ids:
+                continue
+            if crossref_status["attempted"] >= limit:
+                continue
+            crossref_status["attempted"] += 1
+            crossref_attempted_ids.add(article_id)
+            abstract_status["crossref_attempted"] += 1
+            try:
+                metadata = crossref.lookup(article, threshold)
+                if metadata:
+                    crossref_status["matched"] += 1
+                    if merge_abstract(article, metadata.get("abstract", ""), "crossref"):
+                        abstract_status["crossref_replaced"] += 1
+                    else:
+                        # A Crossref record can exist without an abstract, or can
+                        # still contain a truncated value. Let DOI-page fallback decide next.
+                        pass
+                else:
+                    crossref_status["not_found"] += 1
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError, ValueError) as error:
+                crossref_status["errors"] += 1
+                article["crossref_error"] = f"{type(error).__name__}: {error}"
+
+        doi_page_enabled = crossref_config.get("doi_page_enabled", False)
+        doi_page_limit = int(crossref_config.get("max_doi_page_lookups_per_run", 20))
+        doi_page_max_bytes = int(crossref_config.get("doi_page_max_bytes", 524288))
+        if doi_page_enabled:
+            for article in abstract_candidates:
+                if not abstract_needs_fallback(article.get("abstract", "")):
+                    continue
+                if abstract_status["doi_page_attempted"] >= doi_page_limit:
+                    break
+                abstract_status["doi_page_attempted"] += 1
+                try:
+                    page_abstract = fetch_doi_page_abstract(
+                        article["doi"], user_agent, int(config.get("request_timeout_seconds", 30)), doi_page_max_bytes
+                    )
+                    if merge_abstract(article, page_abstract, "doi-page"):
+                        abstract_status["doi_page_replaced"] += 1
+                    else:
+                        abstract_status["doi_page_unavailable"] += 1
+                except (urllib.error.URLError, TimeoutError, UnicodeError, ValueError) as error:
+                    abstract_status["doi_page_errors"] += 1
+                    article["doi_page_error"] = f"{type(error).__name__}: {error}"
 
     for article in processed_articles:
         article["doi"] = normalize_doi(article.get("doi", ""))
@@ -703,8 +1064,10 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
         },
         "feeds": source_status,
         "crossref": crossref_status,
+        "abstracts": abstract_status,
         "counts": {
             "fetched_this_run": len(fetched),
+            "processed_this_run": len(fetched),
             "new_today": new_count,
             "items_in_window": len(fetched),
             "recommended_today": len(recommended),
@@ -722,6 +1085,25 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
         },
     )
     write_json(output_dir / "status.json", status_payload)
+    if outcome in {"success", "partial"}:
+        date_key = history_date_for_batch(batch_date)
+        old_day = history_days.get(date_key, {})
+        old_ids = old_day.get("article_ids", []) if isinstance(old_day, dict) else []
+        if not isinstance(old_ids, list):
+            old_ids = []
+        batch_ids = [str(article.get("id", "")) for article in fetched if article.get("id")]
+        history_days[date_key] = {
+            "generated_at": run_at,
+            "article_ids": sorted(set(old_ids) | set(batch_ids)),
+        }
+        write_json(
+            output_dir / "history.json",
+            {"version": 1, "generated_at": run_at, "days": history_days},
+        )
+    if feed_state_changed or feed_state_path.exists():
+        if feed_state_changed:
+            feed_state_payload["updated_at"] = run_at
+        write_json(feed_state_path, feed_state_payload)
     return status_payload
 
 
