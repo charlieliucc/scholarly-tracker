@@ -19,13 +19,6 @@ function formatDate(value, includeTime = false) {
   ).format(date);
 }
 
-function formatClock(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
-}
-
 function formatPublicationDate(article) {
   const precision = article.date_precision;
   const value = String(article.feed_timestamp || article.published || "");
@@ -195,13 +188,10 @@ async function initToday() {
     const [recommendations, status] = await Promise.all([fetchJson("data/recommendations.json"), fetchJson("data/status.json")]);
     const articles = recommendations.articles || [];
     const otherArticles = recommendations.other_articles || [];
-    const windowStart = recommendations.window?.start;
-    const dateText = windowStart ? formatDate(windowStart) : formatDate(recommendations.date);
-    const clockText = formatClock(recommendations.generated_at || status.generated_at);
-    $("#today-label").textContent = `${dateText}${clockText ? ` ${clockText}` : ""} · 本次更新`;
+    const generatedAt = recommendations.generated_at || status.generated_at;
+    $("#today-label").textContent = generatedAt ? formatDate(generatedAt, true) : "本次更新";
     $("#new-count").textContent = status.counts?.items_in_window ?? status.counts?.new_today ?? "—";
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
-    $("#total-count").textContent = status.counts?.all_articles ?? "—";
     list.replaceChildren();
     if (!articles.length) {
       list.append(emptyState("本次更新没有推荐文章", "没有文章达到当前关键词推荐门槛。"));

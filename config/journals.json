@@ -185,7 +185,8 @@
       "id": "higher-education",
       "name": "Higher Education",
       "publisher": "Springer Nature",
-      "feed_url": "https://link.springer.com/search.rss?facet-content-type=Article&facet-journal-id=10734&channel-name=Higher+Education",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "1573-174X",
       "site_url": "https://link.springer.com/journal/10734",
       "enabled": true
     },
