@@ -118,6 +118,7 @@ main { width: min(1180px, calc(100% - 48px)); margin: 0 auto; min-height: calc(1
 .status-orb.success span, .feed-card.ok .status-dot { background: #3a8561; box-shadow: 0 0 0 5px rgba(58,133,97,0.12); }
 .status-orb.partial span, .status-orb.stale span { background: #d38b34; box-shadow: 0 0 0 5px rgba(211,139,52,0.12); }
 .status-orb.error span, .feed-card.error .status-dot { background: #b44737; box-shadow: 0 0 0 5px rgba(180,71,55,0.12); }
+.feed-card.fallback .status-dot { background: #d38b34; box-shadow: 0 0 0 5px rgba(211,139,52,0.12); }
 .status-orb strong { font-size: 13px; }
 .status-summary { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 36px; border: 1px solid var(--line); background: var(--card); box-shadow: var(--shadow); }
 .status-metric { min-height: 128px; padding: 24px; display: flex; flex-direction: column; border-right: 1px solid var(--line); }
@@ -196,4 +197,3 @@ footer { width: min(1180px, calc(100% - 48px)); margin: 0 auto; min-height: 88px
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
-

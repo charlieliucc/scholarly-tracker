@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -108,6 +109,46 @@ class BuildTests(unittest.TestCase):
             self.assertEqual(status["counts"]["items_in_window"], 0)
             self.assertEqual(status["crossref"]["attempted"], 0)
             lookup.assert_not_called()
+
+    def test_uses_crossref_window_fallback_when_rss_is_blocked(self) -> None:
+        config = {
+            "journals": [
+                {
+                    "id": "test",
+                    "name": "Test Journal",
+                    "publisher": "Test",
+                    "feed_url": "https://example.org/rss",
+                    "crossref_fallback_issn": "1234-5678",
+                }
+            ],
+            "window": {"enabled": True, "timezone": "Asia/Shanghai"},
+            "crossref": {"enabled": False},
+            "ranking": {"keywords": [{"term": "feedback", "weight": 3}]},
+            "recommendations": {"minimum_score": 1},
+        }
+        crossref_item = {
+            "DOI": "10.1234/fallback",
+            "URL": "https://doi.org/10.1234/fallback",
+            "title": ["Feedback from a fallback"],
+            "container-title": ["Test Journal"],
+            "author": [{"given": "Jane", "family": "Doe"}],
+            "deposited": {"date-time": "2026-08-22T08:00:00Z"},
+            "published-online": {"date-parts": [[2026, 8, 22]]},
+            "type": "journal-article",
+        }
+        blocked = urllib.error.HTTPError("https://example.org/rss", 403, "Forbidden", {}, None)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with patch("scripts.update.request_bytes", side_effect=blocked), patch(
+                "scripts.update.CrossrefClient.journal_updates", return_value=[crossref_item]
+            ):
+                status = build(config_path, root / "data", now=datetime(2026, 8, 23, 1, tzinfo=timezone.utc))
+            self.assertEqual(status["outcome"], "success")
+            self.assertEqual(status["feeds"][0]["status"], "fallback")
+            self.assertEqual(status["counts"]["items_in_window"], 1)
+            self.assertEqual(status["counts"]["recommended_today"], 1)
 
 
 if __name__ == "__main__":

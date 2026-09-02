@@ -57,4 +57,5 @@ python3 -m http.server 8000 --directory docs
 - RSS 记录优先保留；Crossref 只补全缺失字段。
 - 无 DOI 时，Crossref 标题候选必须达到配置的相似度门槛才会合并。
 - 单个 feed 或 Crossref 暂时失败不会清空历史数据，错误会显示在运行状态页。
+- 某些出版商可能拒绝 GitHub Actions 的服务器 IP；可为该期刊配置 `crossref_fallback_issn`，仅在 RSS 失败时按相同时间窗口读取 Crossref 更新记录。
 - 页面只发布公开论文元数据，不存储密钥；如仓库或页面中存在敏感数据，请勿启用公开 Pages。

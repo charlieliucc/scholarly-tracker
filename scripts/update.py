@@ -331,6 +331,63 @@ class CrossrefClient:
             return None
         return crossref_record(ranked[0][1])
 
+    def journal_updates(self, issn: str, start: datetime, end: datetime) -> list[dict[str, Any]]:
+        start_utc = start.astimezone(timezone.utc).replace(microsecond=0)
+        # Crossref's until filter is inclusive; subtract one second to preserve
+        # this project's half-open [start, end) window.
+        end_utc = (end.astimezone(timezone.utc) - timedelta(seconds=1)).replace(microsecond=0)
+        crossref_time = lambda value: value.isoformat().replace("+00:00", "Z")
+        filters = ",".join(
+            (
+                f"issn:{issn}",
+                f"from-update-date:{crossref_time(start_utc)}",
+                f"until-update-date:{crossref_time(end_utc)}",
+                "type:journal-article",
+            )
+        )
+        payload = self._get_json("works", {"filter": filters, "rows": 1000})
+        return payload.get("message", {}).get("items", [])
+
+
+def articles_from_crossref_updates(
+    messages: Iterable[dict[str, Any]], journal: dict[str, Any], fetched_at: str
+) -> list[dict[str, Any]]:
+    articles = []
+    for message in messages:
+        metadata = crossref_record(message)
+        if not metadata.get("title"):
+            continue
+        doi = metadata.get("doi", "")
+        deposited = message.get("deposited", {}).get("date-time", "")
+        feed_timestamp, date_precision = parse_feed_timestamp(deposited)
+        stable_source = doi or metadata.get("url") or f"{journal['name']}|{metadata['title']}"
+        article_id = hashlib.sha256(stable_source.encode("utf-8")).hexdigest()[:20]
+        articles.append(
+            {
+                "id": article_id,
+                "title": metadata.get("title", ""),
+                "url": metadata.get("url", ""),
+                "guid": doi,
+                "doi": doi,
+                "authors": metadata.get("authors", []),
+                "abstract": metadata.get("abstract", ""),
+                "published": metadata.get("published", ""),
+                "feed_timestamp": feed_timestamp,
+                "date_precision": date_precision,
+                "journal": metadata.get("journal") or journal["name"],
+                "journal_id": journal["id"],
+                "publisher": metadata.get("publisher") or journal.get("publisher", ""),
+                "volume": metadata.get("volume", ""),
+                "issue": metadata.get("issue", ""),
+                "pages": metadata.get("pages", ""),
+                "type": metadata.get("type", "journal-article"),
+                "first_seen": fetched_at,
+                "last_seen": fetched_at,
+                "metadata_source": "crossref-fallback",
+            }
+        )
+    return articles
+
 
 def merge_crossref(article: dict[str, Any], metadata: dict[str, Any]) -> None:
     for key in ("doi", "authors", "abstract", "published", "journal", "publisher", "volume", "issue", "pages", "type"):
@@ -527,8 +584,25 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
             fetched.extend(eligible)
             status["items"] = len(eligible)
         except Exception as error:  # Preserve old data and expose the failure on the status page.
-            status["status"] = "error"
-            status["error"] = f"{type(error).__name__}: {error}"
+            fallback_issn = journal.get("crossref_fallback_issn", "")
+            if fallback_issn and not offline:
+                try:
+                    messages = crossref.journal_updates(fallback_issn, window_start, window_end)
+                    entries = articles_from_crossref_updates(messages, journal, run_at)
+                    fetched.extend(entries)
+                    status["status"] = "fallback"
+                    status["fallback"] = "crossref"
+                    status["rss_error"] = f"{type(error).__name__}: {error}"
+                    status["items"] = len(entries)
+                except Exception as fallback_error:
+                    status["status"] = "error"
+                    status["error"] = (
+                        f"RSS {type(error).__name__}: {error}; "
+                        f"Crossref fallback {type(fallback_error).__name__}: {fallback_error}"
+                    )
+            else:
+                status["status"] = "error"
+                status["error"] = f"{type(error).__name__}: {error}"
         status["duration_ms"] = round((time.monotonic() - started) * 1000)
         source_status.append(status)
 

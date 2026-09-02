@@ -190,7 +190,9 @@ async function initStatus() {
       head.append(element("span", "status-dot"), element("strong", "", feed.name));
       const feedMessage = feed.status === "ok"
         ? `窗口内 ${feed.items} 篇 · Feed 共 ${feed.received ?? feed.items} 篇 · 日期不精确跳过 ${feed.missing_precise_date || 0} 篇`
-        : (feed.error || "抓取失败");
+        : feed.status === "fallback"
+          ? `RSS 被来源站拒绝，已用 Crossref 同窗口回退 · 获取 ${feed.items} 篇`
+          : (feed.error || "抓取失败");
       card.append(head, element("p", "", feedMessage));
       const timing = element("small", "", `${feed.duration_ms ?? 0} ms · `);
       timing.append(externalLink(feed.url, "查看 RSS"));

@@ -29,6 +29,7 @@
       "publisher": "Taylor & Francis",
       "feed_url": "https://www.tandfonline.com/feed/rss/caeh20",
       "site_url": "https://www.tandfonline.com/journals/caeh20",
+      "crossref_fallback_issn": "0260-2938",
       "enabled": true
     }
   ],
