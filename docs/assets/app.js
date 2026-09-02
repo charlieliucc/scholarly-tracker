@@ -93,7 +93,7 @@ function articleCard(article, index) {
 }
 
 function compactArticleCard(article) {
-  const card = element("article", "paper-card compact-paper-card");
+  const card = element("article", "other-paper-row");
   const body = element("div", "paper-body");
   const meta = element("div", "paper-meta");
   meta.append(element("span", "journal-label", article.journal || "未知期刊"));
@@ -276,7 +276,9 @@ async function initStatus() {
       const head = element("div", "feed-head");
       head.append(element("span", "status-dot"), element("strong", "", feed.name));
       const feedMessage = feed.status === "ok"
-        ? feed.discovery_mode === "guid_diff"
+        ? feed.discovery_mode === "crossref_online_first"
+          ? `Crossref published-online · 窗口内 ${feed.items || 0} 篇 OnlineFirst · 查询 ${feed.received || 0} 条 · 已有卷期跳过 ${feed.with_issue || 0} 条`
+          : feed.discovery_mode === "guid_diff"
           ? feed.baseline_created
             ? `已建立基线 ${feed.known_items || 0} 篇 · 本次不补录历史文章 · 日期不精确 ${feed.imprecise_dates || 0} 篇`
             : `本次新发现 ${feed.new_items || 0} 篇 · Feed 共 ${feed.received ?? 0} 篇 · 累计识别 ${feed.known_items || 0} 篇 · 日期不精确 ${feed.imprecise_dates || 0} 篇（按 GUID 处理） · 元数据变化 ${feed.updated_items || 0} 篇 · 移出 Feed ${feed.removed_items || 0} 篇`
@@ -287,7 +289,7 @@ async function initStatus() {
       card.append(head, element("p", "", feedMessage));
       const buildTime = feed.last_build_date ? ` · Feed 更新 ${formatDate(feed.last_build_date, true)}` : "";
       const timing = element("small", "", `${feed.duration_ms ?? 0} ms${buildTime} · `);
-      timing.append(externalLink(feed.url, "查看 RSS"));
+      timing.append(externalLink(feed.url, feed.source === "crossref" ? "查看 Crossref" : "查看 RSS"));
       card.append(timing);
       feedGrid.append(card);
     });

@@ -416,15 +416,26 @@ def fetch_doi_page_abstract(doi: str, user_agent: str, timeout: int, max_bytes: 
     return max((value for value in cleaned if value), key=len, default="")
 
 
+def crossref_date_value(message: dict[str, Any], key: str) -> tuple[str, str]:
+    value = message.get(key, {})
+    parts = value.get("date-parts", []) if isinstance(value, dict) else []
+    if not parts or not parts[0]:
+        return "", ""
+    raw_parts = parts[0]
+    values = list(raw_parts) + [1, 1]
+    try:
+        parsed = date(int(values[0]), int(values[1]), int(values[2])).isoformat()
+    except (TypeError, ValueError):
+        return "", ""
+    precision = {1: "year", 2: "month", 3: "day"}.get(len(raw_parts), "")
+    return parsed, precision
+
+
 def crossref_date(message: dict[str, Any]) -> str:
     for key in ("published-online", "published-print", "published", "issued", "created"):
-        parts = message.get(key, {}).get("date-parts", []) if isinstance(message.get(key), dict) else []
-        if parts and parts[0]:
-            values = list(parts[0]) + [1, 1]
-            try:
-                return date(int(values[0]), int(values[1]), int(values[2])).isoformat()
-            except (TypeError, ValueError):
-                continue
+        parsed, _ = crossref_date_value(message, key)
+        if parsed:
+            return parsed
     return ""
 
 
@@ -443,6 +454,7 @@ def crossref_record(message: dict[str, Any]) -> dict[str, Any]:
     titles = message.get("title") or []
     containers = message.get("container-title") or []
     pages = message.get("page") or message.get("article-number") or ""
+    published_online, published_online_precision = crossref_date_value(message, "published-online")
     return {
         "title": clean_html(titles[0]) if titles else "",
         "doi": normalize_doi(message.get("DOI", "")),
@@ -450,6 +462,8 @@ def crossref_record(message: dict[str, Any]) -> dict[str, Any]:
         "authors": crossref_authors(message),
         "abstract": clean_html(message.get("abstract", "")),
         "published": crossref_date(message),
+        "published_online": published_online,
+        "published_online_precision": published_online_precision,
         "journal": clean_html(containers[0]) if containers else "",
         "publisher": clean_html(message.get("publisher", "")),
         "volume": str(message.get("volume", "") or ""),
@@ -522,6 +536,18 @@ class CrossrefClient:
         payload = self._get_json("works", {"filter": filters, "rows": 1000})
         return payload.get("message", {}).get("items", [])
 
+    def journal_online_first(self, issn: str, start_date: date, end_date: date) -> list[dict[str, Any]]:
+        filters = ",".join(
+            (
+                f"from-online-pub-date:{start_date.isoformat()}",
+                f"until-online-pub-date:{end_date.isoformat()}",
+                "type:journal-article",
+            )
+        )
+        path = f"journals/{urllib.parse.quote(issn, safe='')}/works"
+        payload = self._get_json(path, {"filter": filters, "rows": 1000})
+        return payload.get("message", {}).get("items", [])
+
 
 def articles_from_crossref_updates(
     messages: Iterable[dict[str, Any]], journal: dict[str, Any], fetched_at: str
@@ -564,9 +590,74 @@ def articles_from_crossref_updates(
     return articles
 
 
+def articles_from_crossref_online_first(
+    messages: Iterable[dict[str, Any]], journal: dict[str, Any], fetched_at: str
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    articles = []
+    stats = {"with_issue": 0, "missing_precise_date": 0, "missing_doi_or_title": 0}
+    for message in messages:
+        metadata = crossref_record(message)
+        if not metadata.get("title") or not metadata.get("doi"):
+            stats["missing_doi_or_title"] += 1
+            continue
+        if metadata.get("published_online_precision") != "day":
+            stats["missing_precise_date"] += 1
+            continue
+        if metadata.get("volume") or metadata.get("issue"):
+            stats["with_issue"] += 1
+            continue
+        stable_source = metadata["doi"] or metadata.get("url") or f"{journal['name']}|{metadata['title']}"
+        article_id = hashlib.sha256(stable_source.encode("utf-8")).hexdigest()[:20]
+        online_date = metadata["published_online"]
+        articles.append(
+            {
+                "id": article_id,
+                "title": metadata["title"],
+                "url": metadata.get("url", ""),
+                "guid": metadata["doi"],
+                "doi": metadata["doi"],
+                "authors": metadata.get("authors", []),
+                "abstract": metadata.get("abstract", ""),
+                "abstract_source": "crossref" if metadata.get("abstract") else "",
+                "published": online_date,
+                "published_online": online_date,
+                "published_online_source": "crossref",
+                "published_online_precision": metadata["published_online_precision"],
+                "publication_text": f"Published online: {online_date}",
+                "feed_timestamp": online_date,
+                "date_precision": metadata["published_online_precision"],
+                "journal": metadata.get("journal") or journal["name"],
+                "journal_id": journal["id"],
+                "publisher": metadata.get("publisher") or journal.get("publisher", ""),
+                "volume": metadata.get("volume", ""),
+                "issue": metadata.get("issue", ""),
+                "pages": metadata.get("pages", ""),
+                "type": metadata.get("type", "journal-article"),
+                "first_seen": fetched_at,
+                "last_seen": fetched_at,
+                "discovered_at": fetched_at,
+                "metadata_source": "crossref-onlinefirst",
+                "online_first_status": "confirmed",
+            }
+        )
+    return articles, stats
+
+
 def merge_crossref(article: dict[str, Any], metadata: dict[str, Any]) -> bool:
     abstract_replaced = False
-    for key in ("doi", "authors", "published", "journal", "publisher", "volume", "issue", "pages", "type"):
+    for key in (
+        "doi",
+        "authors",
+        "published",
+        "published_online",
+        "published_online_precision",
+        "journal",
+        "publisher",
+        "volume",
+        "issue",
+        "pages",
+        "type",
+    ):
         if not article.get(key) and metadata.get(key):
             article[key] = metadata[key]
     if abstract_needs_fallback(article.get("abstract", "")) and abstract_is_longer(
@@ -763,28 +854,60 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
     source_status = []
     fetched: list[dict[str, Any]] = []
     metadata_updates: list[dict[str, Any]] = []
+    primary_crossref_attempted = 0
     previous_article_ids = {str(article.get("id", "")) for article in previous if article.get("id")}
     for journal in config.get("journals", []):
         if not journal.get("enabled", True):
             continue
         started = time.monotonic()
+        discovery_mode = journal.get("discovery_mode", "publication_date")
+        crossref_online_first = discovery_mode == "crossref_online_first"
+        crossref_url = ""
+        if journal.get("crossref_issn"):
+            crossref_url = f"https://api.crossref.org/journals/{urllib.parse.quote(str(journal['crossref_issn']), safe='')}/works"
         status = {
             "id": journal["id"],
             "name": journal["name"],
-            "url": journal["feed_url"],
+            "url": crossref_url if crossref_online_first else journal.get("feed_url", journal.get("site_url", "")),
+            "source": "crossref" if crossref_online_first else "rss",
+            "discovery_mode": discovery_mode,
             "status": "ok",
             "received": 0,
             "items": 0,
             "outside_window": 0,
             "missing_precise_date": 0,
         }
+        if crossref_online_first:
+            try:
+                if offline:
+                    raise RuntimeError("offline mode")
+                crossref_issn = str(journal.get("crossref_issn", "")).strip()
+                if not crossref_issn:
+                    raise ValueError(f"Missing crossref_issn for {journal['id']}")
+                primary_crossref_attempted += 1
+                messages = crossref.journal_online_first(crossref_issn, window_start.date(), (window_end - timedelta(seconds=1)).date())
+                entries, crossref_stats = articles_from_crossref_online_first(messages, journal, run_at)
+                for entry in entries:
+                    entry["history_date"] = history_date_for_batch(batch_date)
+                fetched.extend(entries)
+                status["received"] = len(messages)
+                status["items"] = len(entries)
+                status["crossref_online_first"] = len(entries)
+                status["with_issue"] = crossref_stats["with_issue"]
+                status["missing_precise_date"] = crossref_stats["missing_precise_date"]
+                status["missing_doi_or_title"] = crossref_stats["missing_doi_or_title"]
+            except Exception as error:
+                status["status"] = "error"
+                status["error"] = f"Crossref {type(error).__name__}: {error}"
+            status["duration_ms"] = round((time.monotonic() - started) * 1000)
+            source_status.append(status)
+            continue
         try:
             if offline:
                 raise RuntimeError("offline mode")
             payload = request_bytes(journal["feed_url"], user_agent, int(config.get("request_timeout_seconds", 30)))
             entries = parse_feed(payload, journal, run_at)
             status["received"] = len(entries)
-            discovery_mode = journal.get("discovery_mode", "publication_date")
             if discovery_mode == "guid_diff":
                 status["discovery_mode"] = "guid_diff"
                 channel_metadata = feed_channel_metadata(payload)
@@ -913,7 +1036,14 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
     for article in processed_articles:
         article["score"], article["matched_keywords"] = score_article(article, keyword_settings)
 
-    crossref_status = {"attempted": 0, "matched": 0, "not_found": 0, "errors": 0, "skipped": 0}
+    crossref_status = {
+        "attempted": 0,
+        "matched": 0,
+        "not_found": 0,
+        "errors": 0,
+        "skipped": 0,
+        "primary_attempted": primary_crossref_attempted,
+    }
     abstract_status = {
         "crossref_attempted": 0,
         "crossref_replaced": 0,
@@ -936,14 +1066,14 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
         crossref_attempted_ids.update(
             str(article.get("id", ""))
             for article in abstract_candidates
-            if article.get("metadata_source") == "crossref-fallback"
+            if article.get("metadata_source") in {"crossref-fallback", "crossref-onlinefirst"}
         )
         # Only enrich records from this window. Missing DOI is highest priority,
         # followed by malformed feed author strings and other incomplete fields.
         candidates = [
             article
             for article in processed_articles
-            if article.get("metadata_source") != "crossref-fallback"
+            if article.get("metadata_source") not in {"crossref-fallback", "crossref-onlinefirst"}
             and (
                 not article.get("doi")
                 or not article.get("abstract")

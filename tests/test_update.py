@@ -13,6 +13,7 @@ from scripts.update import (
     CrossrefClient,
     authors_need_replacement,
     build,
+    articles_from_crossref_online_first,
     fetch_doi_page_abstract,
     merge_articles,
     merge_crossref,
@@ -89,6 +90,20 @@ class FeedParserTests(unittest.TestCase):
         articles = parse_feed(sciencedirect_feed(), journal, "2026-08-31T00:00:00Z")
         self.assertEqual(articles[0]["abstract"], "")
         self.assertEqual(articles[0]["abstract_source"], "")
+
+
+class JournalConfigTests(unittest.TestCase):
+    def test_crossref_online_first_journals_do_not_have_rss_sources(self) -> None:
+        config = json.loads((ROOT / "config" / "journals.json").read_text(encoding="utf-8"))
+        journals = {journal["id"]: journal for journal in config["journals"]}
+        for journal_id, issn in {
+            "applied-linguistics": "0142-6001",
+            "language-teaching": "0261-4448",
+        }.items():
+            journal = journals[journal_id]
+            self.assertEqual(journal["discovery_mode"], "crossref_online_first")
+            self.assertEqual(journal["crossref_issn"], issn)
+            self.assertNotIn("feed_url", journal)
 
 
 class RankingTests(unittest.TestCase):
@@ -172,8 +187,92 @@ class CrossrefClientTests(unittest.TestCase):
         self.assertIn("until-update-date:2026-09-01T23:59:59", filters)
         self.assertNotIn("Z", filters)
 
+    def test_online_first_query_uses_published_online_date_filter(self) -> None:
+        client = CrossrefClient(contact_email="", user_agent="test")
+        with patch.object(client, "_get_json", return_value={"message": {"items": []}}) as get_json:
+            client.journal_online_first("0260-2938", datetime(2026, 9, 1).date(), datetime(2026, 9, 1).date())
+        self.assertEqual(get_json.call_args.args[0], "journals/0260-2938/works")
+        filters = get_json.call_args.args[1]["filter"]
+        self.assertIn("from-online-pub-date:2026-09-01", filters)
+        self.assertIn("until-online-pub-date:2026-09-01", filters)
+        self.assertIn("type:journal-article", filters)
+
+    def test_online_first_requires_missing_volume_and_issue(self) -> None:
+        messages = [
+            {
+                "DOI": "10.1234/online",
+                "URL": "https://doi.org/10.1234/online",
+                "title": ["Online first article"],
+                "container-title": ["Test Journal"],
+                "published-online": {"date-parts": [[2026, 9, 1]]},
+                "author": [{"given": "Jane", "family": "Doe"}],
+                "type": "journal-article",
+            },
+            {
+                "DOI": "10.1234/issue",
+                "URL": "https://doi.org/10.1234/issue",
+                "title": ["Issue article"],
+                "container-title": ["Test Journal"],
+                "published-online": {"date-parts": [[2026, 9, 1]]},
+                "volume": "12",
+                "issue": "3",
+                "type": "journal-article",
+            },
+        ]
+        articles, stats = articles_from_crossref_online_first(
+            messages, {"id": "test", "name": "Test Journal", "publisher": "Taylor & Francis"}, "2026-09-02T00:00:00Z"
+        )
+        self.assertEqual([article["doi"] for article in articles], ["10.1234/online"])
+        self.assertEqual(stats["with_issue"], 1)
+        self.assertEqual(articles[0]["online_first_status"], "confirmed")
+
 
 class BuildTests(unittest.TestCase):
+    def test_crossref_online_first_source_does_not_request_rss(self) -> None:
+        config = {
+            "journals": [
+                {
+                    "id": "test-tf",
+                    "name": "Test Journal",
+                    "publisher": "Taylor & Francis",
+                    "discovery_mode": "crossref_online_first",
+                    "crossref_issn": "1234-5678",
+                    "site_url": "https://www.tandfonline.com/journals/test",
+                }
+            ],
+            "window": {"enabled": True, "timezone": "Asia/Shanghai"},
+            "crossref": {"enabled": True, "doi_page_enabled": False},
+            "ranking": {"keywords": [{"term": "feedback", "weight": 3}]},
+            "recommendations": {"minimum_score": 1},
+        }
+        message = {
+            "DOI": "10.1234/online-first",
+            "URL": "https://doi.org/10.1234/online-first",
+            "title": ["Feedback online first"],
+            "container-title": ["Test Journal"],
+            "publisher": "Taylor & Francis",
+            "published-online": {"date-parts": [[2026, 9, 1]]},
+            "author": [{"given": "Jane", "family": "Doe"}],
+            "type": "journal-article",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with patch.object(CrossrefClient, "journal_online_first", return_value=[message]), patch(
+                "scripts.update.request_bytes", side_effect=AssertionError("T&F RSS must not be requested")
+            ) as request:
+                status = build(config_path, root / "data", now=datetime(2026, 9, 2, 1, tzinfo=timezone.utc))
+            self.assertFalse(request.called)
+            self.assertEqual(status["feeds"][0]["source"], "crossref")
+            self.assertEqual(status["feeds"][0]["discovery_mode"], "crossref_online_first")
+            self.assertEqual(status["feeds"][0]["items"], 1)
+            self.assertEqual(status["counts"]["items_in_window"], 1)
+            self.assertEqual(status["crossref"]["primary_attempted"], 1)
+            article = json.loads((root / "data" / "papers.json").read_text(encoding="utf-8"))["articles"][0]
+            self.assertEqual(article["metadata_source"], "crossref-onlinefirst")
+            self.assertEqual(article["published"], "2026-09-01")
+
     def test_guid_diff_baselines_then_processes_only_unseen_items(self) -> None:
         config = {
             "journals": [

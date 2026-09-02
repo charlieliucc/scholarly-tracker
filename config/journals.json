@@ -70,7 +70,8 @@
       "id": "language-teaching",
       "name": "Language Teaching",
       "publisher": "Cambridge University Press",
-      "feed_url": "https://www.cambridge.org/core/rss/product/id/7A18C6CD3BE4DECD9AF92A0B7C9577E6",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0261-4448",
       "site_url": "https://www.cambridge.org/core/journals/language-teaching",
       "enabled": true
     },
@@ -78,7 +79,8 @@
       "id": "applied-linguistics",
       "name": "Applied Linguistics",
       "publisher": "Oxford University Press",
-      "feed_url": "https://academic.oup.com/rss/site_5504/advanceAccess_3212.xml",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0142-6001",
       "site_url": "https://academic.oup.com/applij",
       "enabled": true
     },
@@ -86,7 +88,8 @@
       "id": "studies-higher-education",
       "name": "Studies in Higher Education",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/action/showFeed?jc=cshe20&type=etoc&feed=rss",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0307-5079",
       "site_url": "https://www.tandfonline.com/journals/cshe20",
       "enabled": true
     },
@@ -111,7 +114,8 @@
       "id": "language-assessment-quarterly",
       "name": "Language Assessment Quarterly",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/action/showFeed?jc=hlaq20&type=etoc&feed=rss",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "1543-4303",
       "site_url": "https://www.tandfonline.com/journals/hlaq20",
       "enabled": true
     },
@@ -119,7 +123,8 @@
       "id": "journal-education-teaching",
       "name": "Journal of Education for Teaching",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/action/showFeed?jc=cjet20&type=etoc&feed=rss",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0260-7476",
       "site_url": "https://www.tandfonline.com/journals/cjet20",
       "enabled": true
     },
@@ -127,7 +132,8 @@
       "id": "teachers-teaching",
       "name": "Teachers and Teaching",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/action/showFeed?jc=ctat20&type=etoc&feed=rss",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "1354-0602",
       "site_url": "https://www.tandfonline.com/journals/ctat20",
       "enabled": true
     },
@@ -135,7 +141,8 @@
       "id": "european-journal-teacher-education",
       "name": "European Journal of Teacher Education",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/action/showFeed?jc=cete20&type=etoc&feed=rss",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0261-9768",
       "site_url": "https://www.tandfonline.com/journals/cete20",
       "enabled": true
     },
@@ -178,7 +185,7 @@
       "id": "higher-education",
       "name": "Higher Education",
       "publisher": "Springer Nature",
-      "feed_url": "https://link.springer.com/search.rss?facet-journal-id=10734",
+      "feed_url": "https://link.springer.com/search.rss?facet-content-type=Article&facet-journal-id=10734&channel-name=Higher+Education",
       "site_url": "https://link.springer.com/journal/10734",
       "enabled": true
     },
@@ -186,7 +193,8 @@
       "id": "computer-assisted-language-learning",
       "name": "Computer Assisted Language Learning",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/action/showFeed?jc=ncal20&type=etoc&feed=rss",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0958-8221",
       "site_url": "https://www.tandfonline.com/journals/ncal20",
       "enabled": true
     },
@@ -211,9 +219,9 @@
       "id": "aeh",
       "name": "Assessment & Evaluation in Higher Education",
       "publisher": "Taylor & Francis",
-      "feed_url": "https://www.tandfonline.com/feed/rss/caeh20",
+      "discovery_mode": "crossref_online_first",
+      "crossref_issn": "0260-2938",
       "site_url": "https://www.tandfonline.com/journals/caeh20",
-      "crossref_fallback_issn": "0260-2938",
       "enabled": true
     }
   ],

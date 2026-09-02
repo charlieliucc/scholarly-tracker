@@ -1,12 +1,12 @@
 # Scholarly Tracker
 
-一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天读取 RSS：有逐条精确日期的来源只处理上海时区“昨天 00:00（含）至今天 00:00（不含）”的条目；没有逐条更新日期的 ScienceDirect 则处理上次成功抓取后首次出现的 GUID。随后在需要时通过 Crossref 补全 DOI 和书目信息，再按可配置的关键词权重生成：
+一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天读取期刊 RSS 或 Crossref 元数据：有逐条精确日期的来源只处理上海时区“昨天 00:00（含）至今天 00:00（不含）”的条目；没有逐条更新日期的 ScienceDirect 则处理上次成功抓取后首次出现的 GUID；配置为 Crossref 的期刊则按 `published-online` 日期查询并筛选没有卷期号的 OnlineFirst 文章。随后按可配置的关键词权重生成：
 
 - 今日推荐：本次日更发现且达到最低得分的论文，展示完整卡片；
 - 其他新论文：本次日更发现但未进入推荐区的论文，首页保留期刊、日期、标题、作者、DOI 和分数；
 - 历史记录：按日查看已经生成过的日更批次，避免错过前一天的推送；
 - 全部论文：可检索、筛选和排序的累积档案；
-- 运行状态：每个 RSS 源、Crossref 补全和收录数量的运行记录。
+- 运行状态：每个期刊来源、Crossref 查询和收录数量的运行记录。
 
 当前预置 25 个来源，覆盖 Elsevier、SAGE、Wiley、Taylor & Francis、Cambridge University Press、Oxford University Press 和 Springer Nature。
 
@@ -34,8 +34,8 @@
 
 编辑 [`config/journals.json`](config/journals.json)：
 
-- `journals`：增加、禁用或修改 RSS feed；解析器兼容 RSS 2.0、RSS 1.0/RDF 和常见 Atom 字段。
-- `journals[].discovery_mode`：默认 `publication_date`；对于没有逐条精确更新时间的 ScienceDirect Feed，可设为 `guid_diff`，按 GUID 首次出现判断新增。
+- `journals`：增加、禁用或修改期刊来源；RSS 期刊配置 `feed_url`，Crossref 期刊配置 `crossref_issn`。
+- `journals[].discovery_mode`：默认 `publication_date`；对于没有逐条精确更新时间的 ScienceDirect Feed，可设为 `guid_diff`；需要绕过 RSS、直接按在线发表日查询的期刊使用 `crossref_online_first`。
 - `window.timezone`：计算昨日窗口的 IANA 时区，默认 `Asia/Shanghai`。
 - `ranking.keywords`：正数提高推荐得分，负数降低得分。
 - `title_multiplier`：关键词出现在标题中的权重倍率。
@@ -63,11 +63,11 @@ python3 -m http.server 8000 --directory docs
 
 ## 数据策略
 
-- 摘要按 `RSS → Crossref → DOI 页面公开摘要` 回退；只有当前摘要为空或以省略号结尾，且新摘要更长时才替换。
+- 摘要按 `期刊来源 → Crossref → DOI 页面公开摘要` 回退；只有当前摘要为空或以省略号结尾，且新摘要更长时才替换。
 - DOI 页面只解析 `<head>` 中的公开摘要元数据，不读取正文、全文或 PDF；访问失败时保留原摘要。
-- RSS 记录优先保留；Crossref 只补全缺失字段，摘要回退遵守更长才替换的规则。
+- RSS 记录优先保留；Crossref OnlineFirst 直接以 Crossref 的 `published-online`、volume 和 issue 字段生成；普通 Crossref 查询只补全缺失字段。
 - 无 DOI 时，Crossref 标题候选必须达到配置的相似度门槛才会合并。
 - 单个 feed 或 Crossref 暂时失败不会清空历史数据，错误会显示在运行状态页。
 - `feed-state.json` 只保存最小化的条目 ID、首次/最后见到时间和内容指纹；不会保存每日完整 RSS 快照。
-- 某些出版商可能拒绝 GitHub Actions 的服务器 IP；可为该期刊配置 `crossref_fallback_issn`，仅在 RSS 失败时按相同时间窗口读取 Crossref 更新记录。
+- 某些出版商可能拒绝 GitHub Actions 的服务器 IP；配置为 `crossref_online_first` 的期刊不请求其 RSS，而是按 ISSN 和 `published-online` 日期读取 Crossref 记录。只有同时没有 volume 和 issue 的记录才进入 OnlineFirst 结果。
 - 页面只发布公开论文元数据，不存储密钥；如仓库或页面中存在敏感数据，请勿启用公开 Pages。
