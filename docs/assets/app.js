@@ -19,6 +19,13 @@ function formatDate(value, includeTime = false) {
   ).format(date);
 }
 
+function formatClock(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
+}
+
 function formatPublicationDate(article) {
   const precision = article.date_precision;
   const value = String(article.feed_timestamp || article.published || "");
@@ -92,27 +99,79 @@ function articleCard(article, index) {
   return card;
 }
 
-function compactArticleCard(article) {
-  const card = element("article", "other-paper-row");
-  const body = element("div", "paper-body");
-  const meta = element("div", "paper-meta");
-  meta.append(element("span", "journal-label", article.journal || "未知期刊"));
-  if (article.published || article.feed_timestamp) {
-    const published = element("span", "published", formatPublicationDate(article));
-    if (article.publication_text) published.title = `来源标注：${article.publication_text}`;
-    meta.append(published);
+function updateMeta(article) {
+  if (article.feed_timestamp) {
+    return { label: "更新于", value: formatDate(article.feed_timestamp, true), dateTime: article.feed_timestamp };
   }
+  if (article.first_seen) {
+    return { label: "首次发现", value: formatDate(article.first_seen, true), dateTime: article.first_seen };
+  }
+  return { label: "本批次更新", value: "时间未知", dateTime: "" };
+}
+
+function todayPaperMeta(article) {
+  const meta = element("div", "today-paper-meta");
+  meta.append(element("span", "journal-label", article.journal || "未知期刊"));
+  const update = updateMeta(article);
+  const time = element("time", "update-time", `${update.label} ${update.value}`);
+  if (update.dateTime) time.dateTime = update.dateTime;
+  meta.append(time);
+  return meta;
+}
+
+function todayPaperInfo(article) {
+  const info = element("div", "today-paper-info");
+  info.append(element("span", "today-authors", `作者：${(article.authors || []).join(" · ") || "作者信息待补全"}`));
+  if (article.published) info.append(element("span", "today-publication", `发表：${formatPublicationDate(article)}`));
+  return info;
+}
+
+function todayDetails(article, summaryText = "查看详细信息") {
+  const details = element("details", "today-details");
+  details.append(element("summary", "", summaryText));
+  const content = element("div", "today-details-content");
+  const metadata = element("div", "today-detail-meta");
+  if (article.doi) metadata.append(externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link"));
+  if (metadata.childNodes.length) content.append(metadata);
+  if (article.abstract) content.append(element("p", "today-abstract", article.abstract));
+  if ((article.matched_keywords || []).length) {
+    const keywords = element("div", "keyword-list");
+    article.matched_keywords.slice(0, 6).forEach((match) => {
+      const tag = element("span", Number(match.contribution) < 0 ? "negative" : "", `${match.keyword} ${scoreLabel(match.contribution)}`);
+      tag.title = `命中字段：${(match.fields || []).join("、")}`;
+      keywords.append(tag);
+    });
+    content.append(keywords);
+  }
+  details.append(content);
+  return details;
+}
+
+function todayArticleCard(article, index) {
+  const card = element("article", "today-paper-card");
+  const rank = element("div", "paper-rank", String(index + 1).padStart(2, "0"));
+  const body = element("div", "today-paper-body");
+  const header = element("div", "today-paper-top");
+  header.append(todayPaperMeta(article));
+  header.append(element("span", "recommendation-badge", `推荐 · ${scoreLabel(article.score)} 分`));
   const title = element("h3");
   const articleUrl = article.url || article.doi_url;
   title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
-  const rawAuthors = (article.authors || []).join(" · ") || "作者信息待补全";
-  const authorText = rawAuthors.length > 260 ? `${rawAuthors.slice(0, 257).trim()}…` : rawAuthors;
-  const authors = element("p", "authors", authorText);
-  if (authorText !== rawAuthors) authors.title = rawAuthors;
-  const actions = element("div", "paper-actions");
-  if (article.doi) actions.append(externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link"));
-  actions.append(element("span", `score ${Number(article.score) < 0 ? "negative" : ""}`, `${scoreLabel(article.score)} 分`));
-  body.append(meta, title, authors, actions);
+  body.append(header, title, todayPaperInfo(article), todayDetails(article, "查看摘要、关键词和 DOI"));
+  card.append(rank, body);
+  return card;
+}
+
+function todayOtherArticleRow(article) {
+  const card = element("article", "other-paper-row");
+  const body = element("div", "paper-body");
+  const header = element("div", "other-paper-head");
+  header.append(todayPaperMeta(article));
+  header.append(element("span", "not-recommended", "未推荐"));
+  const title = element("h3");
+  const articleUrl = article.url || article.doi_url;
+  title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
+  body.append(header, title, todayPaperInfo(article), todayDetails(article));
   card.append(body);
   return card;
 }
@@ -136,24 +195,24 @@ async function initToday() {
     const [recommendations, status] = await Promise.all([fetchJson("data/recommendations.json"), fetchJson("data/status.json")]);
     const articles = recommendations.articles || [];
     const otherArticles = recommendations.other_articles || [];
-    const windowDate = recommendations.window?.start?.slice(0, 10) || recommendations.date;
-    $("#today-label").textContent = `DAILY READING · ${formatDate(windowDate)} 日更`;
-    $("#hero-count").textContent = articles.length + otherArticles.length;
+    const windowStart = recommendations.window?.start;
+    const dateText = windowStart ? formatDate(windowStart) : formatDate(recommendations.date);
+    const clockText = formatClock(recommendations.generated_at || status.generated_at);
+    $("#today-label").textContent = `${dateText}${clockText ? ` ${clockText}` : ""} · 本次更新`;
     $("#new-count").textContent = status.counts?.items_in_window ?? status.counts?.new_today ?? "—";
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
     $("#total-count").textContent = status.counts?.all_articles ?? "—";
-    $("#updated-at").textContent = formatDate(status.generated_at, true);
     list.replaceChildren();
     if (!articles.length) {
-      list.append(emptyState("本次日更没有命中推荐", "精确日期来源的昨日条目和 GUID 来源的本次新增条目中，没有论文达到最低关键词得分。你仍可前往“全部论文”浏览累计记录。"));
+      list.append(emptyState("本次更新没有推荐文章", "没有文章达到当前关键词推荐门槛。"));
     } else {
-      articles.forEach((article, index) => list.append(articleCard(article, index)));
+      articles.forEach((article, index) => list.append(todayArticleCard(article, index)));
     }
     otherList.replaceChildren();
     if (!otherArticles.length) {
-      otherList.append(emptyState("没有其他新论文", "本次日更处理的论文都已进入推荐区，或没有新增记录。"));
+      otherList.append(emptyState("没有其余更新", "本次更新的文章都已进入推荐区。"));
     } else {
-      otherArticles.forEach((article) => otherList.append(compactArticleCard(article)));
+      otherArticles.forEach((article) => otherList.append(todayOtherArticleRow(article)));
     }
   } catch (error) {
     list.replaceChildren(errorState(`请稍后重试。${error.message}`));
