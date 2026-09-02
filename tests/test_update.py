@@ -135,7 +135,7 @@ class BuildTests(unittest.TestCase):
                 }
             ],
             "window": {"enabled": True, "timezone": "Asia/Shanghai"},
-            "crossref": {"enabled": False},
+            "crossref": {"enabled": True},
             "ranking": {"keywords": [{"term": "feedback", "weight": 3}]},
             "recommendations": {"minimum_score": 1},
         }
@@ -156,12 +156,14 @@ class BuildTests(unittest.TestCase):
             config_path.write_text(json.dumps(config), encoding="utf-8")
             with patch("scripts.update.request_bytes", side_effect=blocked), patch(
                 "scripts.update.CrossrefClient.journal_updates", return_value=[crossref_item]
-            ):
+            ), patch("scripts.update.CrossrefClient.lookup") as lookup:
                 status = build(config_path, root / "data", now=datetime(2026, 8, 23, 1, tzinfo=timezone.utc))
             self.assertEqual(status["outcome"], "success")
             self.assertEqual(status["feeds"][0]["status"], "fallback")
             self.assertEqual(status["counts"]["items_in_window"], 1)
             self.assertEqual(status["counts"]["recommended_today"], 1)
+            self.assertEqual(status["crossref"]["attempted"], 0)
+            lookup.assert_not_called()
 
 
 if __name__ == "__main__":

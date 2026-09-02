@@ -633,7 +633,13 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
         candidates = [
             article
             for article in processed_articles
-            if not article.get("doi") or not article.get("abstract") or not article.get("authors") or authors_need_replacement(article.get("authors", []))
+            if article.get("metadata_source") != "crossref-fallback"
+            and (
+                not article.get("doi")
+                or not article.get("abstract")
+                or not article.get("authors")
+                or authors_need_replacement(article.get("authors", []))
+            )
         ]
         candidates.sort(
             key=lambda article: (
