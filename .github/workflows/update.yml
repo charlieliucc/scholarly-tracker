@@ -10,8 +10,8 @@ on:
       - "tests/**"
       - "docs/**"
   schedule:
-    - cron: "0 7 * * *"
-      timezone: "Asia/Shanghai"
+    # GitHub Actions 的 cron 一律按 UTC 解释；北京时间 07:00 = UTC 前一天 23:00
+    - cron: "0 23 * * *"
   workflow_dispatch:
     inputs:
       persist_data:
