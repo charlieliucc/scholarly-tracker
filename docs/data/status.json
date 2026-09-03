@@ -1,60 +1,53 @@
 {
-  "generated_at": "2026-08-31T02:01:39Z",
+  "generated_at": "2026-09-03T13:18:37Z",
   "outcome": "success",
-  "last_success_at": "2026-08-31T02:01:39Z",
+  "last_success_at": "2026-09-03T13:18:37Z",
   "window": {
     "timezone": "Asia/Shanghai",
-    "start": "2026-08-30T00:00:00+08:00",
-    "end": "2026-08-31T00:00:00+08:00"
+    "start": "2026-09-02T00:00:00+08:00",
+    "end": "2026-09-03T00:00:00+08:00"
   },
-  "feeds": [
-    {
-      "id": "jslw",
-      "name": "Journal of Second Language Writing",
-      "url": "https://rss.sciencedirect.com/publication/science/10603743",
-      "status": "ok",
-      "received": 26,
-      "items": 0,
-      "outside_window": 1,
-      "missing_precise_date": 25,
-      "duration_ms": 1139
-    },
-    {
-      "id": "ltr",
-      "name": "Language Teaching Research",
-      "url": "https://journals.sagepub.com/action/showFeed?ui=0&mi=ehikzz&ai=2b4&jc=ltr&type=axatoc&feed=rss",
-      "status": "ok",
-      "received": 433,
-      "items": 2,
-      "outside_window": 431,
-      "missing_precise_date": 0,
-      "duration_ms": 2916
-    },
-    {
-      "id": "aeh",
-      "name": "Assessment & Evaluation in Higher Education",
-      "url": "https://www.tandfonline.com/feed/rss/caeh20",
-      "status": "ok",
-      "received": 125,
-      "items": 0,
-      "outside_window": 125,
-      "missing_precise_date": 0,
-      "duration_ms": 2364
-    }
-  ],
-  "crossref": {
+  "email": {
+    "status": "ok",
+    "host": "imap.gmail.com",
+    "folders": [
+      {
+        "name": "INBOX",
+        "status": "ok",
+        "candidates": 0,
+        "in_window": 0
+      },
+      {
+        "name": "[Gmail]/&V4NXPpCuTvY-",
+        "status": "ok",
+        "candidates": 0,
+        "in_window": 0
+      }
+    ],
+    "candidate_count": 0,
+    "messages_in_window": 0,
+    "duplicates": 0,
+    "recognized_alerts": 0,
+    "unrecognized": 0,
+    "empty_alerts": 0,
+    "parser_errors": 0
+  },
+  "parsers": [],
+  "abstracts": {
     "attempted": 0,
-    "matched": 0,
-    "not_found": 0,
+    "replaced": 0,
+    "doi_discovered": 0,
+    "unavailable": 0,
     "errors": 0,
-    "skipped": 0
+    "skipped_low_score": 0
   },
   "counts": {
-    "fetched_this_run": 2,
-    "new_today": 2,
-    "items_in_window": 2,
-    "recommended_today": 1,
-    "other_today": 1,
-    "all_articles": 2
+    "fetched_this_run": 0,
+    "processed_this_run": 0,
+    "new_today": 0,
+    "items_in_window": 0,
+    "recommended_today": 0,
+    "other_today": 0,
+    "all_articles": 0
   }
 }

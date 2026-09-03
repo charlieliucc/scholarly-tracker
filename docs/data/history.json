@@ -1,13 +1,10 @@
 {
   "version": 1,
-  "generated_at": "2026-08-31T02:01:39Z",
+  "generated_at": "2026-09-03T13:18:37Z",
   "days": {
-    "2026-08-30": {
-      "generated_at": "2026-08-31T02:01:39Z",
-      "article_ids": [
-        "623712f8b8fd4687c70c",
-        "a14ea381a043396fcc0c"
-      ]
+    "2026-09-02": {
+      "generated_at": "2026-09-03T13:18:37Z",
+      "article_ids": []
     }
   }
 }
