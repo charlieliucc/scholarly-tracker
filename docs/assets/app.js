@@ -310,44 +310,34 @@ async function initStatus() {
     orb.querySelector("strong").textContent = names[status.outcome] || status.outcome;
     const counts = status.counts || {};
     const windowLabel = status.window?.start
-      ? `${formatDate(status.window.start, true)} → ${formatDate(status.window.end, true)} · ${status.window.timezone}；GUID 源按首次出现`
-      : "精确日期源按昨日窗口；GUID 源按首次出现";
+      ? `${formatDate(status.window.start, true)} → ${formatDate(status.window.end, true)} · ${status.window.timezone}`
+      : "昨日邮件接收窗口";
     $("#status-summary").append(
       metric("本次处理", counts.processed_this_run ?? counts.items_in_window ?? counts.fetched_this_run, windowLabel),
       metric("首次收录", counts.new_today, "篇新增记录"),
       metric("累计论文", counts.all_articles, "篇可检索记录"),
       metric("生成时间", formatDate(status.generated_at, true), `上次完全成功：${formatDate(status.last_success_at, true)}`)
     );
+    const email = status.email || {};
     const feedGrid = $("#feed-status");
     feedGrid.replaceChildren();
-    (status.feeds || []).forEach((feed) => {
-      const card = element("article", `feed-card ${feed.status}`);
-      const head = element("div", "feed-head");
-      head.append(element("span", "status-dot"), element("strong", "", feed.name));
-      const feedMessage = feed.status === "ok"
-        ? feed.discovery_mode === "crossref_online_first"
-          ? `Crossref published-online · 窗口内 ${feed.items || 0} 篇 OnlineFirst · 查询 ${feed.received || 0} 条 · 已有卷期跳过 ${feed.with_issue || 0} 条`
-          : feed.discovery_mode === "guid_diff"
-          ? feed.baseline_created
-            ? `已建立基线 ${feed.known_items || 0} 篇 · 本次不补录历史文章 · 日期不精确 ${feed.imprecise_dates || 0} 篇`
-            : `本次新发现 ${feed.new_items || 0} 篇 · Feed 共 ${feed.received ?? 0} 篇 · 累计识别 ${feed.known_items || 0} 篇 · 日期不精确 ${feed.imprecise_dates || 0} 篇（按 GUID 处理） · 元数据变化 ${feed.updated_items || 0} 篇 · 移出 Feed ${feed.removed_items || 0} 篇`
-          : `窗口内 ${feed.items} 篇 · Feed 共 ${feed.received ?? feed.items} 篇 · 日期不精确跳过 ${feed.missing_precise_date || 0} 篇 · 窗口外 ${feed.outside_window || 0} 篇`
-        : feed.status === "fallback"
-          ? `RSS 被来源站拒绝，已用 Crossref 同窗口回退 · 获取 ${feed.items} 篇`
-          : (feed.error || "抓取失败");
-      card.append(head, element("p", "", feedMessage));
-      const buildTime = feed.last_build_date ? ` · Feed 更新 ${formatDate(feed.last_build_date, true)}` : "";
-      const timing = element("small", "", `${feed.duration_ms ?? 0} ms${buildTime} · `);
-      timing.append(externalLink(feed.url, feed.source === "crossref" ? "查看 Crossref" : "查看 RSS"));
-      card.append(timing);
-      feedGrid.append(card);
-    });
-    const crossref = status.crossref || {};
-    $("#crossref-status").append(
-      metric("尝试查询", crossref.attempted, "条记录"),
-      metric("成功匹配", crossref.matched, "条记录"),
-      metric("未找到", crossref.not_found, "条记录"),
-      metric("请求错误", crossref.errors, `另有 ${crossref.skipped || 0} 条因单次上限跳过`)
+    const emailCard = element("article", `feed-card ${email.status || "ok"}`);
+    const emailHead = element("div", "feed-head");
+    emailHead.append(element("span", "status-dot"), element("strong", "Gmail IMAP"));
+    emailCard.append(emailHead, element("p", "", `窗口候选 ${email.candidate_count ?? 0} 封 · 有效提醒 ${email.recognized_alerts ?? 0} 封 · 邮件文章 ${counts.items_in_window ?? 0} 篇 · 未识别 ${email.unrecognized ?? 0} 封 · 无文章 ${email.empty_alerts ?? 0} 封`));
+    const folderText = (email.folders || []).map((folder) => `${folder.name}: ${folder.in_window ?? 0} 封`).join(" · ");
+    emailCard.append(element("small", "", folderText || (email.error || "没有目录统计")));
+    feedGrid.append(emailCard);
+    const parserPanel = $("#crossref-status");
+    parserPanel.replaceChildren();
+    (status.parsers || []).forEach((parser) => parserPanel.append(metric(parser.name, parser.articles, "篇文章")));
+    const abstracts = status.abstracts || {};
+    parserPanel.append(
+      metric("网页摘要请求", abstracts.attempted, "篇高匹配文章"),
+      metric("摘要已替换", abstracts.replaced, "篇"),
+      metric("发现 DOI", abstracts.doi_discovered, "篇"),
+      metric("网页不可用", abstracts.unavailable, "篇"),
+      metric("请求错误", abstracts.errors, "次")
     );
   } catch (error) {
     $("#status-summary").append(errorState(`请稍后重试。${error.message}`));

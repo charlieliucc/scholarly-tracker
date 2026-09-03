@@ -10,8 +10,8 @@ on:
       - "tests/**"
       - "docs/**"
   schedule:
-    # GitHub Actions 的 cron 一律按 UTC 解释；北京时间 07:00 = UTC 前一天 23:00
-    - cron: "0 23 * * *"
+    # GitHub Actions 的 cron 一律按 UTC 解释；北京时间 00:00 = UTC 前一天 16:00
+    - cron: "0 16 * * *"
   workflow_dispatch:
     inputs:
       persist_data:
@@ -20,7 +20,7 @@ on:
         default: false
         type: boolean
       reset_history:
-        description: "一次性：清空现有档案与 feed 状态，从空库重建"
+        description: "一次性：清空现有档案与旧来源状态，从空库重建"
         required: false
         default: false
         type: boolean
@@ -60,13 +60,16 @@ jobs:
           BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
           if [ "$RESET" = "true" ]; then
-            echo "reset_history=true: clearing archive & feed state, starting from empty."
+            echo "reset_history=true: clearing archive & legacy source state, starting from empty."
             rm -f docs/data/papers.json docs/data/status.json docs/data/history.json docs/data/recommendations.json docs/data/feed-state.json
           else
             python scripts/restore_previous.py "$BASE_URL" docs/data
           fi
 
       - name: Fetch, enrich, and rank papers
+        env:
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: python scripts/update.py --config config/journals.json --output docs/data
 
       - name: Run tests
@@ -113,4 +116,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

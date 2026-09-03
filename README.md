@@ -1,14 +1,14 @@
 # Scholarly Tracker
 
-一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天读取期刊 RSS 或 Crossref 元数据：有逐条精确日期的来源只处理上海时区“昨天 00:00（含）至今天 00:00（不含）”的条目；没有逐条更新日期的 ScienceDirect 则处理上次成功抓取后首次出现的 GUID；配置为 Crossref 的期刊则按 `published-online` 日期查询并筛选没有卷期号的 OnlineFirst 文章。随后按可配置的关键词权重生成：
+一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天从专用 Gmail 的收件箱和垃圾邮件读取期刊提醒，只处理北京时间昨日 00:00 至今日 00:00 的邮件，随后按可配置的关键词权重生成：
 
 - 今日推荐：本次日更发现且达到最低得分的论文，展示完整卡片；
 - 其他新论文：本次日更发现但未进入推荐区的论文，首页保留期刊、日期、标题、作者、DOI 和分数；
 - 历史记录：按日查看已经生成过的日更批次，避免错过前一天的推送；
 - 全部论文：可检索、筛选和排序的累积档案；
-- 运行状态：每个期刊来源、Crossref 查询和收录数量的运行记录。
+- 运行状态：邮箱目录、邮件解析器、网页摘要补全和收录数量的运行记录。
 
-当前预置 25 个来源，覆盖 Elsevier、SAGE、Wiley、Taylor & Francis、Cambridge University Press、Oxford University Press 和 Springer Nature。
+当前解析器覆盖 Elsevier、SAGE、Wiley、Taylor & Francis 和 Nature 的期刊提醒模板。
 
 ## 启用 GitHub Pages
 
@@ -21,33 +21,26 @@
 
 ## 自动运行与数据保留
 
-- 每天上海时间 06:17 自动抓取并部署；避开整点可降低 Actions 高负载时的排队概率。
-- 默认情况下，Feed 必须给出精确到“日”或更细的条目时间才能进入处理窗口；只有年份或月份的条目会跳过，不会猜测日期。
-- ScienceDirect 使用 GUID 增量发现：首次运行只建立当前条目基线，之后仅处理从未见过的 GUID。月份级卷期日期按原精度展示，不会伪装成每月 1 日，也不会把频道级 `lastBuildDate` 套用到全部文章。
+- 每天北京时间 00:00 自动读取邮件并部署（GitHub Actions 使用 UTC 16:00 cron）。
+- 邮件按 Gmail 内部接收时间过滤；邮件正文中的出版日期只有能可靠确认时才写入。
 - 每月 1 日把最新 `docs/data/` 提交回默认分支。
-- 每次运行会先从已部署站点恢复上次论文、状态和 Feed 身份索引，因此两次月度快照之间仍能保留每日首次发现时间和累积论文。
-- `history.json` 只保存日更日期到论文 ID 的轻量索引；历史页面从累计论文档案还原内容，不保存每日完整 RSS 原文。
+- 每次运行会先从已部署站点恢复上次论文和历史索引，因此两次月度快照之间仍能保留每日首次发现时间和累积论文。
+- `history.json` 只保存日更日期到论文 ID 的轻量索引；历史页面从累计论文档案还原内容，不保存每日完整邮件原文。
 - 手动运行时，可勾选 `persist_data`，立即把该次数据也提交到仓库。
 - GitHub 会在公共仓库 60 天没有仓库活动后停用定时工作流；月度数据提交用于持续产生仓库活动：[GitHub scheduled workflow policy](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows)。
 
-## 自定义期刊和筛选权重
+## 邮箱和筛选配置
 
 编辑 [`config/journals.json`](config/journals.json)：
 
-- `journals`：增加、禁用或修改期刊来源；RSS 期刊配置 `feed_url`，Crossref 期刊配置 `crossref_issn`。
-- `journals[].discovery_mode`：默认 `publication_date`；对于没有逐条精确更新时间的 ScienceDirect Feed，可设为 `guid_diff`；需要绕过 RSS、直接按在线发表日查询的期刊使用 `crossref_online_first`。
+- `mail`：配置 Gmail IMAP 主机、端口和单次读取上限。账号与应用专用密码必须放在 Actions Secrets：`GMAIL_USERNAME`、`GMAIL_APP_PASSWORD`。
 - `window.timezone`：计算昨日窗口的 IANA 时区，默认 `Asia/Shanghai`。
 - `ranking.keywords`：正数提高推荐得分，负数降低得分。
 - `title_multiplier`：关键词出现在标题中的权重倍率。
 - `recommendations.minimum_score`：进入今日推荐的最低分。
 - `recommendations.limit`：今日推荐最多显示的篇数。
 - `recommendations.json` 的 `articles` 保存完整推荐卡片数据，`other_articles` 保存同批次未推荐论文数据。
-- `crossref.max_lookups_per_run`：单次运行最多发出的 Crossref 查询数。
-- `crossref.doi_page_enabled`：Crossref 摘要缺失或被截断时，是否读取 DOI 页面 `<head>` 中的公开摘要元数据；不读取正文或 PDF。
-- `crossref.max_doi_page_lookups_per_run`：单次运行最多读取的 DOI 页面数量。
-- `crossref.doi_page_max_bytes`：单个 DOI 页面最多读取的 HTML 字节数。
-
-建议把 `crossref.contact_email` 改为维护者邮箱。Crossref 推荐在自动查询中提供邮箱和明确的 `User-Agent`，以进入 polite pool；配置后脚本会同时设置两者：[Crossref REST API etiquette](https://api.crossref.org/swagger-ui/index.html)。邮箱只随 Crossref 请求发送，不会写入页面数据。
+- `doi_page`：设置只对高匹配文章读取论文页 `<head>` 摘要的上限和最大 HTML 字节数；不读取正文或 PDF，也不调用 Crossref/OpenAlex。
 
 ## 本地运行
 
@@ -63,11 +56,9 @@ python3 -m http.server 8000 --directory docs
 
 ## 数据策略
 
-- 摘要按 `期刊来源 → Crossref → DOI 页面公开摘要` 回退；只有当前摘要为空或以省略号结尾，且新摘要更长时才替换。
+- 摘要按 `邮件正文 → 可信论文页 <head>` 回退；只有高匹配文章才访问网页。
 - DOI 页面只解析 `<head>` 中的公开摘要元数据，不读取正文、全文或 PDF；访问失败时保留原摘要。
-- RSS 记录优先保留；Crossref OnlineFirst 直接以 Crossref 的 `published-online`、volume 和 issue 字段生成；普通 Crossref 查询只补全缺失字段。
-- 无 DOI 时，Crossref 标题候选必须达到配置的相似度门槛才会合并。
-- 单个 feed 或 Crossref 暂时失败不会清空历史数据，错误会显示在运行状态页。
-- `feed-state.json` 只保存最小化的条目 ID、首次/最后见到时间和内容指纹；不会保存每日完整 RSS 快照。
-- 某些出版商可能拒绝 GitHub Actions 的服务器 IP；配置为 `crossref_online_first` 的期刊不请求其 RSS，而是按 ISSN 和 `published-online` 日期读取 Crossref 记录。只有同时没有 volume 和 issue 的记录才进入 OnlineFirst 结果。
+- 邮件提醒按可信出版商模板解析；营销、仿冒和无法可靠解析的邮件会跳过并在状态页计数。
+- 单个邮箱目录、邮件模板或论文页失败不会清空历史数据，错误会显示在运行状态页。
+- 不保存原始邮件、正文、Message-ID 或账号信息；页面只发布公开论文元数据。
 - 页面只发布公开论文元数据，不存储密钥；如仓库或页面中存在敏感数据，请勿启用公开 Pages。

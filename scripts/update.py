@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch journal feeds, enrich records with Crossref, and build site data."""
+"""Read Gmail journal alerts, optionally enrich high-score records from DOI pages, and build site data."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import html
 import json
+import os
 import re
 import sys
 import time
@@ -23,6 +24,11 @@ from pathlib import Path
 from difflib import SequenceMatcher
 from typing import Any, Iterable, Optional
 from zoneinfo import ZoneInfo
+
+try:
+    from .email_source import fetch_messages, parse_messages
+except ImportError:  # python scripts/update.py
+    from email_source import fetch_messages, parse_messages
 
 
 DOI_RE = re.compile(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", re.IGNORECASE)
@@ -333,6 +339,7 @@ class HeadMetadataParser(HTMLParser):
         self.in_jsonld = False
         self.jsonld_parts: list[str] = []
         self.abstracts: list[str] = []
+        self.dois: list[str] = []
         self.jsonld_documents: list[Any] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, Optional[str]]]) -> None:
@@ -349,6 +356,10 @@ class HeadMetadataParser(HTMLParser):
             content = clean_html(attributes.get("content", ""))
             if content and (name in self.ABSTRACT_META_NAMES or itemprop == "abstract"):
                 self.abstracts.append(content)
+            if content and (name in {"citation_doi", "dc.identifier", "dcterms.identifier"} or itemprop == "doi"):
+                doi = normalize_doi(content)
+                if doi:
+                    self.dois.append(doi)
         elif tag == "script" and attributes.get("type", "").split(";", 1)[0].strip().casefold() == "application/ld+json":
             self.in_jsonld = True
             self.jsonld_parts = []
@@ -388,7 +399,16 @@ def jsonld_abstracts(value: Any) -> list[str]:
 
 
 def fetch_doi_page_abstract(doi: str, user_agent: str, timeout: int, max_bytes: int) -> str:
-    url = f"https://doi.org/{urllib.parse.quote(normalize_doi(doi), safe='')}"
+    metadata = fetch_page_metadata(
+        f"https://doi.org/{urllib.parse.quote(normalize_doi(doi), safe='')}",
+        user_agent,
+        timeout,
+        max_bytes,
+    )
+    return metadata.get("abstract", "")
+
+
+def fetch_page_metadata(url: str, user_agent: str, timeout: int, max_bytes: int) -> dict[str, str]:
     request = urllib.request.Request(
         url,
         headers={
@@ -413,7 +433,10 @@ def fetch_doi_page_abstract(doi: str, user_agent: str, timeout: int, max_bytes: 
     for document in parser.jsonld_documents:
         candidates.extend(jsonld_abstracts(document))
     cleaned = [clean_html(value) for value in candidates]
-    return max((value for value in cleaned if value), key=len, default="")
+    return {
+        "abstract": max((value for value in cleaned if value), key=len, default=""),
+        "doi": next(iter(parser.dois), ""),
+    }
 
 
 def crossref_date_value(message: dict[str, Any], key: str) -> tuple[str, str]:
@@ -813,7 +836,7 @@ def display_timestamp(value: datetime) -> str:
     return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, offline: bool = False) -> dict[str, Any]:
+def _build_legacy(config_path: Path, output_dir: Path, now: Optional[datetime] = None, offline: bool = False) -> dict[str, Any]:
     config = load_json(config_path, None)
     if not isinstance(config, dict):
         raise ValueError(f"Invalid config: {config_path}")
@@ -1242,6 +1265,221 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
             feed_state_payload["updated_at"] = run_at
         write_json(feed_state_path, feed_state_payload)
     return status_payload
+
+
+def _trusted_article_url(url: str, publisher: str) -> bool:
+    parsed = urllib.parse.urlparse(url or "")
+    if parsed.scheme != "https" or not parsed.hostname:
+        return False
+    host = parsed.hostname.casefold()
+    allowed = {
+        "Elsevier": ("elsevier.com", "sciencedirect.com"),
+        "SAGE": ("sagepub.com",),
+        "Taylor & Francis": ("tandfonline.com",),
+        "Wiley": ("wiley.com",),
+        "Nature": ("nature.com", "springernature.com"),
+    }.get(publisher, ())
+    return any(host == domain or host.endswith("." + domain) for domain in allowed)
+
+
+def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], offline: bool) -> dict[str, Any]:
+    config = load_json(config_path, {})
+    if not isinstance(config, dict):
+        raise ValueError("Configuration must be a JSON object")
+    now = now or datetime.now(timezone.utc)
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    run_at = display_timestamp(now)
+    window_config = config.get("window", {})
+    zone = ZoneInfo(window_config.get("timezone", "Asia/Shanghai"))
+    local_today = now.astimezone(zone).date()
+    window_end = datetime.combine(local_today, datetime_time.min, tzinfo=zone)
+    window_start = window_end - timedelta(days=1)
+    batch_date = window_start.date()
+    previous_payload = load_json(output_dir / "papers.json", {"articles": []})
+    previous = previous_payload.get("articles", []) if isinstance(previous_payload, dict) else []
+    previous_history = load_json(output_dir / "history.json", {"version": 1, "days": {}})
+    history_days = previous_history.get("days", {}) if isinstance(previous_history, dict) else {}
+    if not isinstance(history_days, dict):
+        history_days = {}
+
+    mail_cfg = config.get("mail", {}) if isinstance(config.get("mail", {}), dict) else {}
+    email_status: dict[str, Any] = {
+        "status": "ok",
+        "host": str(mail_cfg.get("host", "imap.gmail.com")),
+        "folders": [],
+        "candidate_count": 0,
+        "messages_in_window": 0,
+        "duplicates": 0,
+        "recognized_alerts": 0,
+        "unrecognized": 0,
+        "empty_alerts": 0,
+        "parser_errors": 0,
+    }
+    parser_stats: dict[str, Any] = {}
+    fetched: list[dict[str, Any]] = []
+    fetch_error = ""
+    if offline:
+        email_status["status"] = "offline"
+    else:
+        username = os.environ.get("GMAIL_USERNAME", "").strip()
+        app_password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+        if not username or not app_password:
+            raise RuntimeError("GMAIL_USERNAME and GMAIL_APP_PASSWORD Actions secrets are required")
+        try:
+            messages, fetch_stats = fetch_messages(
+                username,
+                app_password,
+                window_start.astimezone(timezone.utc),
+                window_end.astimezone(timezone.utc),
+                host=str(mail_cfg.get("host", "imap.gmail.com")),
+                port=int(mail_cfg.get("port", 993)),
+                max_messages=int(mail_cfg.get("max_messages", 500)),
+            )
+            email_status.update(
+                {
+                    "folders": fetch_stats.get("folders", []),
+                    "candidate_count": fetch_stats.get("candidate_count", 0),
+                    "duplicates": fetch_stats.get("duplicate_count", 0),
+                    "messages_in_window": len(messages),
+                }
+            )
+            fetched, parsed_stats = parse_messages(messages)
+            parser_stats = parsed_stats.get("parsers", {})
+            email_status.update(
+                {
+                    "recognized_alerts": parsed_stats.get("recognized", 0),
+                    "unrecognized": parsed_stats.get("unrecognized", 0),
+                    "empty_alerts": parsed_stats.get("empty", 0),
+                    "parser_errors": parsed_stats.get("errors", 0),
+                }
+            )
+            if any(folder.get("status") == "error" for folder in email_status["folders"]):
+                email_status["status"] = "partial"
+        except Exception as error:
+            fetch_error = f"{type(error).__name__}: {error}"
+            email_status["status"] = "error"
+
+    previous_keys = {key for article in previous for key in identity_keys(article)}
+    seen_incoming: set[str] = set()
+    new_count = 0
+    for article in fetched:
+        keys = identity_keys(article)
+        if not any(key in previous_keys or key in seen_incoming for key in keys):
+            new_count += 1
+        seen_incoming.update(keys)
+        article["history_date"] = batch_date.isoformat()
+    processed_keys = {key for article in fetched for key in identity_keys(article)}
+    articles = merge_articles(previous, fetched)
+    processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
+    ranking = config.get("ranking", {})
+    for article in processed_articles:
+        article["score"], article["matched_keywords"] = score_article(article, ranking)
+
+    abstract_cfg = config.get("doi_page", {}) if isinstance(config.get("doi_page", {}), dict) else {}
+    abstract_status = {
+        "attempted": 0,
+        "replaced": 0,
+        "doi_discovered": 0,
+        "unavailable": 0,
+        "errors": 0,
+        "skipped_low_score": sum(1 for article in processed_articles if article.get("score", 0) < float(config.get("recommendations", {}).get("minimum_score", 1))),
+    }
+    if not offline and not fetch_error and abstract_cfg.get("enabled", True):
+        limit = int(abstract_cfg.get("max_lookups_per_run", 20))
+        max_bytes = int(abstract_cfg.get("max_bytes", 524288))
+        minimum_score = float(config.get("recommendations", {}).get("minimum_score", 1))
+        for article in sorted(processed_articles, key=lambda value: value.get("score", 0), reverse=True):
+            if article.get("score", 0) < minimum_score or abstract_status["attempted"] >= limit:
+                continue
+            publisher = str(article.get("publisher", ""))
+            target = article.get("doi") and f"https://doi.org/{urllib.parse.quote(article['doi'], safe='')}" or article.get("url", "")
+            if not article.get("doi") and not _trusted_article_url(target, publisher):
+                abstract_status["unavailable"] += 1
+                continue
+            abstract_status["attempted"] += 1
+            try:
+                metadata = fetch_page_metadata(target, str(config.get("user_agent", "ScholarlyTracker/1.0")), int(config.get("request_timeout_seconds", 30)), max_bytes)
+                if not article.get("doi") and metadata.get("doi"):
+                    article["doi"] = metadata["doi"]
+                    article["guid"] = metadata["doi"]
+                    article["doi_url"] = f"https://doi.org/{metadata['doi']}"
+                    abstract_status["doi_discovered"] += 1
+                if merge_abstract(article, metadata.get("abstract", ""), "doi-page"):
+                    abstract_status["replaced"] += 1
+                elif not metadata.get("abstract"):
+                    abstract_status["unavailable"] += 1
+            except (urllib.error.URLError, TimeoutError, UnicodeError, ValueError, OSError):
+                abstract_status["errors"] += 1
+
+    for article in processed_articles:
+        article["doi"] = normalize_doi(article.get("doi", ""))
+        if article["doi"]:
+            article["doi_url"] = f"https://doi.org/{article['doi']}"
+        article["score"], article["matched_keywords"] = score_article(article, ranking)
+    articles.sort(key=lambda article: (article.get("published") or "", article.get("feed_timestamp") or "", article.get("score", 0)), reverse=True)
+    articles = articles[: int(config.get("max_articles", 2000))]
+    processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
+    recommendation_cfg = config.get("recommendations", {})
+    minimum_score = float(recommendation_cfg.get("minimum_score", 1))
+    recommended = [article for article in processed_articles if article.get("score", 0) >= minimum_score]
+    recommended.sort(key=lambda article: (article.get("score", 0), article.get("feed_timestamp", "")), reverse=True)
+    recommended = recommended[: int(recommendation_cfg.get("limit", 12))]
+    recommended_ids = {str(article.get("id", "")) for article in recommended}
+    other_articles = [article for article in processed_articles if str(article.get("id", "")) not in recommended_ids]
+    other_articles.sort(key=lambda article: (article.get("score", 0), article.get("feed_timestamp", "")), reverse=True)
+
+    if fetch_error:
+        outcome = "stale" if previous else "error"
+    elif email_status["status"] == "partial" or email_status["parser_errors"] or abstract_status["errors"]:
+        outcome = "partial"
+    else:
+        outcome = "success" if not offline else "stale"
+    previous_status = load_json(output_dir / "status.json", {})
+    status_payload = {
+        "generated_at": run_at,
+        "outcome": outcome,
+        "last_success_at": run_at if outcome == "success" else previous_status.get("last_success_at", ""),
+        "window": {"timezone": str(zone), "start": window_start.isoformat(), "end": window_end.isoformat()},
+        "email": email_status,
+        "parsers": [{"name": name, "articles": count} for name, count in sorted(parser_stats.items())],
+        "abstracts": abstract_status,
+        "counts": {
+            "fetched_this_run": len(fetched),
+            "processed_this_run": len(fetched),
+            "new_today": new_count,
+            "items_in_window": len(fetched),
+            "recommended_today": len(recommended),
+            "other_today": len(other_articles),
+            "all_articles": len(articles),
+        },
+    }
+    if fetch_error:
+        status_payload["email"]["error"] = fetch_error
+        write_json(output_dir / "status.json", status_payload)
+        return status_payload
+    write_json(output_dir / "papers.json", {"generated_at": run_at, "articles": articles})
+    write_json(output_dir / "recommendations.json", {"generated_at": run_at, "date": batch_date.isoformat(), "window": status_payload["window"], "articles": recommended, "other_articles": other_articles})
+    write_json(output_dir / "status.json", status_payload)
+    if outcome in {"success", "partial", "stale"} and not offline:
+        old_day = history_days.get(batch_date.isoformat(), {})
+        old_ids = old_day.get("article_ids", []) if isinstance(old_day, dict) else []
+        batch_ids = [str(article.get("id", "")) for article in fetched if article.get("id")]
+        history_days[batch_date.isoformat()] = {"generated_at": run_at, "article_ids": sorted(set(old_ids if isinstance(old_ids, list) else []) | set(batch_ids))}
+        write_json(output_dir / "history.json", {"version": 1, "generated_at": run_at, "days": history_days})
+    return status_payload
+
+
+def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, offline: bool = False) -> dict[str, Any]:
+    """Build using Gmail when the config contains ``mail``.
+
+    The legacy branch exists only so old local fixtures remain testable; the
+    repository configuration uses the email branch exclusively.
+    """
+    config = load_json(config_path, {})
+    if isinstance(config, dict) and "mail" in config:
+        return _email_build(config_path, output_dir, now, offline)
+    return _build_legacy(config_path, output_dir, now, offline)
 
 
 def parse_args() -> argparse.Namespace:

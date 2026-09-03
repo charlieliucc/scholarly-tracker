@@ -20,6 +20,7 @@ from scripts.update import (
     parse_feed,
     score_article,
 )
+from scripts.email_source import MailMessage, fetch_messages, parse_message, parse_rfc822, parse_messages
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -95,17 +96,152 @@ class FeedParserTests(unittest.TestCase):
 class JournalConfigTests(unittest.TestCase):
     def test_crossref_online_first_journals_do_not_have_rss_sources(self) -> None:
         config = json.loads((ROOT / "config" / "journals.json").read_text(encoding="utf-8"))
-        journals = {journal["id"]: journal for journal in config["journals"]}
-        for journal_id, issn in {
-            "applied-linguistics": "0142-6001",
-            "language-teaching": "0261-4448",
-        }.items():
-            journal = journals[journal_id]
-            self.assertEqual(journal["discovery_mode"], "crossref_online_first")
-            self.assertEqual(journal["crossref_issn"], issn)
-            self.assertNotIn("feed_url", journal)
+        self.assertIn("mail", config)
+        self.assertNotIn("journals", config)
+        self.assertNotIn("crossref", config)
 
 
+class EmailParserTests(unittest.TestCase):
+    RECEIVED = datetime(2026, 9, 3, 0, 0, tzinfo=timezone.utc)
+
+    def message(self, sender: str, subject: str, body: str) -> MailMessage:
+        return MailMessage("m1", "INBOX", self.RECEIVED, sender, subject, body, "")
+
+    def test_parses_elsevier_html_alert_and_rejects_footer(self) -> None:
+        message = self.message(
+            "sciencedirect@notification.elsevier.com",
+            "Educational Research Review : Volume 52",
+            '<h2><a href="https://click.notification.elsevier.com/article/10.1016%2Fj.edurev.2026.1">Feedback literacy in teachers</a></h2><p>Jane Doe</p><a href="https://example.invalid">Manage my alerts</a>',
+        )
+        articles, result = parse_message(message)
+        self.assertEqual(result, "ok")
+        self.assertEqual(len(articles), 1)
+        self.assertEqual(articles[0]["publisher"], "Elsevier")
+        self.assertEqual(articles[0]["doi"], "10.1016/j.edurev.2026.1")
+        self.assertEqual(articles[0]["metadata_source"], "email")
+
+    def test_parses_plain_text_sage_alert(self) -> None:
+        message = MailMessage(
+            "m2", "INBOX", self.RECEIVED, "noreply@sagepub.com",
+            "New OnlineFirst articles available for Language Teaching Research", "",
+            "Article\nTeacher emotion and feedback\nJane Doe\nhttps://journals.sagepub.com/doi/10.1177/1\n",
+        )
+        articles, result = parse_message(message)
+        self.assertEqual(result, "ok")
+        self.assertEqual(articles[0]["journal"], "Language Teaching Research")
+
+    def test_unknown_or_marketing_mail_is_not_an_alert(self) -> None:
+        message = self.message("promo@example.com", "Publish with us", "Buy this service")
+        self.assertEqual(parse_message(message), ([], "unrecognized"))
+
+    def test_rfc822_decodes_multipart_headers_without_side_effects(self) -> None:
+        raw = ("From: alerts@tandfonline.com\n"
+               "Subject: =?utf-8?b?TmV3IGFydGljbGVz?=\n"
+               "Message-ID: <abc@example.com>\n"
+               "Content-Type: text/html; charset=utf-8\n\n"
+               '<a href="https://www.tandfonline.com/doi/10.1080/1234">A feedback study in teaching</a>').encode()
+        parsed = parse_rfc822(raw, "INBOX", self.RECEIVED)
+        self.assertEqual(parsed.subject, "New articles")
+        articles, _ = parse_messages([parsed])
+        self.assertEqual(len(articles), 1)
+
+
+class EmailBuildTests(unittest.TestCase):
+    def test_email_build_uses_yesterday_batch_and_only_fetches_high_score_pages(self) -> None:
+        config = {
+            "mail": {"host": "imap.gmail.com", "port": 993},
+            "doi_page": {"enabled": True, "max_lookups_per_run": 5, "max_bytes": 10000},
+            "window": {"enabled": True, "timezone": "Asia/Shanghai"},
+            "ranking": {"title_multiplier": 2, "keywords": [{"term": "feedback", "weight": 3}]},
+            "recommendations": {"minimum_score": 3, "limit": 5},
+        }
+        received = datetime(2026, 9, 4, 12, 0, tzinfo=timezone.utc)
+        message = MailMessage(
+            "gm-1", "INBOX", received, "alerts@tandfonline.com",
+            "New articles for Feedback Journal are now available online",
+            '<a href="https://www.tandfonline.com/doi/10.1080/1234">Feedback study</a>', "",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+                "scripts.update.fetch_messages", return_value=([message], {"folders": [{"name": "INBOX", "status": "ok", "in_window": 1}], "candidate_count": 1, "duplicate_count": 0})
+            ), patch("scripts.update.fetch_page_metadata", return_value={"doi": "10.1080/1234", "abstract": "A complete public abstract about feedback."}) as page:
+                status = build(config_path, root / "data", now=datetime(2026, 9, 5, 0, 0, tzinfo=timezone.utc))
+            self.assertEqual(status["outcome"], "success")
+            self.assertEqual(status["window"]["start"], "2026-09-04T00:00:00+08:00")
+            self.assertEqual(status["email"]["recognized_alerts"], 1)
+            self.assertEqual(status["abstracts"]["replaced"], 1)
+            page.assert_called_once()
+            homepage = json.loads((root / "data" / "recommendations.json").read_text(encoding="utf-8"))
+            self.assertEqual(homepage["date"], "2026-09-04")
+            article = json.loads((root / "data" / "papers.json").read_text(encoding="utf-8"))["articles"][0]
+            self.assertEqual(article["abstract_source"], "doi-page")
+            history = json.loads((root / "data" / "history.json").read_text(encoding="utf-8"))
+            self.assertIn("2026-09-04", history["days"])
+
+    def test_email_failure_keeps_existing_public_data(self) -> None:
+        config = {"mail": {}, "ranking": {"keywords": []}, "recommendations": {"minimum_score": 1}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            output = root / "data"
+            output.mkdir()
+            old = {"generated_at": "old", "articles": [{"id": "old", "title": "Old"}]}
+            (output / "papers.json").write_text(json.dumps(old), encoding="utf-8")
+            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+                "scripts.update.fetch_messages", side_effect=RuntimeError("temporary IMAP failure")
+            ):
+                status = build(config_path, output, now=datetime(2026, 9, 5, tzinfo=timezone.utc))
+            self.assertEqual(status["outcome"], "stale")
+            self.assertEqual(json.loads((output / "papers.json").read_text(encoding="utf-8"))["articles"][0]["id"], "old")
+
+    def test_imap_fetch_is_read_only_and_filters_exact_internal_date(self) -> None:
+        class FakeIMAP:
+            instances = []
+
+            def __init__(self, host, port):
+                self.calls = []
+                self.selected = []
+                self.__class__.instances.append(self)
+
+            def login(self, username, password):
+                self.calls.append(("login", username, password))
+                return "OK", []
+
+            def list(self):
+                return "OK", [b'* LIST (\\HasNoChildren) "/" "INBOX"', b'* LIST (\\HasNoChildren \\Junk) "/" "[Gmail]/Spam"']
+
+            def select(self, folder, readonly=False):
+                self.selected.append((folder, readonly))
+                return "OK", [b""]
+
+            def uid(self, command, *args):
+                self.calls.append((command, args))
+                if command == "search":
+                    return "OK", [b"1 2"]
+                uid = args[0]
+                received = b"02-Sep-2026 16:00:00 +0000" if uid == b"1" else b"03-Sep-2026 16:00:00 +0000"
+                raw = (b"From: alerts@tandfonline.com\nSubject: New articles\nMessage-ID: <" + uid + b">\n"
+                       b"Content-Type: text/html; charset=utf-8\n\n"
+                       b'<a href="https://www.tandfonline.com/doi/10.1080/1234">Feedback study article</a>')
+                return "OK", [(b'1 FETCH (INTERNALDATE "' + received + b'" X-GM-MSGID ' + uid + b' BODY[] {' + str(len(raw)).encode() + b'})', raw)]
+
+            def logout(self):
+                self.calls.append(("logout",))
+                return "OK", []
+
+        messages, stats = fetch_messages(
+            "user@example.com", "app-password", datetime(2026, 9, 2, 16, tzinfo=timezone.utc),
+            datetime(2026, 9, 3, 16, tzinfo=timezone.utc), client_factory=FakeIMAP,
+        )
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(stats["candidate_count"], 4)
+        self.assertTrue(all(readonly for _, readonly in FakeIMAP.instances[0].selected))
+        fetch_calls = [call for call in FakeIMAP.instances[0].calls if call[0] == "fetch"]
+        self.assertTrue(all("BODY.PEEK" in call[1][1] for call in fetch_calls))
 class RankingTests(unittest.TestCase):
     def test_weighted_title_and_details_scoring_is_explainable(self) -> None:
         article = {"title": "Feedback in L2 writing", "abstract": "An assessment study", "authors": []}
