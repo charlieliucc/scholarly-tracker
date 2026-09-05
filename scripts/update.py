@@ -26,9 +26,9 @@ from typing import Any, Iterable, Optional
 from zoneinfo import ZoneInfo
 
 try:
-    from .email_source import fetch_messages, parse_messages
+    from .email_source import fetch_messages, parse_messages, clean_legacy_email_articles
 except ImportError:  # python scripts/update.py
-    from email_source import fetch_messages, parse_messages
+    from email_source import fetch_messages, parse_messages, clean_legacy_email_articles
 
 
 DOI_RE = re.compile(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", re.IGNORECASE)
@@ -419,7 +419,7 @@ def fetch_page_metadata(url: str, user_agent: str, timeout: int, max_bytes: int)
     with urllib.request.urlopen(request, timeout=timeout) as response:
         content_type = response.headers.get_content_type().casefold()
         if content_type not in {"text/html", "application/xhtml+xml"}:
-            return ""
+            return {}
         parser = HeadMetadataParser()
         remaining = max(1, int(max_bytes))
         while remaining > 0 and not parser.head_ended:
@@ -1282,6 +1282,75 @@ def _trusted_article_url(url: str, publisher: str) -> bool:
     return any(host == domain or host.endswith("." + domain) for domain in allowed)
 
 
+def lookup_openalex(article: dict[str, Any], user_agent: str, timeout: int, threshold: float = 0.92) -> Optional[dict[str, Any]]:
+    doi = normalize_doi(article.get("doi", ""))
+    if doi:
+        url = "https://api.openalex.org/works/" + urllib.parse.quote("https://doi.org/" + doi, safe="")
+    else:
+        url = "https://api.openalex.org/works?" + urllib.parse.urlencode({"search": article["title"], "per-page": 5})
+    payload = json.loads(request_bytes(url, user_agent, timeout))
+    candidates = [payload] if doi else payload.get("results", [])
+    wanted = normalized_text(article["title"])
+    candidates = sorted(candidates, key=lambda item: SequenceMatcher(None, wanted, normalized_text(item.get("title") or "")).ratio(), reverse=True)
+    for item in candidates:
+        candidate_doi = normalize_doi(item.get("doi") or "")
+        if doi:
+            if candidate_doi != doi:
+                continue
+        elif SequenceMatcher(None, wanted, normalized_text(item.get("title") or "")).ratio() < threshold:
+            continue
+        source = ((item.get("primary_location") or {}).get("source") or {}).get("display_name", "")
+        if not doi and source and article.get("journal") and normalized_text(source) != normalized_text(article["journal"]):
+            continue
+        positions = {}
+        for word, offsets in (item.get("abstract_inverted_index") or {}).items():
+            for offset in offsets:
+                if isinstance(offset, int) and offset >= 0:
+                    positions[offset] = word
+        return {
+            "doi": candidate_doi,
+            "authors": [entry["author"]["display_name"] for entry in item.get("authorships", []) if (entry.get("author") or {}).get("display_name")],
+            "abstract": " ".join(positions[index] for index in sorted(positions)),
+        }
+    return None
+
+
+def enrich_email_metadata(articles: list[dict[str, Any]], config: dict[str, Any]) -> dict[str, Any]:
+    cfg = config.get("metadata_fallback", {})
+    status = {"attempted": 0, "matched": 0, "abstracts_replaced": 0, "errors": 0}
+    if not cfg.get("enabled", False):
+        return status
+    user_agent = str(config.get("user_agent", "ScholarlyTracker/2.0"))
+    timeout = int(config.get("request_timeout_seconds", 30))
+    client = CrossrefClient(contact_email="", user_agent=user_agent, timeout=timeout)
+    for article in sorted(articles, key=lambda value: value.get("score", 0), reverse=True):
+        if status["attempted"] >= int(cfg.get("max_lookups_per_run", 20)):
+            break
+        if article.get("authors") and article.get("doi") and not abstract_needs_fallback(article.get("abstract", "")):
+            continue
+        status["attempted"] += 1
+        for source in ("crossref", "openalex"):
+            try:
+                metadata = client.lookup(article, 0.92) if source == "crossref" else lookup_openalex(article, user_agent, timeout)
+                if not metadata:
+                    continue
+                # Title searches require the same journal when the service supplies it.
+                if source == "crossref" and not article.get("doi") and metadata.get("journal") and normalized_text(metadata["journal"]) != normalized_text(article.get("journal", "")):
+                    continue
+                status["matched"] += 1
+                for field in ("doi", "authors", "published", "volume", "issue", "pages"):
+                    if not article.get(field) and metadata.get(field):
+                        article[field] = metadata[field]
+                if merge_abstract(article, metadata.get("abstract", ""), source):
+                    status["abstracts_replaced"] += 1
+                article["metadata_source"] = article.get("metadata_source", "email") + "+" + source
+                if article.get("authors") and not abstract_needs_fallback(article.get("abstract", "")):
+                    break
+            except (urllib.error.URLError, TimeoutError, UnicodeError, ValueError, OSError):
+                status["errors"] += 1
+    return status
+
+
 def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], offline: bool) -> dict[str, Any]:
     config = load_json(config_path, {})
     if not isinstance(config, dict):
@@ -1360,6 +1429,9 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
             fetch_error = f"{type(error).__name__}: {error}"
             email_status["status"] = "error"
 
+    if not offline and not fetch_error:
+        previous = clean_legacy_email_articles(previous)
+
     previous_keys = {key for article in previous for key in identity_keys(article)}
     seen_incoming: set[str] = set()
     new_count = 0
@@ -1376,6 +1448,10 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
     for article in processed_articles:
         article["score"], article["matched_keywords"] = score_article(article, ranking)
 
+    metadata_status = enrich_email_metadata(processed_articles, config) if not offline and not fetch_error else {"attempted": 0, "matched": 0, "abstracts_replaced": 0, "errors": 0}
+    for article in processed_articles:
+        article["score"], article["matched_keywords"] = score_article(article, ranking)
+
     abstract_cfg = config.get("doi_page", {}) if isinstance(config.get("doi_page", {}), dict) else {}
     abstract_status = {
         "attempted": 0,
@@ -1385,12 +1461,15 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
         "errors": 0,
         "skipped_low_score": sum(1 for article in processed_articles if article.get("score", 0) < float(config.get("recommendations", {}).get("minimum_score", 1))),
     }
+    abstract_status["metadata_fallback"] = metadata_status
     if not offline and not fetch_error and abstract_cfg.get("enabled", True):
         limit = int(abstract_cfg.get("max_lookups_per_run", 20))
         max_bytes = int(abstract_cfg.get("max_bytes", 524288))
         minimum_score = float(config.get("recommendations", {}).get("minimum_score", 1))
         for article in sorted(processed_articles, key=lambda value: value.get("score", 0), reverse=True):
             if article.get("score", 0) < minimum_score or abstract_status["attempted"] >= limit:
+                continue
+            if not abstract_needs_fallback(article.get("abstract", "")):
                 continue
             publisher = str(article.get("publisher", ""))
             target = article.get("doi") and f"https://doi.org/{urllib.parse.quote(article['doi'], safe='')}" or article.get("url", "")
@@ -1431,7 +1510,7 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
 
     if fetch_error:
         outcome = "stale" if previous else "error"
-    elif email_status["status"] == "partial" or email_status["parser_errors"] or abstract_status["errors"]:
+    elif email_status["status"] == "partial" or email_status["parser_errors"] or abstract_status["errors"] or metadata_status["errors"]:
         outcome = "partial"
     else:
         outcome = "success" if not offline else "stale"
@@ -1462,6 +1541,10 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
     write_json(output_dir / "recommendations.json", {"generated_at": run_at, "date": batch_date.isoformat(), "window": status_payload["window"], "articles": recommended, "other_articles": other_articles})
     write_json(output_dir / "status.json", status_payload)
     if outcome in {"success", "partial", "stale"} and not offline:
+        valid_ids = {str(article.get("id", "")) for article in articles}
+        for day in history_days.values():
+            if isinstance(day, dict) and isinstance(day.get("article_ids"), list):
+                day["article_ids"] = [item for item in day["article_ids"] if item in valid_ids]
         old_day = history_days.get(batch_date.isoformat(), {})
         old_ids = old_day.get("article_ids", []) if isinstance(old_day, dict) else []
         batch_ids = [str(article.get("id", "")) for article in fetched if article.get("id")]

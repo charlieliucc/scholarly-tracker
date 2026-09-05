@@ -40,7 +40,8 @@
 - `recommendations.minimum_score`：进入今日推荐的最低分。
 - `recommendations.limit`：今日推荐最多显示的篇数。
 - `recommendations.json` 的 `articles` 保存完整推荐卡片数据，`other_articles` 保存同批次未推荐论文数据。
-- `doi_page`：设置只对高匹配文章读取论文页 `<head>` 摘要的上限和最大 HTML 字节数；不读取正文或 PDF，也不调用 Crossref/OpenAlex。
+- `doi_page`：设置只对高匹配文章读取论文页 `<head>` 摘要的上限和最大 HTML 字节数；不读取正文或 PDF。
+- `metadata_fallback`：对本次邮件条目按相关度排序，在限额内使用 Crossref、OpenAlex 补齐作者、DOI 和摘要；按 DOI 或高置信度标题及期刊匹配，不修改邮件原始链接。
 
 ## 本地运行
 
@@ -56,7 +57,7 @@ python3 -m http.server 8000 --directory docs
 
 ## 数据策略
 
-- 摘要按 `邮件正文 → 可信论文页 <head>` 回退；只有高匹配文章才访问网页。
+- 摘要按 `邮件文章块 → Crossref → OpenAlex → 可信论文页 <head>` 回退；只有高匹配文章才访问网页，元数据 API 可补齐其他文章。只用更长的摘要替换缺失或截断摘要。
 - DOI 页面只解析 `<head>` 中的公开摘要元数据，不读取正文、全文或 PDF；访问失败时保留原摘要。
 - 邮件提醒按可信出版商模板解析；营销、仿冒和无法可靠解析的邮件会跳过并在状态页计数。
 - 单个邮箱目录、邮件模板或论文页失败不会清空历史数据，错误会显示在运行状态页。

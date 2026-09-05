@@ -5,6 +5,7 @@
   "window": { "enabled": true, "timezone": "Asia/Shanghai" },
   "mail": { "host": "imap.gmail.com", "port": 993, "max_messages": 500 },
   "doi_page": { "enabled": true, "max_lookups_per_run": 20, "max_bytes": 524288 },
+  "metadata_fallback": { "enabled": true, "max_lookups_per_run": 20 },
   "ranking": {
     "title_multiplier": 2.0,
     "details_multiplier": 1.0,
