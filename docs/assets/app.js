@@ -49,6 +49,19 @@ function scoreLabel(score) {
   return `${value > 0 ? "+" : ""}${Number.isInteger(value) ? value : value.toFixed(1)}`;
 }
 
+function articleTags(article) {
+  const matches = article.matched_keywords || [];
+  if (!matches.length) return null;
+  const tags = element("div", "tag-list");
+  tags.setAttribute("aria-label", "标签");
+  matches.slice(0, 6).forEach((match) => {
+    const tag = element("span", Number(match.contribution) < 0 ? "negative" : "", `${match.keyword} ${scoreLabel(match.contribution)}`);
+    tag.title = `命中字段：${(match.fields || []).join("、")}`;
+    tags.append(tag);
+  });
+  return tags;
+}
+
 function articleCard(article, index) {
   const card = element("article", "paper-card");
   const rank = element("div", "paper-rank", String(index + 1).padStart(2, "0"));
@@ -78,15 +91,8 @@ function articleCard(article, index) {
     details.append(element("summary", "", "查看摘要"), element("p", "", article.abstract));
     body.append(details);
   }
-  if ((article.matched_keywords || []).length) {
-    const keywords = element("div", "keyword-list");
-    article.matched_keywords.slice(0, 6).forEach((match) => {
-      const tag = element("span", Number(match.contribution) < 0 ? "negative" : "", `${match.keyword} ${scoreLabel(match.contribution)}`);
-      tag.title = `命中字段：${(match.fields || []).join("、")}`;
-      keywords.append(tag);
-    });
-    body.append(keywords);
-  }
+  const tags = articleTags(article);
+  if (tags) body.append(tags);
   body.append(actions);
   card.append(rank, body);
   return card;
@@ -127,15 +133,6 @@ function todayDetails(article, summaryText = "查看详细信息") {
   if (article.doi) metadata.append(externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link"));
   if (metadata.childNodes.length) content.append(metadata);
   if (article.abstract) content.append(element("p", "today-abstract", article.abstract));
-  if ((article.matched_keywords || []).length) {
-    const keywords = element("div", "keyword-list");
-    article.matched_keywords.slice(0, 6).forEach((match) => {
-      const tag = element("span", Number(match.contribution) < 0 ? "negative" : "", `${match.keyword} ${scoreLabel(match.contribution)}`);
-      tag.title = `命中字段：${(match.fields || []).join("、")}`;
-      keywords.append(tag);
-    });
-    content.append(keywords);
-  }
   details.append(content);
   return details;
 }
@@ -150,7 +147,10 @@ function todayArticleCard(article, index) {
   const title = element("h3");
   const articleUrl = article.url || article.doi_url;
   title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
-  body.append(header, title, todayPaperInfo(article), todayDetails(article, "查看摘要、关键词和 DOI"));
+  const tags = articleTags(article);
+  body.append(header, title, todayPaperInfo(article));
+  if (tags) body.append(tags);
+  body.append(todayDetails(article, "查看摘要和 DOI"));
   card.append(rank, body);
   return card;
 }
@@ -164,7 +164,10 @@ function todayOtherArticleRow(article) {
   const title = element("h3");
   const articleUrl = article.url || article.doi_url;
   title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
-  body.append(header, title, todayPaperInfo(article), todayDetails(article));
+  const tags = articleTags(article);
+  body.append(header, title, todayPaperInfo(article));
+  if (tags) body.append(tags);
+  body.append(todayDetails(article));
   card.append(body);
   return card;
 }
@@ -194,7 +197,7 @@ async function initToday() {
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
     list.replaceChildren();
     if (!articles.length) {
-      list.append(emptyState("本次更新没有推荐文章", "没有文章达到当前关键词推荐门槛。"));
+      list.append(emptyState("本次更新没有推荐文章", "没有文章达到当前标签推荐门槛。"));
     } else {
       articles.forEach((article, index) => list.append(todayArticleCard(article, index)));
     }
@@ -208,53 +211,6 @@ async function initToday() {
     list.replaceChildren(errorState(`请稍后重试。${error.message}`));
     otherList.replaceChildren(errorState(`请稍后重试。${error.message}`));
   }
-}
-
-async function initPapers() {
-  const list = $("#paper-list");
-  let all = [];
-  let visible = 50;
-  try {
-    const payload = await fetchJson("data/papers.json");
-    all = payload.articles || [];
-    $("#archive-updated").textContent = `更新于 ${formatDate(payload.generated_at, true)}`;
-  } catch (error) {
-    list.replaceChildren(errorState(`请稍后重试。${error.message}`));
-    return;
-  }
-  [...new Set(all.map((item) => item.journal).filter(Boolean))].sort().forEach((journal) => {
-    const option = element("option", "", journal);
-    option.value = journal;
-    $("#journal-filter").append(option);
-  });
-
-  function render(reset = false) {
-    if (reset) visible = 50;
-    const query = $("#paper-search").value.trim().toLocaleLowerCase();
-    const journal = $("#journal-filter").value;
-    const sort = $("#sort-filter").value;
-    const filtered = all.filter((article) => {
-      if (journal && article.journal !== journal) return false;
-      if (!query) return true;
-      const haystack = [article.title, article.abstract, article.doi, ...(article.authors || []), ...(article.matched_keywords || []).map((item) => item.keyword)].join(" ").toLocaleLowerCase();
-      return haystack.includes(query);
-    });
-    filtered.sort((a, b) => {
-      if (sort === "score") return Number(b.score || 0) - Number(a.score || 0) || String(b.published || "").localeCompare(a.published || "");
-      if (sort === "seen") return String(b.first_seen || "").localeCompare(a.first_seen || "");
-      return String(b.published || "").localeCompare(a.published || "");
-    });
-    $("#result-count").textContent = `找到 ${filtered.length} 篇论文`;
-    list.replaceChildren();
-    if (!filtered.length) list.append(emptyState("没有匹配的论文", "请尝试缩短检索词或切换期刊筛选。"));
-    filtered.slice(0, visible).forEach((article, index) => list.append(articleCard(article, index)));
-    $("#load-more").hidden = filtered.length <= visible;
-    $("#load-more").onclick = () => { visible += 50; render(); };
-  }
-  $("#paper-search").addEventListener("input", () => render(true));
-  $("#journal-filter").addEventListener("change", () => render(true));
-  $("#sort-filter").addEventListener("change", () => render(true));
-  render();
 }
 
 async function initHistory() {
@@ -315,7 +271,7 @@ async function initStatus() {
     $("#status-summary").append(
       metric("本次处理", counts.processed_this_run ?? counts.items_in_window ?? counts.fetched_this_run, windowLabel),
       metric("首次收录", counts.new_today, "篇新增记录"),
-      metric("累计论文", counts.all_articles, "篇可检索记录"),
+      metric("近 7 天论文", counts.all_articles, "篇历史记录"),
       metric("生成时间", formatDate(status.generated_at, true), `上次完全成功：${formatDate(status.last_success_at, true)}`)
     );
     const email = status.email || {};
@@ -347,5 +303,4 @@ async function initStatus() {
 const page = document.body.dataset.page;
 if (page === "today") initToday();
 if (page === "history") initHistory();
-if (page === "papers") initPapers();
 if (page === "status") initStatus();

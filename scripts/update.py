@@ -743,6 +743,41 @@ def history_date_for_batch(batch_date: date) -> str:
     return batch_date.isoformat()
 
 
+def prune_history_window(
+    history_days: dict[str, Any],
+    articles: list[dict[str, Any]],
+    batch_date: date,
+    retention_days: int,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Keep only history dates and paper metadata in the rolling date window."""
+    retention_days = max(1, retention_days)
+    cutoff = batch_date - timedelta(days=retention_days - 1)
+
+    retained_days: dict[str, Any] = {}
+    for key, value in history_days.items():
+        try:
+            history_date = date.fromisoformat(key)
+        except (TypeError, ValueError):
+            continue
+        if cutoff <= history_date <= batch_date:
+            retained_days[key] = value
+
+    retained_articles = []
+    for article in articles:
+        try:
+            article_date = date.fromisoformat(str(article.get("history_date", "")))
+        except ValueError:
+            continue
+        if cutoff <= article_date <= batch_date:
+            retained_articles.append(article)
+
+    valid_ids = {str(article.get("id", "")) for article in retained_articles}
+    for day in retained_days.values():
+        if isinstance(day, dict) and isinstance(day.get("article_ids"), list):
+            day["article_ids"] = [str(item) for item in day["article_ids"] if str(item) in valid_ids]
+    return retained_days, retained_articles
+
+
 def score_article(article: dict[str, Any], settings: dict[str, Any]) -> tuple[float, list[dict[str, Any]]]:
     title = normalized_text(article.get("title", ""))
     details = normalized_text(" ".join((article.get("abstract", ""), " ".join(article.get("authors", [])))))
@@ -1193,6 +1228,12 @@ def _build_legacy(config_path: Path, output_dir: Path, now: Optional[datetime] =
         reverse=True,
     )
     articles = articles[: int(config.get("max_articles", 2000))]
+    history_days, articles = prune_history_window(
+        history_days,
+        articles,
+        batch_date,
+        int(config.get("history_retention_days", 7)),
+    )
     recommendation_config = config.get("recommendations", {})
     processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
     recommended = [article for article in processed_articles if article.get("score", 0) >= float(recommendation_config.get("minimum_score", 1))]
@@ -1498,6 +1539,12 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
         article["score"], article["matched_keywords"] = score_article(article, ranking)
     articles.sort(key=lambda article: (article.get("published") or "", article.get("feed_timestamp") or "", article.get("score", 0)), reverse=True)
     articles = articles[: int(config.get("max_articles", 2000))]
+    history_days, articles = prune_history_window(
+        history_days,
+        articles,
+        batch_date,
+        int(config.get("history_retention_days", 7)),
+    )
     processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
     recommendation_cfg = config.get("recommendations", {})
     minimum_score = float(recommendation_cfg.get("minimum_score", 1))

@@ -1,11 +1,10 @@
 # Scholarly Tracker
 
-一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天从专用 Gmail 的收件箱和垃圾邮件读取期刊提醒，只处理北京时间昨日 00:00 至今日 00:00 的邮件，随后按可配置的关键词权重生成：
+一个完全由 GitHub Actions 驱动、发布在 GitHub Pages 上的期刊追踪系统。它每天从专用 Gmail 的收件箱和垃圾邮件读取期刊提醒，只处理北京时间昨日 00:00 至今日 00:00 的邮件，随后按可配置的标签权重生成：
 
 - 今日推荐：本次日更发现且达到最低得分的论文，展示完整卡片；
 - 其他新论文：本次日更发现但未进入推荐区的论文，首页保留期刊、日期、标题、作者、DOI 和分数；
-- 历史记录：按日查看已经生成过的日更批次，避免错过前一天的推送；
-- 全部论文：可检索、筛选和排序的累积档案；
+- 历史记录：按日查看最近 7 天生成的日更批次，更早内容可在邮箱中回溯；
 - 运行状态：邮箱目录、邮件解析器、网页摘要补全和收录数量的运行记录。
 
 当前解析器覆盖 Elsevier、SAGE、Wiley、Taylor & Francis 和 Nature 的期刊提醒模板。
@@ -24,8 +23,8 @@
 - 每天北京时间 00:00 自动读取邮件并部署（GitHub Actions 使用 UTC 16:00 cron）。
 - 邮件按 Gmail 内部接收时间过滤；邮件正文中的出版日期只有能可靠确认时才写入。
 - 每月 1 日把最新 `docs/data/` 提交回默认分支。
-- 每次运行会先从已部署站点恢复上次论文和历史索引，因此两次月度快照之间仍能保留每日首次发现时间和累积论文。
-- `history.json` 只保存日更日期到论文 ID 的轻量索引；历史页面从累计论文档案还原内容，不保存每日完整邮件原文。
+- 每次运行会先从已部署站点恢复上次论文和历史索引，因此两次月度快照之间仍能连续保留最近 7 天的数据。
+- `history.json` 只保存最近 7 个日更日期到论文 ID 的轻量索引；`papers.json` 同步删除窗口外的论文元数据。历史页面不保存每日完整邮件原文。
 - 手动运行时，可勾选 `persist_data`，立即把该次数据也提交到仓库。
 - GitHub 会在公共仓库 60 天没有仓库活动后停用定时工作流；月度数据提交用于持续产生仓库活动：[GitHub scheduled workflow policy](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows)。
 
@@ -34,9 +33,10 @@
 编辑 [`config/journals.json`](config/journals.json)：
 
 - `mail`：配置 Gmail IMAP 主机、端口和单次读取上限。账号与应用专用密码必须放在 Actions Secrets：`GMAIL_USERNAME`、`GMAIL_APP_PASSWORD`。
+- `history_retention_days`：历史记录和论文元数据的滚动保留天数，当前为 7 天。
 - `window.timezone`：计算昨日窗口的 IANA 时区，默认 `Asia/Shanghai`。
-- `ranking.keywords`：正数提高推荐得分，负数降低得分。
-- `title_multiplier`：关键词出现在标题中的权重倍率。
+- `ranking.keywords`：配置用于筛选和展示的标签；正数提高推荐得分，负数降低得分。
+- `title_multiplier`：标签出现在标题中的权重倍率。
 - `recommendations.minimum_score`：进入今日推荐的最低分。
 - `recommendations.limit`：今日推荐最多显示的篇数。
 - `recommendations.json` 的 `articles` 保存完整推荐卡片数据，`other_articles` 保存同批次未推荐论文数据。

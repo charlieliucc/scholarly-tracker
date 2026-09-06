@@ -30,6 +30,11 @@ BOILERPLATE = re.compile(
     r"(?:manage (?:(?:your|my) )?alerts|unsubscribe|privacy policy|terms and conditions|view in browser|read now|click here to read)",
     re.IGNORECASE,
 )
+URL_LIKE_TITLE = re.compile(
+    r"^(?:https?://)?(?:www\.)?(?:[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?\.)+[a-z]{2,63}"
+    r"(?::\d{1,5})?(?:/[^\s]*)?$",
+    re.IGNORECASE,
+)
 
 
 def clean_text(value: Any) -> str:
@@ -399,7 +404,7 @@ def _is_usable_anchor(url: str, title: str, publisher: str) -> bool:
     if not url.startswith(("https://", "http://")) or len(title) < 12:
         return False
     low = title.casefold()
-    if BOILERPLATE.search(low) or low in {"read article", "read issue", "view latest articles", "editorial board", "elsevier b.v."} or low.startswith(("new articles in press", "http://", "https://")) or re.match(r"^(?:volume|issue)\s+\d", low) or any(term in low for term in ("safe senders", "forward to", "browse journals", "search all", "publish with", "view books", "add to your", "view these articles")):
+    if URL_LIKE_TITLE.fullmatch(low) or BOILERPLATE.search(low) or low in {"read article", "read issue", "view latest articles", "editorial board", "elsevier b.v."} or low.startswith(("new articles in press", "http://", "https://")) or re.match(r"^(?:volume|issue)\s+\d", low) or any(term in low for term in ("safe senders", "forward to", "browse journals", "search all", "publish with", "view books", "add to your", "view these articles")):
         return False
     host = (urllib.parse.urlparse(url).hostname or "").casefold()
     domains = {

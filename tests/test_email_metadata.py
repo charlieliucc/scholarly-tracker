@@ -22,11 +22,18 @@ class MailRegressionTests(unittest.TestCase):
         <a href="https://url.tandfonline.com/journal">Feedback Journal</a>
         <p>Research Article</p><a href="https://url.tandfonline.com/title">Calibrating GenAI and human feedback</a>
         <p>Siliang Yu, Chao Wang &amp; Qianxiao Zhang</p><p>{abstract}</p>
+        <a href="https://url.tandfonline.com/association">www.isatt.org</a>
         <a href="https://url.tandfonline.com/button">Read article</a>'''
         articles = self.parse(body)
         self.assertEqual(len(articles), 1)
         self.assertEqual(articles[0]['authors'], ['Siliang Yu', 'Chao Wang', 'Qianxiao Zhang'])
         self.assertEqual(articles[0]['abstract'], abstract)
+
+    def test_domain_and_url_titles_are_not_articles(self):
+        for title in ('www.isatt.org', 'isatt.org', 'https://www.isatt.org/about', 'isatt.org/about'):
+            with self.subTest(title=title):
+                articles = self.parse(f'<a href="https://url.tandfonline.com/tracked">{title}</a>')
+                self.assertEqual(articles, [])
 
     def test_two_elsevier_articles_have_own_authors_and_no_fake_abstract(self):
         body = ''.join(f'<a href="https://click.notification.elsevier.com/{n}">Research into language learning {n}</a><p>Open Access - Research article</p><p>Available Online 03 September 2026</p><p>{author}</p>' for n, author in [(1, 'Pelin Irgin, Nataliya Borkovska'), (2, 'Jane Doe')])
@@ -53,11 +60,11 @@ class MailRegressionTests(unittest.TestCase):
 
     def test_legacy_navigation_removed_and_label_not_kept_as_abstract(self):
         base = {'metadata_source': 'email', 'abstract_source': 'email', 'publisher': 'Taylor & Francis', 'journal': 'Feedback Journal', 'url': 'https://url.tandfonline.com/a'}
-        old = [dict(base, id='button', title='Read article'), dict(base, id='journal', title='Feedback Journal'), dict(base, id='paper', title='Feedback in teaching research', abstract='Research Article')]
+        old = [dict(base, id='button', title='Read article'), dict(base, id='journal', title='Feedback Journal'), dict(base, id='domain', title='www.isatt.org'), dict(base, id='paper', title='Feedback in teaching research', abstract='Research Article')]
         result = clean_legacy_email_articles(old)
         self.assertEqual([a['id'] for a in result], ['paper'])
         self.assertEqual(result[0]['abstract'], '')
-        self.assertEqual(old[2]['abstract'], 'Research Article')
+        self.assertEqual(old[3]['abstract'], 'Research Article')
 
 
 class MetadataFallbackTests(unittest.TestCase):

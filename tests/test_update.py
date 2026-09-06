@@ -18,6 +18,7 @@ from scripts.update import (
     merge_articles,
     merge_crossref,
     parse_feed,
+    prune_history_window,
     score_article,
 )
 from scripts.email_source import MailMessage, fetch_messages, parse_message, parse_rfc822, parse_messages
@@ -25,6 +26,29 @@ from scripts.email_source import MailMessage, fetch_messages, parse_message, par
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures"
+
+
+class HistoryRetentionTests(unittest.TestCase):
+    def test_keeps_seven_days_and_removes_older_paper_metadata(self) -> None:
+        history = {
+            "2026-08-29": {"article_ids": ["old"]},
+            "2026-08-30": {"article_ids": ["boundary", "missing"]},
+            "2026-09-05": {"article_ids": ["current"]},
+        }
+        articles = [
+            {"id": "old", "history_date": "2026-08-29"},
+            {"id": "boundary", "history_date": "2026-08-30"},
+            {"id": "current", "history_date": "2026-09-05"},
+            {"id": "undated"},
+        ]
+
+        retained_history, retained_articles = prune_history_window(
+            history, articles, datetime(2026, 9, 5).date(), 7
+        )
+
+        self.assertEqual(list(retained_history), ["2026-08-30", "2026-09-05"])
+        self.assertEqual(retained_history["2026-08-30"]["article_ids"], ["boundary"])
+        self.assertEqual([article["id"] for article in retained_articles], ["boundary", "current"])
 
 
 def sciencedirect_feed(include_new: bool = False, new_title: str = "New monthly article") -> bytes:
@@ -147,6 +171,47 @@ class EmailParserTests(unittest.TestCase):
 
 
 class EmailBuildTests(unittest.TestCase):
+    def test_email_build_prunes_history_and_papers_to_seven_days(self) -> None:
+        config = {
+            "mail": {},
+            "history_retention_days": 7,
+            "ranking": {"keywords": []},
+            "recommendations": {"minimum_score": 1},
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            output = root / "data"
+            output.mkdir()
+            papers = {
+                "articles": [
+                    {"id": "old", "title": "Old paper", "history_date": "2026-08-30"},
+                    {"id": "boundary", "title": "Boundary paper", "history_date": "2026-08-31"},
+                ]
+            }
+            history = {
+                "version": 1,
+                "days": {
+                    "2026-08-30": {"article_ids": ["old"]},
+                    "2026-08-31": {"article_ids": ["boundary"]},
+                },
+            }
+            (output / "papers.json").write_text(json.dumps(papers), encoding="utf-8")
+            (output / "history.json").write_text(json.dumps(history), encoding="utf-8")
+
+            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+                "scripts.update.fetch_messages",
+                return_value=([], {"folders": [], "candidate_count": 0, "duplicate_count": 0}),
+            ):
+                status = build(config_path, output, now=datetime(2026, 9, 6, 16, 0, tzinfo=timezone.utc))
+
+            saved_history = json.loads((output / "history.json").read_text(encoding="utf-8"))
+            saved_papers = json.loads((output / "papers.json").read_text(encoding="utf-8"))
+            self.assertEqual(list(saved_history["days"]), ["2026-08-31", "2026-09-06"])
+            self.assertEqual([article["id"] for article in saved_papers["articles"]], ["boundary"])
+            self.assertEqual(status["counts"]["all_articles"], 1)
+
     def test_email_build_uses_yesterday_batch_and_only_fetches_high_score_pages(self) -> None:
         config = {
             "mail": {"host": "imap.gmail.com", "port": 993},
