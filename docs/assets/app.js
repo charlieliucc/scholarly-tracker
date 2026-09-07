@@ -192,7 +192,7 @@ async function initToday() {
     const articles = recommendations.articles || [];
     const otherArticles = recommendations.other_articles || [];
     const generatedAt = recommendations.generated_at || status.generated_at;
-    $("#today-label").textContent = generatedAt ? formatDate(generatedAt, true) : "本次更新";
+    $("#today-label").textContent = generatedAt ? formatDate(generatedAt, true) : "时间待更新";
     $("#new-count").textContent = status.counts?.items_in_window ?? status.counts?.new_today ?? "—";
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
     list.replaceChildren();
@@ -214,7 +214,8 @@ async function initToday() {
 }
 
 async function initHistory() {
-  const list = $("#history-list");
+  const recommendedList = $("#history-recommended-list");
+  const otherList = $("#history-other-list");
   const dateSelect = $("#history-date");
   try {
     const [history, papers] = await Promise.all([fetchJson("data/history.json"), fetchJson("data/papers.json")]);
@@ -223,7 +224,8 @@ async function initHistory() {
     const days = history.days || {};
     const dates = Object.keys(days).sort().reverse();
     if (!dates.length) {
-      list.replaceChildren(emptyState("还没有历史记录", "首次成功完成日更后，这里会保留按日期查看的记录。"));
+      recommendedList.replaceChildren(emptyState("还没有历史记录", "首次成功完成日更后，这里会保留按日期查看的记录。"));
+      otherList.replaceChildren(emptyState("还没有历史记录", "首次成功完成日更后，这里会保留按日期查看的记录。"));
       $("#history-count").textContent = "0 篇论文";
       return;
     }
@@ -234,20 +236,43 @@ async function initHistory() {
       const date = dateSelect.value;
       const day = days[date] || {};
       const articles = (day.article_ids || []).map((id) => byId.get(String(id))).filter(Boolean);
+      let recommendedArticles;
+      let otherArticles;
+      if (Array.isArray(day.recommended_article_ids) && Array.isArray(day.other_article_ids)) {
+        recommendedArticles = day.recommended_article_ids.map((id) => byId.get(String(id))).filter(Boolean);
+        otherArticles = day.other_article_ids.map((id) => byId.get(String(id))).filter(Boolean);
+      } else {
+        recommendedArticles = articles.filter((article) => Number(article.score || 0) >= 3)
+          .sort((a, b) => Number(b.score || 0) - Number(a.score || 0)).slice(0, 12);
+        const recommendedIds = new Set(recommendedArticles.map((article) => String(article.id)));
+        otherArticles = articles.filter((article) => !recommendedIds.has(String(article.id)));
+      }
       $("#history-count").textContent = `${articles.length} 篇论文 · ${formatDate(date)}`;
       $("#history-updated").textContent = day.generated_at ? `记录生成于 ${formatDate(day.generated_at, true)}` : "";
-      list.replaceChildren();
+      recommendedList.replaceChildren();
+      otherList.replaceChildren();
       if (!articles.length) {
-        list.append(emptyState("这一天没有收录记录", "当日数据可能没有命中，或来源暂时没有成功返回。"));
+        recommendedList.append(emptyState("这一天没有收录记录", "当日数据可能没有命中，或来源暂时没有成功返回。"));
+        otherList.append(emptyState("这一天没有收录记录", "当日数据可能没有命中，或来源暂时没有成功返回。"));
         return;
       }
-      articles.forEach((article, index) => list.append(articleCard(article, index)));
+      if (recommendedArticles.length) {
+        recommendedArticles.forEach((article, index) => recommendedList.append(todayArticleCard(article, index)));
+      } else {
+        recommendedList.append(emptyState("这一天没有推荐文章", "没有文章达到当日标签推荐门槛。"));
+      }
+      if (otherArticles.length) {
+        otherArticles.forEach((article) => otherList.append(todayOtherArticleRow(article)));
+      } else {
+        otherList.append(emptyState("没有其他文章", "这一天的文章都已进入推荐区。"));
+      }
     }
 
     dateSelect.addEventListener("change", render);
     render();
   } catch (error) {
-    list.replaceChildren(errorState(`请稍后重试。${error.message}`));
+    recommendedList.replaceChildren(errorState(`请稍后重试。${error.message}`));
+    otherList.replaceChildren(errorState(`请稍后重试。${error.message}`));
   }
 }
 

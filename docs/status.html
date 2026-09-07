@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Scholarly Tracker 自动更新运行状态。">
-  <meta name="theme-color" content="#f4f0e8">
+  <meta name="theme-color" content="#fafaf8">
   <title>运行状态 · Scholarly Tracker</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/style.css?v=1.1.0">
-  <script src="assets/app.js?v=1.1.0" defer></script>
+  <link rel="stylesheet" href="assets/style.css?v=1.3.0">
+  <script src="assets/app.js?v=1.3.0" defer></script>
 </head>
 <body data-page="status">
   <header class="site-header">
@@ -25,16 +25,16 @@
 
   <main>
     <section class="page-title status-title">
-      <div><p class="eyebrow">SYSTEM HEALTH</p><h1>运行状态</h1><p>昨日邮件窗口、解析器、摘要补全和数据规模一览。</p></div>
+      <div><h1>运行状态</h1><p>昨日邮件窗口、解析器、摘要补全和数据规模一览。</p></div>
       <div id="overall-status" class="status-orb pending"><span></span><strong>读取中</strong></div>
     </section>
     <section id="status-summary" class="status-summary" aria-live="polite"></section>
     <section class="content-section compact">
-      <div class="section-heading"><div><p class="eyebrow">GMAIL IMAP</p><h2>邮箱读取</h2></div></div>
+      <div class="section-heading"><div><h2>邮箱读取</h2></div></div>
       <div id="feed-status" class="feed-grid"><div class="loading">正在读取运行记录…</div></div>
     </section>
     <section class="content-section compact">
-      <div class="section-heading"><div><p class="eyebrow">PARSERS &amp; ABSTRACTS</p><h2>解析与网页摘要</h2></div></div>
+      <div class="section-heading"><div><h2>解析与网页摘要</h2></div></div>
       <div id="crossref-status" class="crossref-panel"></div>
     </section>
     <aside class="manual-note">
@@ -43,6 +43,6 @@
     </aside>
   </main>
 
-  <footer><span>Scholarly Tracker</span><span>Gmail IMAP · DOI pages · GitHub Pages</span></footer>
+  <footer><span>Scholarly Tracker</span><span>每日期刊资讯</span></footer>
 </body>
 </html>

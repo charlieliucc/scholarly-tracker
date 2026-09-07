@@ -45,6 +45,13 @@ class MailRegressionTests(unittest.TestCase):
         self.assertEqual(articles[0]['published'], '2026-09-03')
         self.assertEqual(articles[0]['abstract'], '')
 
+    def test_elsevier_full_issue_link_is_not_an_article(self):
+        body = '''
+        <a href="https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fjournal%2Fjournal-of-english-for-academic-purposes%2Fvol%2F83%2Fsuppl%2FC%3Fdgcid=raven_sd_via_email/3/010001a074b6935a-848ee069-0f24-4e5f-a229-d7f4f8e46bef-000000/k5HmOqdHNKKdnUdrJhCNRst45m_yOn334JkTrThiQnY=452">
+          Read the full issue on ScienceDirect
+        </a>'''
+        self.assertEqual(self.parse(body, 'elsevier'), [])
+
     def test_wiley_section_heading_not_part_of_title(self):
         articles = self.parse('<p>Journal of Computer Assisted Learning</p><p>Volume 42, Issue 5</p><p>ORIGINAL ARTICLE</p><p>Interactive and Intelligent Learning Environments</p><a href="https://el.wiley.com/a">Teacher Readiness for Interactive Learning</a><p>Ayşe Eminoğlu Güven,</p><p>İbrahim Savran</p><p>e70316</p><p>| First Published: 01 September 2026</p>', 'wiley')
         self.assertEqual(len(articles), 1)
@@ -60,11 +67,11 @@ class MailRegressionTests(unittest.TestCase):
 
     def test_legacy_navigation_removed_and_label_not_kept_as_abstract(self):
         base = {'metadata_source': 'email', 'abstract_source': 'email', 'publisher': 'Taylor & Francis', 'journal': 'Feedback Journal', 'url': 'https://url.tandfonline.com/a'}
-        old = [dict(base, id='button', title='Read article'), dict(base, id='journal', title='Feedback Journal'), dict(base, id='domain', title='www.isatt.org'), dict(base, id='paper', title='Feedback in teaching research', abstract='Research Article')]
+        old = [dict(base, id='button', title='Read article'), dict(base, id='issue', title='Read the full issue on ScienceDirect'), dict(base, id='journal', title='Feedback Journal'), dict(base, id='domain', title='www.isatt.org'), dict(base, id='paper', title='Feedback in teaching research', abstract='Research Article')]
         result = clean_legacy_email_articles(old)
         self.assertEqual([a['id'] for a in result], ['paper'])
         self.assertEqual(result[0]['abstract'], '')
-        self.assertEqual(old[3]['abstract'], 'Research Article')
+        self.assertEqual(old[4]['abstract'], 'Research Article')
 
 
 class MetadataFallbackTests(unittest.TestCase):

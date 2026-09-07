@@ -592,6 +592,12 @@ class BuildTests(unittest.TestCase):
             self.assertEqual(len(homepage["articles"]), 1)
             self.assertEqual(len(homepage["other_articles"]), 1)
             self.assertEqual(homepage["other_articles"][0]["title"], "Unrelated study")
+            history = json.loads((root / "data" / "history.json").read_text(encoding="utf-8"))
+            day = history["days"]["2026-08-22"]
+            papers = json.loads((root / "data" / "papers.json").read_text(encoding="utf-8"))["articles"]
+            title_by_id = {article["id"]: article["title"] for article in papers}
+            self.assertEqual([title_by_id[item] for item in day["recommended_article_ids"]], ["Feedback study"])
+            self.assertEqual([title_by_id[item] for item in day["other_article_ids"]], ["Unrelated study"])
 
     def test_build_skips_entries_outside_yesterday_window(self) -> None:
         config = {

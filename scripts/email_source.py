@@ -27,7 +27,7 @@ from typing import Any, Callable, Iterable, Optional
 DOI_RE = re.compile(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", re.IGNORECASE)
 SPACE_RE = re.compile(r"\s+")
 BOILERPLATE = re.compile(
-    r"(?:manage (?:(?:your|my) )?alerts|unsubscribe|privacy policy|terms and conditions|view in browser|read now|click here to read)",
+    r"(?:manage (?:(?:your|my) )?alerts|unsubscribe|privacy policy|terms and conditions|view in browser|read now|click here to read|read the full issue(?: on sciencedirect)?)",
     re.IGNORECASE,
 )
 URL_LIKE_TITLE = re.compile(

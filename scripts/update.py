@@ -106,6 +106,55 @@ def normalized_text(value: str) -> str:
     return SPACE_RE.sub(" ", value).strip()
 
 
+def split_recommendations(
+    articles: Iterable[dict[str, Any]], recommendation_config: dict[str, Any]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Split one daily batch exactly as the homepage does."""
+    values = list(articles)
+    minimum_score = float(recommendation_config.get("minimum_score", 1))
+    recommended = [article for article in values if article.get("score", 0) >= minimum_score]
+    recommended.sort(
+        key=lambda article: (
+            article.get("score", 0),
+            article.get("feed_timestamp") or article.get("published", ""),
+        ),
+        reverse=True,
+    )
+    recommended = recommended[: int(recommendation_config.get("limit", 12))]
+    recommended_ids = {str(article.get("id", "")) for article in recommended}
+    other_articles = [
+        article for article in values if str(article.get("id", "")) not in recommended_ids
+    ]
+    other_articles.sort(
+        key=lambda article: (
+            article.get("score", 0),
+            article.get("feed_timestamp") or article.get("published", ""),
+        ),
+        reverse=True,
+    )
+    return recommended, other_articles
+
+
+def add_history_groups(
+    history_days: dict[str, Any],
+    articles: Iterable[dict[str, Any]],
+    recommendation_config: dict[str, Any],
+) -> None:
+    """Persist recommendation groups so history never guesses the score threshold."""
+    by_id = {str(article.get("id", "")): article for article in articles if article.get("id")}
+    for day in history_days.values():
+        if not isinstance(day, dict) or not isinstance(day.get("article_ids"), list):
+            continue
+        daily_articles = [
+            by_id[str(article_id)]
+            for article_id in day["article_ids"]
+            if str(article_id) in by_id
+        ]
+        recommended, other_articles = split_recommendations(daily_articles, recommendation_config)
+        day["recommended_article_ids"] = [str(article["id"]) for article in recommended]
+        day["other_article_ids"] = [str(article["id"]) for article in other_articles]
+
+
 def parse_date(value: str) -> str:
     value = clean_html(value)
     if not value:
@@ -1236,14 +1285,7 @@ def _build_legacy(config_path: Path, output_dir: Path, now: Optional[datetime] =
     )
     recommendation_config = config.get("recommendations", {})
     processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
-    recommended = [article for article in processed_articles if article.get("score", 0) >= float(recommendation_config.get("minimum_score", 1))]
-    recommended.sort(key=lambda article: (article.get("score", 0), article.get("published", "")), reverse=True)
-    recommended = recommended[: int(recommendation_config.get("limit", 12))]
-    recommended_ids = {str(article.get("id", "")) for article in recommended}
-    other_articles = [
-        article for article in processed_articles if str(article.get("id", "")) not in recommended_ids
-    ]
-    other_articles.sort(key=lambda article: (article.get("score", 0), article.get("published", "")), reverse=True)
+    recommended, other_articles = split_recommendations(processed_articles, recommendation_config)
     failures = sum(1 for source in source_status if source["status"] == "error")
     if source_status and failures == len(source_status):
         outcome = "error" if not articles else "stale"
@@ -1297,6 +1339,7 @@ def _build_legacy(config_path: Path, output_dir: Path, now: Optional[datetime] =
             "generated_at": run_at,
             "article_ids": sorted(set(old_ids) | set(batch_ids)),
         }
+        add_history_groups(history_days, articles, recommendation_config)
         write_json(
             output_dir / "history.json",
             {"version": 1, "generated_at": run_at, "days": history_days},
@@ -1547,13 +1590,7 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
     )
     processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
     recommendation_cfg = config.get("recommendations", {})
-    minimum_score = float(recommendation_cfg.get("minimum_score", 1))
-    recommended = [article for article in processed_articles if article.get("score", 0) >= minimum_score]
-    recommended.sort(key=lambda article: (article.get("score", 0), article.get("feed_timestamp", "")), reverse=True)
-    recommended = recommended[: int(recommendation_cfg.get("limit", 12))]
-    recommended_ids = {str(article.get("id", "")) for article in recommended}
-    other_articles = [article for article in processed_articles if str(article.get("id", "")) not in recommended_ids]
-    other_articles.sort(key=lambda article: (article.get("score", 0), article.get("feed_timestamp", "")), reverse=True)
+    recommended, other_articles = split_recommendations(processed_articles, recommendation_cfg)
 
     if fetch_error:
         outcome = "stale" if previous else "error"
@@ -1596,6 +1633,7 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
         old_ids = old_day.get("article_ids", []) if isinstance(old_day, dict) else []
         batch_ids = [str(article.get("id", "")) for article in fetched if article.get("id")]
         history_days[batch_date.isoformat()] = {"generated_at": run_at, "article_ids": sorted(set(old_ids if isinstance(old_ids, list) else []) | set(batch_ids))}
+        add_history_groups(history_days, articles, recommendation_cfg)
         write_json(output_dir / "history.json", {"version": 1, "generated_at": run_at, "days": history_days})
     return status_payload
 
