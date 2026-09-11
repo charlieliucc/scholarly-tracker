@@ -49,6 +49,16 @@ function scoreLabel(score) {
   return `${value > 0 ? "+" : ""}${Number.isInteger(value) ? value : value.toFixed(1)}`;
 }
 
+function hasCompleteAbstract(article) {
+  const abstract = String(article.abstract || "").trim();
+  return Boolean(abstract) && !abstract.endsWith("...") && !abstract.endsWith("…");
+}
+
+function doiLink(article) {
+  if (!article.doi) return null;
+  return externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link");
+}
+
 function articleTags(article) {
   const matches = article.matched_keywords || [];
   if (!matches.length) return null;
@@ -81,12 +91,13 @@ function articleCard(article, index) {
   const authors = element("p", "authors", authorText);
   if (authorText !== rawAuthors) authors.title = rawAuthors;
   const actions = element("div", "paper-actions");
-  if (article.doi) actions.append(externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link"));
+  const doi = doiLink(article);
+  if (doi) actions.append(doi);
   const score = element("span", `score ${Number(article.score) < 0 ? "negative" : ""}`, `${scoreLabel(article.score)} 分`);
   actions.append(score);
 
   body.append(meta, title, authors);
-  if (article.abstract) {
+  if (hasCompleteAbstract(article)) {
     const details = element("details", "abstract");
     details.append(element("summary", "", "查看摘要"), element("p", "", article.abstract));
     body.append(details);
@@ -125,14 +136,12 @@ function todayPaperInfo(article) {
   return info;
 }
 
-function todayDetails(article, summaryText = "查看详细信息") {
+function todayDetails(article) {
+  if (!hasCompleteAbstract(article)) return null;
   const details = element("details", "today-details");
-  details.append(element("summary", "", summaryText));
+  details.append(element("summary", "", "查看摘要"));
   const content = element("div", "today-details-content");
-  const metadata = element("div", "today-detail-meta");
-  if (article.doi) metadata.append(externalLink(article.doi_url || `https://doi.org/${article.doi}`, `DOI ${article.doi}`, "doi-link"));
-  if (metadata.childNodes.length) content.append(metadata);
-  if (article.abstract) content.append(element("p", "today-abstract", article.abstract));
+  content.append(element("p", "today-abstract", article.abstract));
   details.append(content);
   return details;
 }
@@ -150,7 +159,14 @@ function todayArticleCard(article, index) {
   const tags = articleTags(article);
   body.append(header, title, todayPaperInfo(article));
   if (tags) body.append(tags);
-  body.append(todayDetails(article, "查看摘要和 DOI"));
+  const doi = doiLink(article);
+  if (doi) {
+    const actions = element("div", "paper-actions");
+    actions.append(doi);
+    body.append(actions);
+  }
+  const details = todayDetails(article);
+  if (details) body.append(details);
   card.append(rank, body);
   return card;
 }
@@ -167,7 +183,12 @@ function todayOtherArticleRow(article) {
   const tags = articleTags(article);
   body.append(header, title, todayPaperInfo(article));
   if (tags) body.append(tags);
-  body.append(todayDetails(article));
+  const doi = doiLink(article);
+  if (doi) {
+    const actions = element("div", "paper-actions");
+    actions.append(doi);
+    body.append(actions);
+  }
   card.append(body);
   return card;
 }
@@ -195,6 +216,7 @@ async function initToday() {
     $("#today-label").textContent = generatedAt ? formatDate(generatedAt, true) : "时间待更新";
     $("#new-count").textContent = status.counts?.items_in_window ?? status.counts?.new_today ?? "—";
     $("#recommend-count").textContent = status.counts?.recommended_today ?? articles.length;
+    $("#seven-day-count").textContent = status.counts?.all_articles ?? "—";
     list.replaceChildren();
     if (!articles.length) {
       list.append(emptyState("本次更新没有推荐文章", "没有文章达到当前标签推荐门槛。"));
