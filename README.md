@@ -36,6 +36,7 @@
 - `history_retention_days`：历史记录和论文元数据的滚动保留天数，当前为 7 天。
 - `window.timezone`：计算昨日窗口的 IANA 时区，默认 `Asia/Shanghai`。
 - `ranking.keywords`：配置用于筛选和展示的标签；正数提高推荐得分，负数降低得分。
+- 同一 `group` 的标签在每篇论文中只计分一次；优先取标题命中，避免宽泛 AI 表述重复加分。
 - `title_multiplier`：标签出现在标题中的权重倍率。
 - `recommendations.minimum_score`：进入今日推荐的最低分。
 - `recommendations.limit`：今日推荐最多显示的篇数。

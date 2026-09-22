@@ -81,6 +81,7 @@ main { width: min(1180px, calc(100% - 48px)); margin: 0 auto; min-height: calc(1
 .today-paper-card h3 a, .other-paper-row h3 a { text-decoration: none; background-image: linear-gradient(var(--orange), var(--orange)); background-size: 0 1px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size 220ms ease; }
 .today-paper-card h3 a:hover, .other-paper-row h3 a:hover { background-size: 100% 1px; }
 .today-paper-info { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 9px; color: var(--muted); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.today-open-access { color: var(--green); font-weight: 600; }
 .today-details { margin-top: 12px; color: var(--muted); font-size: 12px; }
 .today-details summary { width: max-content; cursor: pointer; color: var(--green); }
 .today-details-content { display: grid; gap: 12px; padding-top: 12px; }

@@ -44,6 +44,46 @@ class MailRegressionTests(unittest.TestCase):
         self.assertEqual(articles[1]['authors'], ['Jane Doe'])
         self.assertEqual(articles[0]['published'], '2026-09-03')
         self.assertEqual(articles[0]['abstract'], '')
+        self.assertTrue(all(article['is_open_access'] for article in articles))
+
+    def test_open_access_belongs_to_its_article_for_all_three_publishers(self):
+        cases = (
+            ('elsevier', '<p>Open Access - Research article</p>'),
+            ('tf', '<p>Open Access</p>'),
+            ('wiley', '<img alt="Open Access">'),
+        )
+        for publisher, label in cases:
+            with self.subTest(publisher=publisher):
+                body = (
+                    '<a href="https://' + {
+                        'elsevier': 'click.notification.elsevier.com',
+                        'tf': 'url.tandfonline.com',
+                        'wiley': 'el.wiley.com',
+                    }[publisher] + '/first">Research on digital teaching</a>'
+                    + label + '<p>Available Online 21 September 2026</p><p>Jane Doe</p>'
+                    + '<a href="https://' + {
+                        'elsevier': 'click.notification.elsevier.com',
+                        'tf': 'url.tandfonline.com',
+                        'wiley': 'el.wiley.com',
+                    }[publisher] + '/second">Learning in higher education</a>'
+                    + '<p>Available Online 21 September 2026</p><p>John Smith</p>'
+                )
+                articles = self.parse(body, publisher)
+                self.assertEqual(len(articles), 2)
+                self.assertTrue(articles[0]['is_open_access'])
+                self.assertFalse(articles[1]['is_open_access'])
+
+    def test_open_access_before_wiley_title_is_recognized(self):
+        body = ('<a href="https://el.wiley.com/first">Research on digital teaching</a>'
+                '<p>Jane Doe</p><p>| First Published: 20 September 2026</p>'
+                '<p>ORIGINAL ARTICLE</p><p>OPEN ACCESS</p>'
+                '<a href="https://el.wiley.com/a">Teacher Readiness for Interactive Learning</a>'
+                '<p>Jane Doe</p><p>| First Published: 21 September 2026</p>')
+        articles = self.parse(body, 'wiley')
+        self.assertEqual(len(articles), 2)
+        self.assertFalse(articles[0]['is_open_access'])
+        self.assertTrue(articles[1]['is_open_access'])
+        self.assertEqual(articles[1]['published'], '2026-09-21')
 
     def test_elsevier_full_issue_link_is_not_an_article(self):
         body = '''

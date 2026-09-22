@@ -133,6 +133,7 @@ function todayPaperInfo(article) {
   const info = element("div", "today-paper-info");
   info.append(element("span", "today-authors", `作者：${(article.authors || []).join(" · ") || "作者信息待补全"}`));
   if (article.published) info.append(element("span", "today-publication", `发表：${formatPublicationDate(article)}`));
+  if (article.is_open_access === true) info.append(element("span", "today-open-access", "Open access"));
   return info;
 }
 

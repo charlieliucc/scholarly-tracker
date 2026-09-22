@@ -35,6 +35,8 @@ URL_LIKE_TITLE = re.compile(
     r"(?::\d{1,5})?(?:/[^\s]*)?$",
     re.IGNORECASE,
 )
+OPEN_ACCESS_LABEL = re.compile(r"^open[\s-]+access(?:\s*[-|:]\s*(?:research|review|original|full)\s+article|\s+article)?$", re.I)
+ARTICLE_TYPE_LABEL = re.compile(r"^(?:research|review|original|full)\s+article$", re.I)
 
 
 def clean_text(value: Any) -> str:
@@ -271,12 +273,18 @@ class AnchorParser(HTMLParser):
         self.parts = []
         self.active = None
         self.skip = 0
+        self.open_access_positions = []
 
     def handle_starttag(self, tag, attrs):
         if tag in {"head", "script", "style"}:
             self.skip += 1
         if self.skip:
             return
+        if any(
+            OPEN_ACCESS_LABEL.fullmatch(clean_text(dict(attrs).get(name, "")))
+            for name in ("alt", "aria-label", "title")
+        ):
+            self.open_access_positions.append(len(self.parts))
         if tag in self.BLOCKS:
             self.parts.append("\n")
         if tag == "a":
@@ -319,6 +327,8 @@ def _block_metadata(publisher: str, block: str) -> tuple[str, str]:
     authors = []
     abstract = []
     for line in lines:
+        if OPEN_ACCESS_LABEL.fullmatch(line):
+            continue
         if re.search(r"^(?:Read article|New Articles in Press|First Published|Version of Record|Online Version|Manage|Unsubscribe|You are receiving|To update|Open Access|Research article|Full Article|Original Article|\||e\d{4,})\b", line, re.I):
             break
         if _author_line(line) and (not abstract or publisher == "Nature"):
@@ -332,6 +342,21 @@ def _block_metadata(publisher: str, block: str) -> tuple[str, str]:
         elif authors:
             break
     return ", ".join(authors), " ".join(abstract)
+
+
+def _has_open_access_label(block: str) -> bool:
+    return any(OPEN_ACCESS_LABEL.fullmatch(clean_text(line)) for line in block.splitlines())
+
+
+def _open_access_prelude_start(parts: list[str], start: int, end: int, markers: list[int]) -> Optional[int]:
+    """Find an article-type heading followed only by an OA badge before a title."""
+    for position in range(end - 1, start - 1, -1):
+        if not ARTICLE_TYPE_LABEL.fullmatch(clean_text(parts[position])):
+            continue
+        suffix = clean_text("".join(parts[position + 1:end]))
+        if OPEN_ACCESS_LABEL.fullmatch(suffix) or (not suffix and any(position < marker < end for marker in markers)):
+            return position
+    return None
 
 
 def _article(journal: str, publisher: str, title: str, url: str, authors: str, snippet: str, received: datetime) -> dict[str, Any]:
@@ -448,10 +473,20 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
             if section != "Work":
                 continue
         next_start = parser.anchors[index + 1][2] if index + 1 < len(parser.anchors) else len(parser.parts)
-        block = "".join(parser.parts[end:next_start])
+        next_prelude = _open_access_prelude_start(parser.parts, end, next_start, parser.open_access_positions)
+        block_end = next_prelude if next_prelude is not None else next_start
+        block = "".join(parser.parts[end:block_end])
+        previous_end = parser.anchors[index - 1][3] if index else 0
+        preceding_start = _open_access_prelude_start(parser.parts, previous_end, start, parser.open_access_positions)
+        preceding_label = preceding_start is not None
         authors, snippet = _block_metadata(publisher, block)
         article = _article(journal, publisher, title, url, authors, snippet, message.received_at)
         article["published"], article["publication_text"] = extract_publication_date(block)
+        article["is_open_access"] = bool(
+            _has_open_access_label(block)
+            or any(end <= position < block_end for position in parser.open_access_positions)
+            or preceding_label
+        )
         articles.append(article)
     if publisher == "SAGE" and not articles:
         plain = message.text_body or "".join(parser.parts)

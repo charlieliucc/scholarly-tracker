@@ -834,7 +834,12 @@ def score_article(article: dict[str, Any], settings: dict[str, Any]) -> tuple[fl
     details_multiplier = float(settings.get("details_multiplier", 1.0))
     matches: list[dict[str, Any]] = []
     total = 0.0
+    grouped_entries: dict[str, list[dict[str, Any]]] = {}
     for entry in settings.get("keywords", []):
+        group = entry.get("group")
+        if group:
+            grouped_entries.setdefault(str(group), []).append(entry)
+            continue
         keyword = normalized_text(str(entry.get("term", "")))
         if not keyword:
             continue
@@ -857,6 +862,32 @@ def score_article(article: dict[str, Any], settings: dict[str, Any]) -> tuple[fl
                     "contribution": round(contribution, 2),
                 }
             )
+    # A group of broad aliases contributes once per article, favoring a title hit.
+    for entries in grouped_entries.values():
+        for field, content, multiplier in (
+            ("title", title, title_multiplier),
+            ("details", details, details_multiplier),
+        ):
+            matched_entry = None
+            for entry in entries:
+                keyword = normalized_text(str(entry.get("term", "")))
+                if keyword and keyword in content:
+                    matched_entry = entry
+                    break
+            if matched_entry is None:
+                continue
+            weight = float(matched_entry.get("weight", 0))
+            contribution = weight * multiplier
+            total += contribution
+            matches.append(
+                {
+                    "keyword": matched_entry["term"],
+                    "weight": weight,
+                    "fields": [field],
+                    "contribution": round(contribution, 2),
+                }
+            )
+            break
     matches.sort(key=lambda item: abs(item["contribution"]), reverse=True)
     return round(total, 2), matches
 
@@ -895,6 +926,7 @@ def merge_articles(previous: Iterable[dict[str, Any]], incoming: Iterable[dict[s
             for key, value in article.items():
                 if value not in (None, "", []):
                     merged[key] = value
+            merged["is_open_access"] = bool(old.get("is_open_access") or article.get("is_open_access"))
             merged["first_seen"] = first_seen
             records[position] = merged
         for key in identity_keys(records[position]):

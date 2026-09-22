@@ -171,6 +171,36 @@ class EmailParserTests(unittest.TestCase):
 
 
 class EmailBuildTests(unittest.TestCase):
+    def test_open_access_without_keyword_match_stays_in_other_articles(self) -> None:
+        config = {
+            "mail": {},
+            "ranking": {"keywords": [{"term": "feedback", "weight": 3}]},
+            "recommendations": {"minimum_score": 1},
+            "metadata_fallback": {"enabled": False},
+            "doi_page": {"enabled": False},
+        }
+        message = MailMessage(
+            "oa-1", "INBOX", datetime(2026, 9, 21, 12, tzinfo=timezone.utc),
+            "sciencedirect@notification.elsevier.com", "Test Journal: Alert",
+            '<a href="https://click.notification.elsevier.com/article/1">Research on digital teaching</a>'
+            '<p>Open Access - Research article</p><p>Available Online 21 September 2026</p>', "",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+                "scripts.update.fetch_messages",
+                return_value=([message], {"folders": [], "candidate_count": 1, "duplicate_count": 0}),
+            ):
+                build(config_path, root / "data", now=datetime(2026, 9, 22, 12, tzinfo=timezone.utc))
+            output = json.loads((root / "data" / "recommendations.json").read_text(encoding="utf-8"))
+            self.assertEqual(output["articles"], [])
+            article = output["other_articles"][0]
+            self.assertEqual(article["matched_keywords"], [])
+            self.assertEqual(article["published"], "2026-09-21")
+            self.assertTrue(article["is_open_access"])
+
     def test_email_build_prunes_history_and_papers_to_seven_days(self) -> None:
         config = {
             "mail": {},
@@ -308,6 +338,27 @@ class EmailBuildTests(unittest.TestCase):
         fetch_calls = [call for call in FakeIMAP.instances[0].calls if call[0] == "fetch"]
         self.assertTrue(all("BODY.PEEK" in call[1][1] for call in fetch_calls))
 class RankingTests(unittest.TestCase):
+    def test_broad_ai_terms_share_one_low_weight_score(self) -> None:
+        config = json.loads((ROOT / "config" / "journals.json").read_text(encoding="utf-8"))
+        settings = config["ranking"]
+        for term in ("GenAI", "generative AI", "artificial intelligence"):
+            with self.subTest(term=term):
+                score, matches = score_article({"title": term, "abstract": term, "authors": []}, settings)
+                self.assertEqual(score, 2)
+                self.assertEqual([item["keyword"] for item in matches], [term])
+
+        score, matches = score_article(
+            {"title": "GenAI, generative AI and artificial intelligence", "abstract": "GenAI", "authors": []},
+            settings,
+        )
+        self.assertEqual(score, 2)
+        self.assertEqual(len(matches), 1)
+
+        score, _ = score_article(
+            {"title": "A teaching study", "abstract": "GenAI in assessment", "authors": []}, settings
+        )
+        self.assertEqual(score, config["recommendations"]["minimum_score"])
+
     def test_weighted_title_and_details_scoring_is_explainable(self) -> None:
         article = {"title": "Feedback in L2 writing", "abstract": "An assessment study", "authors": []}
         settings = {
@@ -330,6 +381,11 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(len(merged), 1)
         self.assertEqual(merged[0]["first_seen"], "2026-08-01T00:00:00Z")
         self.assertEqual(merged[0]["doi"], "10.1234/test")
+
+    def test_merge_preserves_confirmed_open_access(self) -> None:
+        old = {"id": "old", "title": "Same title", "journal": "J", "is_open_access": True}
+        new = {"id": "new", "title": "Same title", "journal": "J", "is_open_access": False}
+        self.assertTrue(merge_articles([old], [new])[0]["is_open_access"])
 
     def test_detects_biography_in_author_field(self) -> None:
         value = ["Jane Doe Department of Education, Example University. Jane is a professor whose research interests include assessment."]
