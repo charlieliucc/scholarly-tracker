@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-03T13:18:37Z",
-  "outcome": "success",
-  "last_success_at": "2026-09-03T13:18:37Z",
+  "generated_at": "2026-09-30T20:25:10Z",
+  "outcome": "partial",
+  "last_success_at": "2026-09-27T19:25:23Z",
   "window": {
     "timezone": "Asia/Shanghai",
-    "start": "2026-09-02T00:00:00+08:00",
-    "end": "2026-09-03T00:00:00+08:00"
+    "start": "2026-09-30T00:00:00+08:00",
+    "end": "2026-10-01T00:00:00+08:00"
   },
   "email": {
     "status": "ok",
@@ -14,8 +14,8 @@
       {
         "name": "INBOX",
         "status": "ok",
-        "candidates": 0,
-        "in_window": 0
+        "candidates": 13,
+        "in_window": 2
       },
       {
         "name": "[Gmail]/&V4NXPpCuTvY-",
@@ -24,30 +24,45 @@
         "in_window": 0
       }
     ],
-    "candidate_count": 0,
-    "messages_in_window": 0,
+    "candidate_count": 13,
+    "messages_in_window": 2,
     "duplicates": 0,
-    "recognized_alerts": 0,
+    "recognized_alerts": 2,
     "unrecognized": 0,
     "empty_alerts": 0,
     "parser_errors": 0
   },
-  "parsers": [],
+  "parsers": [
+    {
+      "name": "Elsevier",
+      "articles": 2
+    },
+    {
+      "name": "Taylor & Francis",
+      "articles": 1
+    }
+  ],
   "abstracts": {
-    "attempted": 0,
+    "attempted": 2,
     "replaced": 0,
     "doi_discovered": 0,
-    "unavailable": 0,
-    "errors": 0,
-    "skipped_low_score": 0
+    "unavailable": 1,
+    "errors": 1,
+    "skipped_low_score": 1,
+    "metadata_fallback": {
+      "attempted": 3,
+      "matched": 3,
+      "abstracts_replaced": 0,
+      "errors": 2
+    }
   },
   "counts": {
-    "fetched_this_run": 0,
-    "processed_this_run": 0,
-    "new_today": 0,
-    "items_in_window": 0,
-    "recommended_today": 0,
-    "other_today": 0,
-    "all_articles": 0
+    "fetched_this_run": 3,
+    "processed_this_run": 3,
+    "new_today": 3,
+    "items_in_window": 3,
+    "recommended_today": 2,
+    "other_today": 1,
+    "all_articles": 42
   }
 }

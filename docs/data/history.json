@@ -1,10 +1,152 @@
 {
   "version": 1,
-  "generated_at": "2026-09-03T13:18:37Z",
+  "generated_at": "2026-09-30T20:25:10Z",
   "days": {
-    "2026-09-02": {
-      "generated_at": "2026-09-03T13:18:37Z",
-      "article_ids": []
+    "2026-09-24": {
+      "generated_at": "2026-09-24T19:38:19Z",
+      "article_ids": [
+        "060d8f52427d97c79ab2",
+        "124e975b1369c99c9624",
+        "1c6d35d0721c6d3bd788",
+        "22d95a7a4b1f23468b1b",
+        "2d966d37af93709a81da",
+        "353910fc04fbef665722",
+        "4829c4facd35010898e6",
+        "493f636313f70cda1562",
+        "5a8e6a19fe83b3b67f57",
+        "5c74068dffc4298540cb",
+        "6297c54be3083a347032",
+        "685dd2e1f5d23fedc5f4",
+        "9b61695c584ea6acc25b",
+        "b370ac41be0eea78331b",
+        "bdd906fd6753c4a398ec",
+        "df68b40070f9521b6660",
+        "e01aef9142f4e0eb0ea2",
+        "e8667b10ea1b7b9acd9a"
+      ],
+      "recommended_article_ids": [
+        "e8667b10ea1b7b9acd9a",
+        "df68b40070f9521b6660",
+        "5c74068dffc4298540cb",
+        "b370ac41be0eea78331b",
+        "bdd906fd6753c4a398ec",
+        "2d966d37af93709a81da"
+      ],
+      "other_article_ids": [
+        "22d95a7a4b1f23468b1b",
+        "6297c54be3083a347032",
+        "5a8e6a19fe83b3b67f57",
+        "e01aef9142f4e0eb0ea2",
+        "9b61695c584ea6acc25b",
+        "060d8f52427d97c79ab2",
+        "493f636313f70cda1562",
+        "124e975b1369c99c9624",
+        "1c6d35d0721c6d3bd788",
+        "353910fc04fbef665722",
+        "4829c4facd35010898e6",
+        "685dd2e1f5d23fedc5f4"
+      ]
+    },
+    "2026-09-25": {
+      "generated_at": "2026-09-25T19:43:22Z",
+      "article_ids": [
+        "abe7733b16be2c17e96a",
+        "baede371d30de7a1605e",
+        "d90740f00c13c7fdc53c"
+      ],
+      "recommended_article_ids": [
+        "baede371d30de7a1605e"
+      ],
+      "other_article_ids": [
+        "d90740f00c13c7fdc53c",
+        "abe7733b16be2c17e96a"
+      ]
+    },
+    "2026-09-26": {
+      "generated_at": "2026-09-26T18:52:44Z",
+      "article_ids": [
+        "54c13f7c45f5942b73bf",
+        "6b1117329ff35e488298",
+        "c3daaf2333c6e4b91c2f",
+        "cd6c663d62cb305039d9",
+        "eac33a90fada75ac9851"
+      ],
+      "recommended_article_ids": [
+        "cd6c663d62cb305039d9",
+        "54c13f7c45f5942b73bf",
+        "eac33a90fada75ac9851"
+      ],
+      "other_article_ids": [
+        "6b1117329ff35e488298",
+        "c3daaf2333c6e4b91c2f"
+      ]
+    },
+    "2026-09-27": {
+      "generated_at": "2026-09-27T19:25:23Z",
+      "article_ids": [
+        "cee5ee3269c838f8ee55"
+      ],
+      "recommended_article_ids": [],
+      "other_article_ids": [
+        "cee5ee3269c838f8ee55"
+      ]
+    },
+    "2026-09-28": {
+      "generated_at": "2026-09-28T21:28:50Z",
+      "article_ids": [
+        "4f693e2889b540af0dc2",
+        "5b948eb19a1216f0f6f0",
+        "6675c1451bb3514b9e12",
+        "9008881a33c05f317647",
+        "a98674efadbe4f2995bc"
+      ],
+      "recommended_article_ids": [
+        "5b948eb19a1216f0f6f0"
+      ],
+      "other_article_ids": [
+        "4f693e2889b540af0dc2",
+        "6675c1451bb3514b9e12",
+        "a98674efadbe4f2995bc",
+        "9008881a33c05f317647"
+      ]
+    },
+    "2026-09-29": {
+      "generated_at": "2026-09-29T20:21:28Z",
+      "article_ids": [
+        "2457eb0653675580c0c8",
+        "27537a4dd3bb0cbb4e91",
+        "32fb6d2489d8a6a57cf1",
+        "52bddfbb50550742bcc6",
+        "5cad86d8c4317db29249",
+        "8a37422970c208dc23c9",
+        "ce785c4fdd57fff45b88"
+      ],
+      "recommended_article_ids": [
+        "32fb6d2489d8a6a57cf1"
+      ],
+      "other_article_ids": [
+        "8a37422970c208dc23c9",
+        "ce785c4fdd57fff45b88",
+        "52bddfbb50550742bcc6",
+        "27537a4dd3bb0cbb4e91",
+        "2457eb0653675580c0c8",
+        "5cad86d8c4317db29249"
+      ]
+    },
+    "2026-09-30": {
+      "generated_at": "2026-09-30T20:25:10Z",
+      "article_ids": [
+        "176bd2a186fbf204f9d6",
+        "7131e9f02495af68412d",
+        "9e588af4ff0843f8cecb"
+      ],
+      "recommended_article_ids": [
+        "9e588af4ff0843f8cecb",
+        "176bd2a186fbf204f9d6"
+      ],
+      "other_article_ids": [
+        "7131e9f02495af68412d"
+      ]
     }
   }
 }

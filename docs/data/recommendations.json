@@ -1,11 +1,142 @@
 {
-  "generated_at": "2026-09-03T13:18:37Z",
-  "date": "2026-09-02",
+  "generated_at": "2026-09-30T20:25:10Z",
+  "date": "2026-09-30",
   "window": {
     "timezone": "Asia/Shanghai",
-    "start": "2026-09-02T00:00:00+08:00",
-    "end": "2026-09-03T00:00:00+08:00"
+    "start": "2026-09-30T00:00:00+08:00",
+    "end": "2026-10-01T00:00:00+08:00"
   },
-  "articles": [],
-  "other_articles": []
+  "articles": [
+    {
+      "id": "9e588af4ff0843f8cecb",
+      "title": "Principles without provisions? Unpacking assessment in higher education AI policies",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IdRwptloLFUCRo9ey3pdSV1BNnTiwcCMAmKo-2F4VROl7KaU8E-2FSwnBZCQwypm5GQGjw-3D-3D4mov_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdx1UFxemy3hcv9qr-2FzImD6VowfQi904D1tYRcKbVBqFBLhR-2FUaOOoJyIZ9ezyUOH3vUystNiHxIPB1kHlQK-2F9dKV07Wut0lgqg7c7aoF6Ha9prJoPRfw9go71uQPv3jMakwuwsGobx1YfWaVP0yDAQUu-2Bc1LpCtTrItph8K3IKkc3P-2F-2FDDeVfjrjsAIu-2F7sQWNT7nee7mORG8ZcYhOWf4M-2B3SIBKsIA884B0h-2BJvTWHI-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IdRwptloLFUCRo9ey3pdSV1BNnTiwcCMAmKo-2F4VROl7KaU8E-2FSwnBZCQwypm5GQGjw-3D-3D4mov_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdx1UFxemy3hcv9qr-2FzImD6VowfQi904D1tYRcKbVBqFBLhR-2FUaOOoJyIZ9ezyUOH3vUystNiHxIPB1kHlQK-2F9dKV07Wut0lgqg7c7aoF6Ha9prJoPRfw9go71uQPv3jMakwuwsGobx1YfWaVP0yDAQUu-2Bc1LpCtTrItph8K3IKkc3P-2F-2FDDeVfjrjsAIu-2F7sQWNT7nee7mORG8ZcYhOWf4M-2B3SIBKsIA884B0h-2BJvTWHI-3D",
+      "doi": "10.1080/0969594x.2026.2740061",
+      "authors": [
+        "Marc Egloffstein",
+        "Joana Heil"
+      ],
+      "abstract": "This study examines how university AI policies across Germany, Austria, and Switzerland address artificial intelligence in assessment and align with responsible AI principles. A census-based policy an …",
+      "abstract_source": "email",
+      "published": "2026-09-29",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-30T09:05:58Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-15",
+      "type": "journal-article",
+      "first_seen": "2026-09-30T09:05:58Z",
+      "last_seen": "2026-09-30T09:05:58Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": true,
+      "history_date": "2026-09-30",
+      "score": 7.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "artificial intelligence",
+          "weight": 1.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 1.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2740061"
+    },
+    {
+      "id": "176bd2a186fbf204f9d6",
+      "title": "Development and Validation of a Game-Based Assessment Tool for Computational Thinking Practices in Lower Primary Students",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001922%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/gNkMz26Fq6DHVPp7PxnX9JABQ3ab_mTlfLmyVO6e27M=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001922%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/gNkMz26Fq6DHVPp7PxnX9JABQ3ab_mTlfLmyVO6e27M=452",
+      "doi": "10.1016/j.compedu.2026.105752",
+      "authors": [
+        "Qi LUO",
+        "Shuhan ZHANG"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-29",
+      "publication_text": "29 September 2026",
+      "feed_timestamp": "2026-09-30T15:02:28Z",
+      "date_precision": "time",
+      "journal": "Computers & Education",
+      "journal_id": "computers-education",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "105752",
+      "type": "journal-article",
+      "first_seen": "2026-09-30T15:02:28Z",
+      "last_seen": "2026-09-30T15:02:28Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-30",
+      "score": 4.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 4.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1016/j.compedu.2026.105752"
+    }
+  ],
+  "other_articles": [
+    {
+      "id": "7131e9f02495af68412d",
+      "title": "Mapping Fifty Years of Technology-Enhanced Science and Mathematics Education in Computers & Education: Trends and Connections with Technologies, Functions, and Theories",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S036013152600196X%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/KnvO17oH3Ouo_0XVD4SmE8ZLBoxnqMU2u8tUtAiFHR0=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S036013152600196X%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/KnvO17oH3Ouo_0XVD4SmE8ZLBoxnqMU2u8tUtAiFHR0=452",
+      "doi": "",
+      "authors": [
+        "Min-Hsien Lee",
+        "Tzung-Jin Lin",
+        "Edwin Chng",
+        "Guo-Li Chiou",
+        "Aik Ling Tan",
+        "Jyh-Chong Liang",
+        "Pin-Chi Huang",
+        "Seng Chee Tan",
+        "Chin-Chung Tsai"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-30",
+      "publication_text": "30 September 2026",
+      "feed_timestamp": "2026-09-30T15:02:28Z",
+      "date_precision": "time",
+      "journal": "Computers & Education",
+      "journal_id": "computers-education",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-30T15:02:28Z",
+      "last_seen": "2026-09-30T15:02:28Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-30",
+      "score": 0.0,
+      "matched_keywords": []
+    }
+  ]
 }

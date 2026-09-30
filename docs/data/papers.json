@@ -1,4 +1,1604 @@
 {
-  "generated_at": "2026-09-03T13:18:37Z",
-  "articles": []
+  "generated_at": "2026-09-30T20:25:10Z",
+  "articles": [
+    {
+      "id": "7131e9f02495af68412d",
+      "title": "Mapping Fifty Years of Technology-Enhanced Science and Mathematics Education in Computers & Education: Trends and Connections with Technologies, Functions, and Theories",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S036013152600196X%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/KnvO17oH3Ouo_0XVD4SmE8ZLBoxnqMU2u8tUtAiFHR0=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S036013152600196X%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/KnvO17oH3Ouo_0XVD4SmE8ZLBoxnqMU2u8tUtAiFHR0=452",
+      "doi": "",
+      "authors": [
+        "Min-Hsien Lee",
+        "Tzung-Jin Lin",
+        "Edwin Chng",
+        "Guo-Li Chiou",
+        "Aik Ling Tan",
+        "Jyh-Chong Liang",
+        "Pin-Chi Huang",
+        "Seng Chee Tan",
+        "Chin-Chung Tsai"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-30",
+      "publication_text": "30 September 2026",
+      "feed_timestamp": "2026-09-30T15:02:28Z",
+      "date_precision": "time",
+      "journal": "Computers & Education",
+      "journal_id": "computers-education",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-30T15:02:28Z",
+      "last_seen": "2026-09-30T15:02:28Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-30",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "176bd2a186fbf204f9d6",
+      "title": "Development and Validation of a Game-Based Assessment Tool for Computational Thinking Practices in Lower Primary Students",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001922%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/gNkMz26Fq6DHVPp7PxnX9JABQ3ab_mTlfLmyVO6e27M=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001922%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0f2d6a3bb-655b7fa1-d035-416f-8fc3-8dff20b21615-000000/gNkMz26Fq6DHVPp7PxnX9JABQ3ab_mTlfLmyVO6e27M=452",
+      "doi": "10.1016/j.compedu.2026.105752",
+      "authors": [
+        "Qi LUO",
+        "Shuhan ZHANG"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-29",
+      "publication_text": "29 September 2026",
+      "feed_timestamp": "2026-09-30T15:02:28Z",
+      "date_precision": "time",
+      "journal": "Computers & Education",
+      "journal_id": "computers-education",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "105752",
+      "type": "journal-article",
+      "first_seen": "2026-09-30T15:02:28Z",
+      "last_seen": "2026-09-30T15:02:28Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-30",
+      "score": 4.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 4.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1016/j.compedu.2026.105752"
+    },
+    {
+      "id": "9e588af4ff0843f8cecb",
+      "title": "Principles without provisions? Unpacking assessment in higher education AI policies",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IdRwptloLFUCRo9ey3pdSV1BNnTiwcCMAmKo-2F4VROl7KaU8E-2FSwnBZCQwypm5GQGjw-3D-3D4mov_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdx1UFxemy3hcv9qr-2FzImD6VowfQi904D1tYRcKbVBqFBLhR-2FUaOOoJyIZ9ezyUOH3vUystNiHxIPB1kHlQK-2F9dKV07Wut0lgqg7c7aoF6Ha9prJoPRfw9go71uQPv3jMakwuwsGobx1YfWaVP0yDAQUu-2Bc1LpCtTrItph8K3IKkc3P-2F-2FDDeVfjrjsAIu-2F7sQWNT7nee7mORG8ZcYhOWf4M-2B3SIBKsIA884B0h-2BJvTWHI-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IdRwptloLFUCRo9ey3pdSV1BNnTiwcCMAmKo-2F4VROl7KaU8E-2FSwnBZCQwypm5GQGjw-3D-3D4mov_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdx1UFxemy3hcv9qr-2FzImD6VowfQi904D1tYRcKbVBqFBLhR-2FUaOOoJyIZ9ezyUOH3vUystNiHxIPB1kHlQK-2F9dKV07Wut0lgqg7c7aoF6Ha9prJoPRfw9go71uQPv3jMakwuwsGobx1YfWaVP0yDAQUu-2Bc1LpCtTrItph8K3IKkc3P-2F-2FDDeVfjrjsAIu-2F7sQWNT7nee7mORG8ZcYhOWf4M-2B3SIBKsIA884B0h-2BJvTWHI-3D",
+      "doi": "10.1080/0969594x.2026.2740061",
+      "authors": [
+        "Marc Egloffstein",
+        "Joana Heil"
+      ],
+      "abstract": "This study examines how university AI policies across Germany, Austria, and Switzerland address artificial intelligence in assessment and align with responsible AI principles. A census-based policy an …",
+      "abstract_source": "email",
+      "published": "2026-09-29",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-30T09:05:58Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-15",
+      "type": "journal-article",
+      "first_seen": "2026-09-30T09:05:58Z",
+      "last_seen": "2026-09-30T09:05:58Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": true,
+      "history_date": "2026-09-30",
+      "score": 7.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "artificial intelligence",
+          "weight": 1.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 1.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2740061"
+    },
+    {
+      "id": "2457eb0653675580c0c8",
+      "title": "Translate: Multilingual Access to Critical Services in the Age of AI",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001995%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0edd53f3b-1ca1012b-849f-4b8d-8dec-42c6ddf16b19-000000/ZC6rSuV3C5Nz4eOdbosA_d3Vosk6q4CcXUK2mK6su90=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001995%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0edd53f3b-1ca1012b-849f-4b8d-8dec-42c6ddf16b19-000000/ZC6rSuV3C5Nz4eOdbosA_d3Vosk6q4CcXUK2mK6su90=452",
+      "doi": "",
+      "authors": [
+        "X.U. Mianjun"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-29",
+      "publication_text": "29 September 2026",
+      "feed_timestamp": "2026-09-29T15:42:51Z",
+      "date_precision": "time",
+      "journal": "System",
+      "journal_id": "system",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T15:42:51Z",
+      "last_seen": "2026-09-29T15:42:51Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-29",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "5cad86d8c4317db29249",
+      "title": "Fifty Years of Topic Development, Thematic Combination, and AI’s Evolving Reach in Computers & Education",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001958%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0edb05177-392a6286-edda-4122-9b74-46c181fb025b-000000/JS2YzjCbhHCQDdi03l9hkg5q3_RZ3DrDiiA4jQqDdhU=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001958%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0edb05177-392a6286-edda-4122-9b74-46c181fb025b-000000/JS2YzjCbhHCQDdi03l9hkg5q3_RZ3DrDiiA4jQqDdhU=452",
+      "doi": "10.1016/j.compedu.2026.105755",
+      "authors": [
+        "Jiun-Yu Wu",
+        "An-Ching Shih",
+        "Yuan-Hsuan Lee",
+        "Ching Sing Chai",
+        "Chin-Chung Tsai"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-29",
+      "publication_text": "29 September 2026",
+      "feed_timestamp": "2026-09-29T15:02:31Z",
+      "date_precision": "time",
+      "journal": "Computers & Education",
+      "journal_id": "computers-education",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "105755",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T15:02:31Z",
+      "last_seen": "2026-09-29T15:02:31Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-29",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1016/j.compedu.2026.105755"
+    },
+    {
+      "id": "27537a4dd3bb0cbb4e91",
+      "title": "An Overview of Reviews on Teacher Collaboration: A Four-Dimensional Typology and Future Research Directions",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S1747938X26000916%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0edd8293a-f60faf5e-50b0-4e7b-80df-b97769b2dcdc-000000/MIgZWuKLb2H-P5uDaR61ZtfV_rL_L83YTcUcJ-G4rRA=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S1747938X26000916%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0edd8293a-f60faf5e-50b0-4e7b-80df-b97769b2dcdc-000000/MIgZWuKLb2H-P5uDaR61ZtfV_rL_L83YTcUcJ-G4rRA=452",
+      "doi": "10.1016/j.edurev.2026.100852",
+      "authors": [
+        "Huang Wu",
+        "Xueli Shi"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-28",
+      "publication_text": "28 September 2026",
+      "feed_timestamp": "2026-09-29T15:46:02Z",
+      "date_precision": "time",
+      "journal": "Educational Research Review",
+      "journal_id": "educational-research-review",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "100852",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T15:46:02Z",
+      "last_seen": "2026-09-29T15:46:02Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-29",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1016/j.edurev.2026.100852"
+    },
+    {
+      "id": "32fb6d2489d8a6a57cf1",
+      "title": "Inevitable journey of “practice shock”? A thematic analysis of the experiences of Chinese student teachers’ teaching practice",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogFMT9ganP8FmW94zzEV-2BR-2BxdezytUMBuVv4VJX5g7AqAm2Y3Qs9kjufL8DHBxxKKCi56_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdzTJoGgYc47Fb7do0Ch2vkDCSo-2BeiKdiFnGMgHiMi7vftGlvc7C-2BS1wfLk-2B47QEW5CRC-2B3LjDmzrCAJdAaujbmUv8KdnItdRypvaaFv1g-2BPAQ5Nj-2FTHsJHTrjh-2FiZIg98umhnlh6ohEfOZordCxcpWKvsjkk4yi0XQyb32N2GaG3OwmdFLoibx36VwOlfI0tvb44-2BBLh54bbxjuUwD3xu0QHwn8PK-2FMr9I3gi629hqWY-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogFMT9ganP8FmW94zzEV-2BR-2BxdezytUMBuVv4VJX5g7AqAm2Y3Qs9kjufL8DHBxxKKCi56_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdzTJoGgYc47Fb7do0Ch2vkDCSo-2BeiKdiFnGMgHiMi7vftGlvc7C-2BS1wfLk-2B47QEW5CRC-2B3LjDmzrCAJdAaujbmUv8KdnItdRypvaaFv1g-2BPAQ5Nj-2FTHsJHTrjh-2FiZIg98umhnlh6ohEfOZordCxcpWKvsjkk4yi0XQyb32N2GaG3OwmdFLoibx36VwOlfI0tvb44-2BBLh54bbxjuUwD3xu0QHwn8PK-2FMr9I3gi629hqWY-3D",
+      "doi": "10.1080/02607476.2026.2719562",
+      "authors": [
+        "Honglei Cao",
+        "Yuan Xun"
+      ],
+      "abstract": "Teaching internships expose student teachers to the complexities and challenges of classroom practice. Through thematic analysis of semi-structured interviews with 42 student teachers (recent Master o …",
+      "abstract_source": "email",
+      "published": "2026-09-28",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-29T11:02:06Z",
+      "date_precision": "time",
+      "journal": "Journal of Education for Teaching",
+      "journal_id": "journal-of-education-for-teaching",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-22",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T11:02:06Z",
+      "last_seen": "2026-09-29T11:02:06Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-29",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "student teacher",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/02607476.2026.2719562"
+    },
+    {
+      "id": "6675c1451bb3514b9e12",
+      "title": "Cultivating Systems Thinking through Game-Making: A Systematic Review on Curriculum Design",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S1747938X26000928%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0e8a56b6b-fc8f6a34-e0ca-4176-997d-3276bbe1145d-000000/2eBEDpxMm--kMkiwxM3xumb8isDchCz597Hzi1BXarY=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S1747938X26000928%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0e8a56b6b-fc8f6a34-e0ca-4176-997d-3276bbe1145d-000000/2eBEDpxMm--kMkiwxM3xumb8isDchCz597Hzi1BXarY=452",
+      "doi": "",
+      "authors": [
+        "Sichuang Fan"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-28",
+      "publication_text": "28 September 2026",
+      "feed_timestamp": "2026-09-28T15:32:30Z",
+      "date_precision": "time",
+      "journal": "Educational Research Review",
+      "journal_id": "educational-research-review",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-28T15:32:30Z",
+      "last_seen": "2026-09-28T15:32:30Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-28",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "a98674efadbe4f2995bc",
+      "title": "From Citation to Documented Use: Computers & Education Research in Selected Policy Reports",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001946%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0e87f1b5c-7a5bde67-9841-4918-b2c3-be295ec6c4fd-000000/AV_AgpA878Pa2jfiliVgurA-A6v6oeN9niHNDwe9v4E=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0360131526001946%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0e87f1b5c-7a5bde67-9841-4918-b2c3-be295ec6c4fd-000000/AV_AgpA878Pa2jfiliVgurA-A6v6oeN9niHNDwe9v4E=452",
+      "doi": "10.1016/j.compedu.2026.105754",
+      "authors": [
+        "Zvi Bekerman",
+        "Miguel Nussbaum"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-28",
+      "publication_text": "28 September 2026",
+      "feed_timestamp": "2026-09-28T14:50:40Z",
+      "date_precision": "time",
+      "journal": "Computers & Education",
+      "journal_id": "computers-education",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "105754",
+      "type": "journal-article",
+      "first_seen": "2026-09-28T14:50:40Z",
+      "last_seen": "2026-09-28T14:50:40Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-28",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1016/j.compedu.2026.105754"
+    },
+    {
+      "id": "ce785c4fdd57fff45b88",
+      "title": "Preservice English Teachers’ Emotions and Identities During Teaching Practicum: A Case Study in China",
+      "url": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS6fU-2BYWWS9Rz62bGuSLzOWXEQOA1z2eoyuvaLNGIfZMDyQNL_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda563YH0AueAiDUkvO7NXusMhRmqCHw-2BsS3ijZHwVzNxPpe-2FsF0jTqXyE4sDp9oDZzqOpMWnWeZYWGR4XeAO5KRl-2Bqz60jSigLGcxIvbLObyJ-2FHwKh0jjnJw7JCljddbKSP6yx1oqHtvhOwlKFLwj579Yu9dBOC8WUGOc5Ws9ninr7i0sjLWjxVJaYR-2FTGwGcxylAyhjMR7PQjpwdQqD-2BZ-2FZ6eg4-2FfXMyrzpXySuLNfc-3D",
+      "guid": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS6fU-2BYWWS9Rz62bGuSLzOWXEQOA1z2eoyuvaLNGIfZMDyQNL_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda563YH0AueAiDUkvO7NXusMhRmqCHw-2BsS3ijZHwVzNxPpe-2FsF0jTqXyE4sDp9oDZzqOpMWnWeZYWGR4XeAO5KRl-2Bqz60jSigLGcxIvbLObyJ-2FHwKh0jjnJw7JCljddbKSP6yx1oqHtvhOwlKFLwj579Yu9dBOC8WUGOc5Ws9ninr7i0sjLWjxVJaYR-2FTGwGcxylAyhjMR7PQjpwdQqD-2BZ-2FZ6eg4-2FfXMyrzpXySuLNfc-3D",
+      "doi": "10.1177/13621688261487633",
+      "authors": [
+        "Xu Jinfen",
+        "Li Xia"
+      ],
+      "abstract": "This study delves into the intricate emotional experiences of two preservice English teachers and explores how these experiences shape their evolving identities during teaching practicum. Data collection involved reflection logs, semi-structured interviews, casual communications, and tangible artifacts. Findings reveal that preservice English teachers experience a spectrum of emotions during their teaching practicum, which are shaped by primary and secondary appraisals. These emotions play a crucial role in forming, transforming, and confirming their teacher identities. Furthermore, the study shows that both participants demonstrated their agency, which was found to mediate the nexus between their emotions and their emerging identities. This research enriches the existing literature on emotions and identities in teacher education and provides valuable insights for teacher educators, mentor teachers, and policymakers.",
+      "abstract_source": "crossref",
+      "published": "2026-09-27",
+      "publication_text": "Sep 27, 2026",
+      "feed_timestamp": "2026-09-29T07:48:30Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "language-teaching-research",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "13621688261487633",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T07:48:30Z",
+      "last_seen": "2026-09-29T07:48:30Z",
+      "metadata_source": "email+crossref",
+      "history_date": "2026-09-29",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "teacher education",
+          "weight": 2.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1177/13621688261487633"
+    },
+    {
+      "id": "8a37422970c208dc23c9",
+      "title": "Early-Start Effects in EFL Settings: A Critical Review of Long-Term Evidence Beyond the Primary School Years",
+      "url": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS6olD2V4mj22-2BtFDzs6fAjO0ufbrMz1ElUpA0Y9Ys2m6Rfu7_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda563YH0AueAiDUkvO7NXusMhRmqCHw-2BsS3ijZHwVzNz24MTLjptKOIujntie69n05lsJlb8FBRuPfZBOzANv-2FXtWGVsDed8EKJcSNfu-2BAIrISq7A-2Fw-2FlTXshIkLWyGywJRyqv3KqsNL-2Fw3JHFPQEOOM4kvfXv-2BIKzTcornqWQbtc692kO7iFNAkCKqxp-2FoGVXJ4MptoT3FoOXmjIZCMV9Q8gi7UcUPzaBamupVyc8FU-3D",
+      "guid": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS6olD2V4mj22-2BtFDzs6fAjO0ufbrMz1ElUpA0Y9Ys2m6Rfu7_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda563YH0AueAiDUkvO7NXusMhRmqCHw-2BsS3ijZHwVzNz24MTLjptKOIujntie69n05lsJlb8FBRuPfZBOzANv-2FXtWGVsDed8EKJcSNfu-2BAIrISq7A-2Fw-2FlTXshIkLWyGywJRyqv3KqsNL-2Fw3JHFPQEOOM4kvfXv-2BIKzTcornqWQbtc692kO7iFNAkCKqxp-2FoGVXJ4MptoT3FoOXmjIZCMV9Q8gi7UcUPzaBamupVyc8FU-3D",
+      "doi": "10.1177/13621688261485475",
+      "authors": [
+        "Al-Thubaiti Kholoud A."
+      ],
+      "abstract": "This paper critically reviews long-term evidence on early English instruction in foreign language settings beyond the primary school years. It examines how early-start effects change across the transition to lower-secondary education, later school years, and college-level contexts, and which conditions are associated with their persistence, weakening, or re-emergence. Using a timeline approach, the review synthesizes school-based and post-school evidence across these stages. The findings indicate that early-start advantages are unstable, context-dependent, and often domain-specific rather than automatic or cumulative. Although cumulative exposure matters, the evidence does not support a consistent exposure threshold at which durable advantages emerge. Cross-study comparisons are also constrained by differences in assessment constructs and their alignment with program aims. Lowering the starting age alone is therefore unlikely to produce lasting benefits unless early instruction is supported by sustained, high-quality input, coherent curricular progression, careful transition planning, and meaningful opportunities to use English across educational stages.",
+      "abstract_source": "crossref",
+      "published": "2026-09-27",
+      "publication_text": "Sep 27, 2026",
+      "feed_timestamp": "2026-09-29T07:48:30Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "language-teaching-research",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "13621688261485475",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T07:48:30Z",
+      "last_seen": "2026-09-29T07:48:30Z",
+      "metadata_source": "email+crossref",
+      "history_date": "2026-09-29",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1177/13621688261485475"
+    },
+    {
+      "id": "52bddfbb50550742bcc6",
+      "title": "AI-Informed Digital Literacy for Language Educators: Redefining Core Competencies Through TPACK and SAMR",
+      "url": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS1Z1qH9qM8pCAL5NWuA88v-2F80fYC0gz8FDQ7PVacTOkuF7Mm_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda563YH0AueAiDUkvO7NXusMhRmqCHw-2BsS3ijZHwVzNy4M5Vl5vf7K2LR5K-2B4OazFHLjxwxhI8tx-2FVX4HxqGwxYiBV4YOQm1UjHDgeoJbkFFkc264gCfTZn08Ypkxj3eTHQZ1EsjgqqJJtkRoAt1XXOS9iRjzFqbEO1mWenTnq-2FIGByc0jQYkXTQj4bcSASccB9dvJ31nasF6HdlWdGpOKhmHaOfZ3SKN7teGpD41lDs-3D",
+      "guid": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS1Z1qH9qM8pCAL5NWuA88v-2F80fYC0gz8FDQ7PVacTOkuF7Mm_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda563YH0AueAiDUkvO7NXusMhRmqCHw-2BsS3ijZHwVzNy4M5Vl5vf7K2LR5K-2B4OazFHLjxwxhI8tx-2FVX4HxqGwxYiBV4YOQm1UjHDgeoJbkFFkc264gCfTZn08Ypkxj3eTHQZ1EsjgqqJJtkRoAt1XXOS9iRjzFqbEO1mWenTnq-2FIGByc0jQYkXTQj4bcSASccB9dvJ31nasF6HdlWdGpOKhmHaOfZ3SKN7teGpD41lDs-3D",
+      "doi": "10.1177/13621688261487632",
+      "authors": [
+        "Zou Di",
+        "Kohnke Lucas"
+      ],
+      "abstract": "The rapid evolution of generative artificial intelligence (GenAI) has transformed language education, presenting opportunities to enhance efficiency, personalisation and learner engagement. The technologies have also disrupted educators’ conventional roles, necessitating the acquisition of artificial intelligence (AI)-informed digital literacy competencies. This conceptual article explores the integration of GenAI technologies in language education through the lenses of technological pedagogical and content knowledge and substitution augmentation, modification and redefinition frameworks. By examining AI’s affordances and limitations, the article highlights the irreplaceability of the human role in cultivating critical thinking, cultural awareness, motivation and relationship-building. It calls for language educators to balance AI’s technological capabilities with pedagogical and relational expertise. Core competencies such as critical AI literacy, ethical data management and the ability to design transformative, student-centred learning experiences are essential. By redefining their roles as facilitators, language educators can harness AI’s potential to support deep engagement, creativity and communication without sacrificing the social and emotional dimensions of education. This article provides practical insights for educators, researchers and policymakers seeking to overcome the challenges and take advantage of AI-enhanced language education.",
+      "abstract_source": "openalex",
+      "published": "2026-09-27",
+      "publication_text": "Sep 27, 2026",
+      "feed_timestamp": "2026-09-29T07:48:30Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "language-teaching-research",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-29T07:48:30Z",
+      "last_seen": "2026-09-29T07:48:30Z",
+      "metadata_source": "email+openalex",
+      "history_date": "2026-09-29",
+      "score": 1.0,
+      "matched_keywords": [
+        {
+          "keyword": "GenAI",
+          "weight": 1.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 1.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1177/13621688261487632"
+    },
+    {
+      "id": "4f693e2889b540af0dc2",
+      "title": "Can incorporating GenAI chatbots into L2 writing instruction promote student agency and writing performance? Insights from a mixed-methods quasi-experimental study",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCNxYlrdx88spR8ThNVEViY3QGhwSY8jLR5wcItA5dtpmIMyg28-2BMhLl9-2FnhermQQ1Yg-3D-3D84Ds_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVd-2BBvHnpCOua1B91AhDKITwKICTdUYTNV9RzV2akNPvcD4wFa6x58JaNPyDz53-2B-2FmhjmlUb2bTZcjvK2k053Y08CxzQxKONcnhtCmYtO-2BnXoIMrmASUf1hb9SesBnkh4YgkiVK-2B-2FF5x94Wxb8vkY2G0kANiDaD-2Fz0AgCaVP-2BSddS5EJzxq3p4oPJzYZq3nB6x2qUV96PMuaHsDvrV0vSmK1LtPvUd3OIRB-2B7ww05N1Eg4-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCNxYlrdx88spR8ThNVEViY3QGhwSY8jLR5wcItA5dtpmIMyg28-2BMhLl9-2FnhermQQ1Yg-3D-3D84Ds_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVd-2BBvHnpCOua1B91AhDKITwKICTdUYTNV9RzV2akNPvcD4wFa6x58JaNPyDz53-2B-2FmhjmlUb2bTZcjvK2k053Y08CxzQxKONcnhtCmYtO-2BnXoIMrmASUf1hb9SesBnkh4YgkiVK-2B-2FF5x94Wxb8vkY2G0kANiDaD-2Fz0AgCaVP-2BSddS5EJzxq3p4oPJzYZq3nB6x2qUV96PMuaHsDvrV0vSmK1LtPvUd3OIRB-2B7ww05N1Eg4-3D",
+      "doi": "10.1080/09588221.2026.2733006",
+      "authors": [
+        "Minlin Minny Zou",
+        "Hayo Reinders",
+        "Weichen Wang"
+      ],
+      "abstract": "We conducted a mixed-methods quasi-experimental research design to examine the effects of incorporating GenAI into L2 writing instruction on Chinese university English as a foreign language (EFL) lear …",
+      "abstract_source": "email",
+      "published": "2026-09-27",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-28T10:23:12Z",
+      "date_precision": "time",
+      "journal": "Computer Assisted Language Learning",
+      "journal_id": "computer-assisted-language-learning",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-44",
+      "type": "journal-article",
+      "first_seen": "2026-09-28T10:23:12Z",
+      "last_seen": "2026-09-28T10:23:12Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-28",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "GenAI",
+          "weight": 1.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/09588221.2026.2733006"
+    },
+    {
+      "id": "9008881a33c05f317647",
+      "title": "Micro-credentials and RPL for epistemological access in a postgraduate diploma: a social justice-informed design",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fokP7yUwhllkv0wPm8FK-2FzgmXMDWTQSxzfvUojjTSEddgiPuPv4BlcA6BI6MTTNM9ac9MazJh6uBR2pAjrrNhuPw-3D-3D7xlr_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdPiF5H28f7yU1unkAH7uSsRG8zrZNhNoy4dea8P8rtkZdhuRCkdmq-2FkAvDt7C-2BFpV7SM6-2B7vAztbPnh8sdaFTEviE7hnl-2BKH7OA1llKIYN0ylnfceXgJVXafCG42zSslQv98031fvzFtILTmWGEMPDJHN7lNrBx-2FdqixwYeUALZV06JVchs4MSGpH44y5xNvyyscNvr-2Fri6TY1ocosU5y-2FNkHiSadp3264xDLNJOWKwc-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fokP7yUwhllkv0wPm8FK-2FzgmXMDWTQSxzfvUojjTSEddgiPuPv4BlcA6BI6MTTNM9ac9MazJh6uBR2pAjrrNhuPw-3D-3D7xlr_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdPiF5H28f7yU1unkAH7uSsRG8zrZNhNoy4dea8P8rtkZdhuRCkdmq-2FkAvDt7C-2BFpV7SM6-2B7vAztbPnh8sdaFTEviE7hnl-2BKH7OA1llKIYN0ylnfceXgJVXafCG42zSslQv98031fvzFtILTmWGEMPDJHN7lNrBx-2FdqixwYeUALZV06JVchs4MSGpH44y5xNvyyscNvr-2Fri6TY1ocosU5y-2FNkHiSadp3264xDLNJOWKwc-3D",
+      "doi": "10.1080/13562517.2026.2735431",
+      "authors": [
+        "Tabisa Mayisela",
+        "Lara Karassellos"
+      ],
+      "abstract": "This theoretical paper uses the concept of ‘powerful knowledge’ to argue for a critical approach to micro-credentials and recognition of prior learning (RPL) short courses. This approach holds that in …",
+      "abstract_source": "email",
+      "published": "2026-09-27",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-28T09:24:30Z",
+      "date_precision": "time",
+      "journal": "Teaching in Higher Education",
+      "journal_id": "teaching-in-higher-education",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-21",
+      "type": "journal-article",
+      "first_seen": "2026-09-28T09:24:30Z",
+      "last_seen": "2026-09-28T09:24:30Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-28",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1080/13562517.2026.2735431"
+    },
+    {
+      "id": "5b948eb19a1216f0f6f0",
+      "title": "Bridging policy, practice, and pedagogy: a multi-level framework for Responsible AI adoption in higher education assessment (ML-RAAF)",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5Ia9xLOZ25ki1d51q1dSLUZmdxicpbgK9dQMrEIOdDc-2FfdxyfpswQ6nyFiqvCQUnqiQ-3D-3DUKUo_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdEl2SKsmhfU-2FnFTewUkyb1ZuFdCYJMxaXK-2FIEciJSfJx634oGIuChkxkWnIPfgJHr0X0cruDkQx2HR59szcCjcrKacZWyCmWwSYWIhsX5RMtzWC4mRdvNMKSbCrDlUYvopEYs-2BA-2BvpbjpSVRGux05aYcaF3KqUcunJ-2BG61KTcqvWdvZACL4We9tdY9oryNr-2BU6TfI4BH8-2BhRrgqAMaDwGg2uvad9rIYJRFvO8uasDT8U-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5Ia9xLOZ25ki1d51q1dSLUZmdxicpbgK9dQMrEIOdDc-2FfdxyfpswQ6nyFiqvCQUnqiQ-3D-3DUKUo_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdEl2SKsmhfU-2FnFTewUkyb1ZuFdCYJMxaXK-2FIEciJSfJx634oGIuChkxkWnIPfgJHr0X0cruDkQx2HR59szcCjcrKacZWyCmWwSYWIhsX5RMtzWC4mRdvNMKSbCrDlUYvopEYs-2BA-2BvpbjpSVRGux05aYcaF3KqUcunJ-2BG61KTcqvWdvZACL4We9tdY9oryNr-2BU6TfI4BH8-2BhRrgqAMaDwGg2uvad9rIYJRFvO8uasDT8U-3D",
+      "doi": "10.1080/0969594x.2026.2736629",
+      "authors": [
+        "Spriha Sharma",
+        "Ankita Choudhary"
+      ],
+      "abstract": "The rapid integration of artificial intelligence (AI) into higher education assessment offers opportunities for efficiency, personalisation, and innovation, while raising concerns about academic integ …",
+      "abstract_source": "email",
+      "published": "2026-09-27",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-28T09:03:48Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-18",
+      "type": "journal-article",
+      "first_seen": "2026-09-28T09:03:48Z",
+      "last_seen": "2026-09-28T09:03:48Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-28",
+      "score": 7.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "artificial intelligence",
+          "weight": 1.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 1.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736629"
+    },
+    {
+      "id": "cee5ee3269c838f8ee55",
+      "title": "“Teaching Was Changing Me”: EFL Teacher Identity Trajectories as Dynamic Systems—An Arts-Based Narrative Inquiry",
+      "url": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS9CWzpGuXpDIRqgwwn4LORzS3QivpNj27Nc2yGQCtXvYmSfJ_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdNgk7mdHX-2FV5H2g58XYSOPawEQWQ0pPILdCMDkNypjR5RJTtrWxMDf7qlZ81K6IMCsoj8jEmXgFdiM89T5sXNpS6rxLnELzI6iCixuAc9xvsVbcl96r2I1UWNzlT-2BP8XDi912j1DLs2AYpR048wMsjS5Ov6Q7RAmyqsJrfUoKfJnr5Q-2FHVP1iDy8AIQEf5qgnK0MDZ1VPQg7ygoUKM0syqNe8VnobYeYKnAb-2Br4CoJtI-3D",
+      "guid": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS9CWzpGuXpDIRqgwwn4LORzS3QivpNj27Nc2yGQCtXvYmSfJ_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdNgk7mdHX-2FV5H2g58XYSOPawEQWQ0pPILdCMDkNypjR5RJTtrWxMDf7qlZ81K6IMCsoj8jEmXgFdiM89T5sXNpS6rxLnELzI6iCixuAc9xvsVbcl96r2I1UWNzlT-2BP8XDi912j1DLs2AYpR048wMsjS5Ov6Q7RAmyqsJrfUoKfJnr5Q-2FHVP1iDy8AIQEf5qgnK0MDZ1VPQg7ygoUKM0syqNe8VnobYeYKnAb-2Br4CoJtI-3D",
+      "doi": "10.1177/13621688261485476",
+      "authors": [
+        "Somuncu Dilara",
+        "Yalcin Arslan Fadime"
+      ],
+      "abstract": "This study investigates how English as a foreign language (EFL) teachers’ role identity trajectories develop over time and how such processes are rendered visible through arts-based narrative practices. Drawing on the Dynamic Systems Model of Role Identity (DSMRI), the study adopts an arts-based narrative inquiry design with two in-service teachers in the Turkish EFL context. Data were generated through multimodal artifacts (self-portrait collages, soundtracks, literary reflections), written narratives, and post-curation meetings across a three-phase process. The analysis traced the dynamic alignment and misalignment among identity components, including beliefs, goals, self-perceptions, and perceived action possibilities. Findings revealed two predominant trajectory patterns that differed in the degree to which coherence among identity components was disrupted, maintained, and consolidated over time. The first, a perturbation-driven reorganization, was characterized by initial misalignment, contextual disruption, and subsequent cycles of reconfiguration and expansion. The second, a value-anchored consolidation, reflected a comparatively stable trajectory in which early coherence across identity components was progressively strengthened and deepened over time. These patterns demonstrate that identity development is not uniformly driven by tension or instability but may also emerge through the consolidation of internally coherent value structures. The study contributes to DSMRI-informed language teacher identity (LTI) research by illustrating predominant modes of system organization and reconceptualizes LTI as a complex system whose developmental pathways are differentially structured by configurations of coherence across components. Methodologically, it highlights the value of arts-based narrative practices as mediational affordances for externalizing and articulating retrospectively reconstructed identity trajectories.",
+      "abstract_source": "crossref",
+      "published": "2026-09-26",
+      "publication_text": "Sep 26, 2026",
+      "feed_timestamp": "2026-09-27T05:11:13Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "language-teaching-research",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "13621688261485476",
+      "type": "journal-article",
+      "first_seen": "2026-09-27T05:11:13Z",
+      "last_seen": "2026-09-27T05:11:13Z",
+      "metadata_source": "email+crossref",
+      "history_date": "2026-09-27",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1177/13621688261485476"
+    },
+    {
+      "id": "c3daaf2333c6e4b91c2f",
+      "title": "Navigating the (dis)connect: advancing equitable and inclusive practices in Computer Assisted Language Learning (CALL)",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCN1GPlfYqrAE8bZRDHkSWfgHyjPl9WN0P9A3MpMPazRIoWfdylHvF0j4e1boVyYRseg-3D-3DUvuK_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdSiHFyjo80yli4m12SaPGa50ZMCOKsdwtSlWxYpf02dCdKt-2BzYqOhwr3IGuVgn73U5dkhcrBxLyUI5URvtzU8NCnbGel1IKlq7C6bjaG55zhuc5w9C0szn9R2JVJMy-2Fzj0VXnhwTAIWvpu3n64YVjWwfqKXp43Zf62tXIiNEr6wJf4SHYKLroN8dOFuMIBtmtW-2BMgyozn51L06vKUOD-2BIFuw3onlPnsXXmWoUeaDma0M-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCN1GPlfYqrAE8bZRDHkSWfgHyjPl9WN0P9A3MpMPazRIoWfdylHvF0j4e1boVyYRseg-3D-3DUvuK_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdSiHFyjo80yli4m12SaPGa50ZMCOKsdwtSlWxYpf02dCdKt-2BzYqOhwr3IGuVgn73U5dkhcrBxLyUI5URvtzU8NCnbGel1IKlq7C6bjaG55zhuc5w9C0szn9R2JVJMy-2Fzj0VXnhwTAIWvpu3n64YVjWwfqKXp43Zf62tXIiNEr6wJf4SHYKLroN8dOFuMIBtmtW-2BMgyozn51L06vKUOD-2BIFuw3onlPnsXXmWoUeaDma0M-3D",
+      "doi": "10.1080/09588221.2026.2737120",
+      "authors": [
+        "Cheryl Brown"
+      ],
+      "abstract": "This paper explores the potential of digital technologies to foster equitable and inclusive practices in Computer Assisted Language Learning (CALL) within a postdigital context, where digital and anal …",
+      "abstract_source": "email",
+      "published": "2026-09-26",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-26T10:35:27Z",
+      "date_precision": "time",
+      "journal": "Computer Assisted Language Learning",
+      "journal_id": "computer-assisted-language-learning",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-18",
+      "type": "journal-article",
+      "first_seen": "2026-09-26T10:35:27Z",
+      "last_seen": "2026-09-26T10:35:27Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": true,
+      "history_date": "2026-09-26",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1080/09588221.2026.2737120"
+    },
+    {
+      "id": "eac33a90fada75ac9851",
+      "title": "Who, what, is a framework for effective and equitable classroom assessment for? A review essay on “principles for effective, equitable classroom assessment” by Dustin Van Orman, Erin Riley-Lepo, and James McMillan",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IZMfKV1UchcVpPGSn-2BGHugBA12QUlAfUXTsGEvBrEFz5V1r5dFszsX-2FXhZs68kRf1g-3D-3DW3ML_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdQwY6olFLPttuN71rb7ZGx7JuunB-2Fi-2Fm6ymQLRX7GnCCkLDRVFc0EBQrINQ-2BU57sKtP7jRIkbHCHTlBV3CasxR7XQjmiUzz9U1EeMrFpYGjFLGLNQoK0Vs-2FtX-2FcstotRqkargD8Sn38YuLTKFs8w72RbZhozIkV-2FseYr2k0vJu2yHPGJGv5y3jUtozB6SDwGr-2BIC-2BkWfv-2FDIp7Te6Q7EvGResspH82Uj4VzcL00MSeJQ-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IZMfKV1UchcVpPGSn-2BGHugBA12QUlAfUXTsGEvBrEFz5V1r5dFszsX-2FXhZs68kRf1g-3D-3DW3ML_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdQwY6olFLPttuN71rb7ZGx7JuunB-2Fi-2Fm6ymQLRX7GnCCkLDRVFc0EBQrINQ-2BU57sKtP7jRIkbHCHTlBV3CasxR7XQjmiUzz9U1EeMrFpYGjFLGLNQoK0Vs-2FtX-2FcstotRqkargD8Sn38YuLTKFs8w72RbZhozIkV-2FseYr2k0vJu2yHPGJGv5y3jUtozB6SDwGr-2BIC-2BkWfv-2FDIp7Te6Q7EvGResspH82Uj4VzcL00MSeJQ-3D",
+      "doi": "10.1080/0969594x.2026.2736637",
+      "authors": [
+        "Tan Heng Kiat Kelvin"
+      ],
+      "abstract": "This paper critically examines a proposed framework for effective and equitable classroom assessment (CA). While recognising its emphasis on learning, motivation, and belonging, I argue that its scope …",
+      "abstract_source": "email",
+      "published": "2026-09-26",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-26T09:08:35Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-8",
+      "type": "journal-article",
+      "first_seen": "2026-09-26T09:08:35Z",
+      "last_seen": "2026-09-26T09:08:35Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-26",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736637"
+    },
+    {
+      "id": "54c13f7c45f5942b73bf",
+      "title": "Using text-to-speech in second language research and assessment: preliminary results from elicited imitation",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCNxoWXr16xa4wuR3LLi83BAuV8K1VzntLlxuVVCz0pUndnrM3ao6vEn3w7O8FKpNG8g-3D-3DDjLD_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdSiHFyjo80yli4m12SaPGa50ZMCOKsdwtSlWxYpf02dA0ewR5s9GfUgYB5T3xrWZnmB4cOF7L4kxDhiH-2BdUAGEkKFb1e9uDxBgfPWyTLoe5uiEn26a2SkWZHIdRJX0-2FruQwhl2lM7T31gf4pWz9Syb7O2TF-2F7QcttUkKA5fHgZLy6m8M4Jipz2YkrbDU8z642jSyutrVlGzezvxTOFgdLhCWw83XTZ8-2BliuO96b1UuTY-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCNxoWXr16xa4wuR3LLi83BAuV8K1VzntLlxuVVCz0pUndnrM3ao6vEn3w7O8FKpNG8g-3D-3DDjLD_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdSiHFyjo80yli4m12SaPGa50ZMCOKsdwtSlWxYpf02dA0ewR5s9GfUgYB5T3xrWZnmB4cOF7L4kxDhiH-2BdUAGEkKFb1e9uDxBgfPWyTLoe5uiEn26a2SkWZHIdRJX0-2FruQwhl2lM7T31gf4pWz9Syb7O2TF-2F7QcttUkKA5fHgZLy6m8M4Jipz2YkrbDU8z642jSyutrVlGzezvxTOFgdLhCWw83XTZ8-2BliuO96b1UuTY-3D",
+      "doi": "10.1080/09588221.2026.2737122",
+      "authors": [
+        "Sarah Löber",
+        "Kathy Minhye Kim",
+        "Xiaobin Chen"
+      ],
+      "abstract": "Text-to-speech (TTS) is a technology widely used in second language learning and testing, for example in the case of learning material creation, pronunciation training, and speaking assessment. Such advances suggest that TTS may also hold great potential for automating performance-based measures of L2 knowledge and proficiency such as the Elicited Imitation (EI) test. However, questions remain about the impact of the technology on validity and fairness and consequently on how learners’ linguistic competence is interpreted. Both issues are crucial in the context of high-stakes language assessment but also for SLA research, where elicited performance is used to infer learners’ underlying interlanguage development. We show that EIs developed with TTS-synthesised stimuli demonstrated comparable construct validity as tests created with human-spoken stimuli and do not discriminate against test takers of varying proficiency or different first language backgrounds. EI scores were also not significantly different between human-spoken and TTS-synthesised items. These findings provide preliminary evidence for the use of TTS technology in language learning and language assessment contexts, with practical implications for researchers, educators, and test developers working in second language acquisition and bilingualism.",
+      "abstract_source": "openalex",
+      "published": "2026-09-25",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-26T10:35:27Z",
+      "date_precision": "time",
+      "journal": "Computer Assisted Language Learning",
+      "journal_id": "computer-assisted-language-learning",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-22",
+      "type": "journal-article",
+      "first_seen": "2026-09-26T10:35:27Z",
+      "last_seen": "2026-09-26T10:35:27Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-26",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/09588221.2026.2737122"
+    },
+    {
+      "id": "6b1117329ff35e488298",
+      "title": "Effects of digital multimodal composing on Chinese EFL learners’ writing performance: an explanatory sequential mixed-methods study",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCN-2F3y5-2F6Mgjxi8lAUZp6wF2eKO4Q2524ajpXVYdUqnMUl7bgPWlFLAF3OiVVtyX0oow-3D-3DFazz_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdSiHFyjo80yli4m12SaPGa50ZMCOKsdwtSlWxYpf02dCUKj7qv6aBASRQtmr7GzbjLgWDQ0dZYlDpvhHiXXD0XnIigmmRVXhuftC-2B9S1arcF8tPK2kQ4o1Kft-2B1C0F3n18sE8c6IPGCY1-2BbhRyRWVJg2VQkB15cRqwgBLSZsTU8TGu-2FP3szLPeeGSDrxJz6T50-2BN0hXRrhlSoL8vg4dAwK5yWA3xDON2ismakcE8wGZ0-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fogNPszJMAuhrm6kmISj-2FCN-2F3y5-2F6Mgjxi8lAUZp6wF2eKO4Q2524ajpXVYdUqnMUl7bgPWlFLAF3OiVVtyX0oow-3D-3DFazz_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdSiHFyjo80yli4m12SaPGa50ZMCOKsdwtSlWxYpf02dCUKj7qv6aBASRQtmr7GzbjLgWDQ0dZYlDpvhHiXXD0XnIigmmRVXhuftC-2B9S1arcF8tPK2kQ4o1Kft-2B1C0F3n18sE8c6IPGCY1-2BbhRyRWVJg2VQkB15cRqwgBLSZsTU8TGu-2FP3szLPeeGSDrxJz6T50-2BN0hXRrhlSoL8vg4dAwK5yWA3xDON2ismakcE8wGZ0-3D",
+      "doi": "10.1080/09588221.2026.2737118",
+      "authors": [
+        "Jing Zhu",
+        "Omer Hassan Ali Mahfoodh",
+        "Huili Cui"
+      ],
+      "abstract": "While an increasing body of research has examined the role of digital multimodal composing (DMC) in L2 writing, existing studies have often focused on overall writing outcomes or learners’ perceptions, less is known about how DMC influences specific dimensions of writing performance and how learners experience these changes, particularly in Chinese EFL contexts. Accordingly, the present study adopts a mixed-methods approach to investigate the effects of DMC on multiple dimensions of writing performance and to explore learners’ perspectives on the composing process. The study involved 128 English-major undergraduates at a university in China who were assigned to an experimental group receiving DMC integrated writing instruction (n = 66) or a control group following traditional text-based instruction (n = 62) over an 18-week semester. Quantitative data were collected through pre- and post-test narrative writing tasks, while qualitative data were obtained from semi-structured interviews with 18 students in the experimental group. The results showed that students in the DMC group achieved significantly greater gains in overall writing performance than those in the control group, particularly in organization, accuracy, and fluency, whereas no significant improvement was observed for complexity and voice. Qualitative findings helped account for these patterns by showing that learners perceived DMC as supporting idea generation and elaboration, increasing attention to language accuracy, and facilitating more explicit planning and organization of content. Participants also reported opportunities for personal expression and lexical refinement, while gains in syntactic complexity remained limited. In addition, learners identified challenges related to technical skills and the demands of multimodal composition. By integrating evidence from writing outcomes and learner experiences, the study provides insight into how DMC may support EFL writing development and offers pedagogical implications for implementing multimodal composing in EFL contexts.",
+      "abstract_source": "openalex",
+      "published": "2026-09-25",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-26T10:35:27Z",
+      "date_precision": "time",
+      "journal": "Computer Assisted Language Learning",
+      "journal_id": "computer-assisted-language-learning",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-26",
+      "type": "journal-article",
+      "first_seen": "2026-09-26T10:35:27Z",
+      "last_seen": "2026-09-26T10:35:27Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-26",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1080/09588221.2026.2737118"
+    },
+    {
+      "id": "cd6c663d62cb305039d9",
+      "title": "Preserving epistemic authenticity: process-oriented assessment in the age of generative AI",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7foRuM5oXsn8kolPC-2FAVtOk7NM4SboME7F11x-2FXyeCcT9Q79rVd2n1SD9EDp-2BYJnBImLZBFljc6nBGwq5o9Vu6BZA-3D-3D0t8g_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVddgz9p7HSlGCFVaGFFF01tETyD-2FwniBTvKVrYK91vgVrnsSrwxRDMP9ZoVIOSR-2BOCYId5d9vnLN7ItbrtuP1n7FLkv7o8PQVIzpoy7LOzU-2F5awt-2BR-2BAIHW74KmWJNvkfEWJW0vmIBfvuoKjoX-2FobzImZlp-2FlFnTz2e-2B3nLL8ebyvmVjwKzEt-2FiqPkwwlaeQjyKL5tqAxso0q4V3lYCTpM0pcD-2FBH9PGLqr3-2Bfrg5Sim8-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7foRuM5oXsn8kolPC-2FAVtOk7NM4SboME7F11x-2FXyeCcT9Q79rVd2n1SD9EDp-2BYJnBImLZBFljc6nBGwq5o9Vu6BZA-3D-3D0t8g_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVddgz9p7HSlGCFVaGFFF01tETyD-2FwniBTvKVrYK91vgVrnsSrwxRDMP9ZoVIOSR-2BOCYId5d9vnLN7ItbrtuP1n7FLkv7o8PQVIzpoy7LOzU-2F5awt-2BR-2BAIHW74KmWJNvkfEWJW0vmIBfvuoKjoX-2FobzImZlp-2FlFnTz2e-2B3nLL8ebyvmVjwKzEt-2FiqPkwwlaeQjyKL5tqAxso0q4V3lYCTpM0pcD-2FBH9PGLqr3-2Bfrg5Sim8-3D",
+      "doi": "10.1080/02602938.2026.2736679",
+      "authors": [
+        "Gayetri Chhetri Thapa",
+        "Steven Lewis"
+      ],
+      "abstract": "The rapid advancement of generative artificial intelligence (AI) has introduced significant challenges for higher education (HE) assessment practices, particularly those relying on unsupervised writte …",
+      "abstract_source": "email",
+      "published": "2026-09-25",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-26T09:06:15Z",
+      "date_precision": "time",
+      "journal": "Assessment & Evaluation in Higher Education",
+      "journal_id": "assessment-evaluation-in-higher-education",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-15",
+      "type": "journal-article",
+      "first_seen": "2026-09-26T09:06:15Z",
+      "last_seen": "2026-09-26T09:06:15Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-26",
+      "score": 8.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "generative AI",
+          "weight": 1.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/02602938.2026.2736679"
+    },
+    {
+      "id": "d90740f00c13c7fdc53c",
+      "title": "Review of Humanising Language Education in the Generative Artificial Intelligence Age: A Critical Realist Approach",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001879%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d92d4c56-5c3271aa-d6d4-4f94-b4bc-22f4fc78d5bc-000000/wIRerla29QBtGWMUznkLvexy8WJGg6fxwSKB9yujm_E=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001879%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d92d4c56-5c3271aa-d6d4-4f94-b4bc-22f4fc78d5bc-000000/wIRerla29QBtGWMUznkLvexy8WJGg6fxwSKB9yujm_E=452",
+      "doi": "",
+      "authors": [
+        "Yu Kyoung Shin"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-25",
+      "publication_text": "25 September 2026",
+      "feed_timestamp": "2026-09-25T15:27:00Z",
+      "date_precision": "time",
+      "journal": "System",
+      "journal_id": "system",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-25T15:27:00Z",
+      "last_seen": "2026-09-25T15:27:00Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-25",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "artificial intelligence",
+          "weight": 1.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 2.0
+        }
+      ]
+    },
+    {
+      "id": "abe7733b16be2c17e96a",
+      "title": "Polling as an Interactional Resource: A Multimodal Conversation Analysis of Video-Mediated Language Teaching",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001922%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d92d4c56-5c3271aa-d6d4-4f94-b4bc-22f4fc78d5bc-000000/7sPWCdiy8uFhuVxmoiaFGOgWke5J6bk62n_IcqY2ZiE=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001922%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d92d4c56-5c3271aa-d6d4-4f94-b4bc-22f4fc78d5bc-000000/7sPWCdiy8uFhuVxmoiaFGOgWke5J6bk62n_IcqY2ZiE=452",
+      "doi": "10.1016/j.system.2026.104161",
+      "authors": [
+        "FATMA KARACA TURHAN"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-25",
+      "publication_text": "25 September 2026",
+      "feed_timestamp": "2026-09-25T15:27:00Z",
+      "date_precision": "time",
+      "journal": "System",
+      "journal_id": "system",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "104161",
+      "type": "journal-article",
+      "first_seen": "2026-09-25T15:27:00Z",
+      "last_seen": "2026-09-25T15:27:00Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-25",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1016/j.system.2026.104161"
+    },
+    {
+      "id": "baede371d30de7a1605e",
+      "title": "Teacher assessment literacy and equitable assessment: the phronesis perspective",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IRtTzutnOY645UCGv75OxiFGxNdu9KqkHqO-2FE6TrMMrYgFHBUFKTyjDvMCS8Ss8rjw-3D-3Dj0_N_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdoRlYfokS0A7Qb1D7QY6vHCz0PuNZy-2BhhKwBT-2Faz5Ym10c-2FIP6-2BQa8qSMcdXBJLJkT4OD6h0p-2FFOdl2NYpvSgwcrS4rB1je6uN6Ik3r5iJ7eqromGLtiNKv5a6XN7sYOXwKGc22F56knivrcp80Epcs7PIfp-2BpFRd8nZB7r5P8NvnubX-2FAJaPblampxufrs1QVIPcqM96Zqqp-2Ft4PCfUYJew578wZ7LDUJBd-2BNfXT0r0-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IRtTzutnOY645UCGv75OxiFGxNdu9KqkHqO-2FE6TrMMrYgFHBUFKTyjDvMCS8Ss8rjw-3D-3Dj0_N_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdoRlYfokS0A7Qb1D7QY6vHCz0PuNZy-2BhhKwBT-2Faz5Ym10c-2FIP6-2BQa8qSMcdXBJLJkT4OD6h0p-2FFOdl2NYpvSgwcrS4rB1je6uN6Ik3r5iJ7eqromGLtiNKv5a6XN7sYOXwKGc22F56knivrcp80Epcs7PIfp-2BpFRd8nZB7r5P8NvnubX-2FAJaPblampxufrs1QVIPcqM96Zqqp-2Ft4PCfUYJew578wZ7LDUJBd-2BNfXT0r0-3D",
+      "doi": "10.1080/0969594x.2026.2736635",
+      "authors": [
+        "Serafina Pastore"
+      ],
+      "abstract": "Drawing on research into teacher assessment literacy, this commentary critically examines the Guiding Framework for Effective, Equitable Classroom Assessment for Teacher Practice and Student Success d …",
+      "abstract_source": "email",
+      "published": "2026-09-24",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-25T09:05:34Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-10",
+      "type": "journal-article",
+      "first_seen": "2026-09-25T09:05:34Z",
+      "last_seen": "2026-09-25T09:05:34Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": true,
+      "history_date": "2026-09-25",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736635"
+    },
+    {
+      "id": "9b61695c584ea6acc25b",
+      "title": "Assessing sustainability competences in secondary education: a systematic literature review",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S1747938X26000898%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d405a34c-0432a6eb-4dd7-4130-a908-5ac9fb05bb6a-000000/be7TAiEpUmVpyKUrXo188sWc3p8a-5GMiNVE_PlDCTg=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S1747938X26000898%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d405a34c-0432a6eb-4dd7-4130-a908-5ac9fb05bb6a-000000/be7TAiEpUmVpyKUrXo188sWc3p8a-5GMiNVE_PlDCTg=452",
+      "doi": "10.1016/j.edurev.2026.100850",
+      "authors": [
+        "Núria Monterde-Miralles",
+        "Mercè Junyent",
+        "Gisela Cebrián"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-24",
+      "publication_text": "24 September 2026",
+      "feed_timestamp": "2026-09-24T15:25:34Z",
+      "date_precision": "time",
+      "journal": "Educational Research Review",
+      "journal_id": "educational-research-review",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "100850",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T15:25:34Z",
+      "last_seen": "2026-09-24T15:25:34Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1016/j.edurev.2026.100850"
+    },
+    {
+      "id": "060d8f52427d97c79ab2",
+      "title": "Language learning motivations by age and socio-economic status: A cross-sectional comparison of Taiwan’s high school students",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001983%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d40586a0-6a6aad71-5d4b-47f0-a069-f1151520dccd-000000/YOvAwviSb_ox4WSqbKQSzdPExH6sJBrBHvaAKgOm7VE=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S0346251X26001983%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0d40586a0-6a6aad71-5d4b-47f0-a069-f1151520dccd-000000/YOvAwviSb_ox4WSqbKQSzdPExH6sJBrBHvaAKgOm7VE=452",
+      "doi": "10.1016/j.system.2026.104167",
+      "authors": [
+        "Karen J. Dunn",
+        "Janina Iwaniec"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "2026-09-24",
+      "publication_text": "24 September 2026",
+      "feed_timestamp": "2026-09-24T15:25:27Z",
+      "date_precision": "time",
+      "journal": "System",
+      "journal_id": "system",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "104167",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T15:25:27Z",
+      "last_seen": "2026-09-24T15:25:27Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1016/j.system.2026.104167"
+    },
+    {
+      "id": "493f636313f70cda1562",
+      "title": "Teaching and the decolonisation of research: structures of theory and inquiry",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fokP7yUwhllkv0wPm8FK-2FzgokiPWvrXfMv-2FpKE7YHf1aZiu5yMfie0MGffF0hsGEEXuiB7piwPgRA7fJpYYzKh-2FA-3D-3D0_vr_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda4tcOoXLS9gF11fRje8-2BwsrAluvxVNRmnbbuhRYJ9lU0dYVBCcHJtjDsQl5FEJDRdXh-2BESDai3wPqQOXY9wYkQFNzBI27sMpyLC9XPYx-2BBnjVZg9eTclBdZgCcZp8xRUZVnyuCkAxelXbQxYug-2FMU-2BxiN7aoh3cM1v34n-2BF4dN4-2FrQIhM8AG4awdTWxqNRWKuutwJ-2BFRBzd8o5W-2FIxzW9NNh7XjjqizmndprU3gqMiA-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fokP7yUwhllkv0wPm8FK-2FzgokiPWvrXfMv-2FpKE7YHf1aZiu5yMfie0MGffF0hsGEEXuiB7piwPgRA7fJpYYzKh-2FA-3D-3D0_vr_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVda4tcOoXLS9gF11fRje8-2BwsrAluvxVNRmnbbuhRYJ9lU0dYVBCcHJtjDsQl5FEJDRdXh-2BESDai3wPqQOXY9wYkQFNzBI27sMpyLC9XPYx-2BBnjVZg9eTclBdZgCcZp8xRUZVnyuCkAxelXbQxYug-2FMU-2BxiN7aoh3cM1v34n-2BF4dN4-2FrQIhM8AG4awdTWxqNRWKuutwJ-2BFRBzd8o5W-2FIxzW9NNh7XjjqizmndprU3gqMiA-3D",
+      "doi": "10.1080/13562517.2026.2735435",
+      "authors": [
+        "Syed Farid Alatas",
+        "Ibrar Bhatt",
+        "Shuchen Xiang"
+      ],
+      "abstract": "This article applies Syed Farid Alatas’s two-part framework for decolonisation, critique and construction, and considers what it entails for research training and methods pedagogy in the contemporary …",
+      "abstract_source": "email",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T10:07:25Z",
+      "date_precision": "time",
+      "journal": "Teaching in Higher Education",
+      "journal_id": "teaching-in-higher-education",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-20",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T10:07:25Z",
+      "last_seen": "2026-09-24T10:07:25Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": [],
+      "doi_url": "https://doi.org/10.1080/13562517.2026.2735435"
+    },
+    {
+      "id": "e8667b10ea1b7b9acd9a",
+      "title": "Formative and summative use of automatic conversational assessment- in higher education",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IS40KodwGcDd-2FxV5monyvI-2FI-2BimuVWOj976pXwuQpstL4FqWwne1ih8AszvQpwpTdw-3D-3DPx8-_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR99R9yENeMacvIuIB5A-2FrK9cnFCN28Y07DwiBPNpir8CxZuZ2Oqk-2Fag2qNupXX8yp8-2FDGSUn6kVCH7nQLgE33-2Ft8mZDXiMp-2BpBMQ3C-2FceZCes-2BbPvMhuJVkal3VlJ0H5LA7Or2NTwjDsQQVh5bfschA1c4qRMDaeKTOHaYCEJcr3Rk9PTluZE2PVhS8H6o-2BX8cQ-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IS40KodwGcDd-2FxV5monyvI-2FI-2BimuVWOj976pXwuQpstL4FqWwne1ih8AszvQpwpTdw-3D-3DPx8-_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR99R9yENeMacvIuIB5A-2FrK9cnFCN28Y07DwiBPNpir8CxZuZ2Oqk-2Fag2qNupXX8yp8-2FDGSUn6kVCH7nQLgE33-2Ft8mZDXiMp-2BpBMQ3C-2FceZCes-2BbPvMhuJVkal3VlJ0H5LA7Or2NTwjDsQQVh5bfschA1c4qRMDaeKTOHaYCEJcr3Rk9PTluZE2PVhS8H6o-2BX8cQ-3D",
+      "doi": "10.1080/0969594x.2026.2736624",
+      "authors": [
+        "Krist Shingjergji",
+        "Julie Bauer",
+        "Aki Härmä",
+        "Daniëlle Verstegen",
+        "Jorik Arts",
+        "Desirée Joosten-ten Brinke"
+      ],
+      "abstract": "The increasing use of generative AI in education raises concerns about misuse, particularly regarding students’ work originality. Conversational assessments offer a promising alternative for measuring students’ subject mastery but are difficult to scale. Building upon a prototype for automatic conversational assessment (ACA) using large language models, technology, this study examines whether the ACA-method can summatively assess high-order cognitive skills and whether its formative use supports learning ethically and responsibly. A mixed-methods design combines system logs, assessment results, survey data on usefulness, trust, and learning perspectives and qualitative analysis of student-bot interaction. Eleven batchelor level statistics students participated in a formative assessment, and six in a subsequent summative assessment. Results showed that students who used the bot performed significantly better on the final exam, indicating the bot’s potential educational value. Overall, perceptions were positive, though feedback qualityneeds improvement. The findings provide empirical support for the ACA-bot’s potential in this educational context.",
+      "abstract_source": "openalex",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T09:05:46Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-18",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T09:05:46Z",
+      "last_seen": "2026-09-24T09:05:46Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-24",
+      "score": 13.0,
+      "matched_keywords": [
+        {
+          "keyword": "feedback",
+          "weight": 6.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "generative AI",
+          "weight": 1.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 1.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736624"
+    },
+    {
+      "id": "df68b40070f9521b6660",
+      "title": "Protecting assessment validity in AI-augmented higher education: a governance framework for responsible integration",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IfF3wXYXN1knisfuGaDfbDeXtIG6oX0xP2cl1K1FERcv-2FeYeXnc0GSTDXrK1-2Bz4WLg-3D-3DAorC_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR9-2Bnicgf2oWbuo-2FJ6NiYf4Ytzx3W4CrfSYhb-2BdJ-2FzqOMmvj4LXrvCq-2FpKJvP4EPf5JtgTSC1XjEvXclWd2Onw6rYsaU6bzJVjm8RXWl8hIxQiFmJfLywuex8NdhsX169PrYwMWYF5FAHWywZzNJDr8JMxdterLHj-2BsnJxK2HaT9foTJ3cdRvuBcf2YQMNZH6s7E-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IfF3wXYXN1knisfuGaDfbDeXtIG6oX0xP2cl1K1FERcv-2FeYeXnc0GSTDXrK1-2Bz4WLg-3D-3DAorC_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR9-2Bnicgf2oWbuo-2FJ6NiYf4Ytzx3W4CrfSYhb-2BdJ-2FzqOMmvj4LXrvCq-2FpKJvP4EPf5JtgTSC1XjEvXclWd2Onw6rYsaU6bzJVjm8RXWl8hIxQiFmJfLywuex8NdhsX169PrYwMWYF5FAHWywZzNJDr8JMxdterLHj-2BsnJxK2HaT9foTJ3cdRvuBcf2YQMNZH6s7E-3D",
+      "doi": "10.1080/0969594x.2026.2736625",
+      "authors": [
+        "Bert M. Sadowski",
+        "Manuel Oliveira"
+      ],
+      "abstract": "Generative AI makes student outputs ambiguous indicators of learning. This study examines how institutional governance can protect validity while enabling responsible AI use, aligned with the EU AI Act and the European Commission’s Ethics Guidelines for Trustworthy AI. A qualitative single-case study of a departmental Task Force (October 2024–April 2025) compares two pilots: unscaffolded retrieval-augmented chatbot access (n = 35 of 116 enrolled) and process-focused assessment using the DRIVE framework (n = 70 students; 1,450 prompts). Chatlogs, student surveys (n = 19), instructor evaluations, and governance documents were analysed using a unified validity framework. An efficiency paradox emerged: unscaffolded access produced high satisfaction but no exam-performance difference (d = 0.08), whereas DRIVEinteraction-quality scores correlated with essay scores (r = .54), separating collaborative partnership from passive delegation. Validity protection requires ethical review of pilots, process visibility, validated rubrics, faculty development, and equity-impact analysis. Findings are exploratory.",
+      "abstract_source": "openalex",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T09:05:46Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-15",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T09:05:46Z",
+      "last_seen": "2026-09-24T09:05:46Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-24",
+      "score": 7.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        },
+        {
+          "keyword": "generative AI",
+          "weight": 1.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 1.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736625"
+    },
+    {
+      "id": "b370ac41be0eea78331b",
+      "title": "A higher-education ‘AI integrity risk ecology’ model grounded in assessment ethics",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IfWz1SWJwRXfysAOkToxXrKwwJhFRnGocFBNPz8mMHiMjZFXID1BoJmZtjVVt-2Fgb4w-3D-3D4slf_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR995o4Lx5ARvGfvSBZgh-2BgQGYI1IXI-2BDcNV8i6g8q44650op24DYP5CYXdU8ZAaspq3h8JWmbbCgWBCNLLikT08rXRfQIpqTYENu3d-2BDO-2BD2g6NEBG2OmWFlzHal914bGWVj3-2BFf01i9jFOuSFY8IxD-2F9vmrdOqdon8lWjD3uEOVpJTwk3dT79gg9C7EYP44IGY-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IfWz1SWJwRXfysAOkToxXrKwwJhFRnGocFBNPz8mMHiMjZFXID1BoJmZtjVVt-2Fgb4w-3D-3D4slf_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR995o4Lx5ARvGfvSBZgh-2BgQGYI1IXI-2BDcNV8i6g8q44650op24DYP5CYXdU8ZAaspq3h8JWmbbCgWBCNLLikT08rXRfQIpqTYENu3d-2BDO-2BD2g6NEBG2OmWFlzHal914bGWVj3-2BFf01i9jFOuSFY8IxD-2F9vmrdOqdon8lWjD3uEOVpJTwk3dT79gg9C7EYP44IGY-3D",
+      "doi": "10.1080/0969594x.2026.2736633",
+      "authors": [
+        "Shahazwan Mat Yusoff",
+        "Anwar Farhan Mohamad Marzaini",
+        "Hao Lijie",
+        "Evanna Devi Seyapalan",
+        "Mohamad Ridhuan Abdullah",
+        "Muhammad Ridha Ali Huddin"
+      ],
+      "abstract": "Shahazwan Mat Yusoff, Anwar Farhan Mohamad Marzaini, Hao Lijie, Evanna Devi Seyapalan, Mohamad Ridhuan Abdullah & others The paper introduces the Higher-Education AI Integrity Risk Ecology (HE-AIRE) model, which aims to address ethical, validity, and governance issues related to AI-powered assessment decisions. With the …",
+      "abstract_source": "email",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T09:05:46Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-16",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T09:05:46Z",
+      "last_seen": "2026-09-24T09:05:46Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736633"
+    },
+    {
+      "id": "5c74068dffc4298540cb",
+      "title": "Repositioning assessment as care work in the age of AI",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IcWuMe2JsZe2M549pxAvmwkuvnWujyeABccBkZwKo9Wu2UPLqwL1ZYPLztZfAim-2Big-3D-3Dujzt_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR9-2BRSwhY8TOzpI3m9w3iwwGnJ6eG0xgL7tzPyBhmUXA5Ac7XxWwY0YfeQNN8CrvG0dg7nrvtz9GuajfcWxVGsaqQdKV8Urn-2Fd9ivG8guAONMeL7oJ5If7fDmCjUKPlREQunmdkoxmwxwnzEem2qStUJeuKdgPGKZmdJOyDvmMUarOxbxkHlQHvDhLB9n-2FSQnAw8-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IcWuMe2JsZe2M549pxAvmwkuvnWujyeABccBkZwKo9Wu2UPLqwL1ZYPLztZfAim-2Big-3D-3Dujzt_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR9-2BRSwhY8TOzpI3m9w3iwwGnJ6eG0xgL7tzPyBhmUXA5Ac7XxWwY0YfeQNN8CrvG0dg7nrvtz9GuajfcWxVGsaqQdKV8Urn-2Fd9ivG8guAONMeL7oJ5If7fDmCjUKPlREQunmdkoxmwxwnzEem2qStUJeuKdgPGKZmdJOyDvmMUarOxbxkHlQHvDhLB9n-2FSQnAw8-3D",
+      "doi": "10.1080/0969594x.2026.2736634",
+      "authors": [
+        "Mary Rice"
+      ],
+      "abstract": "Assessment in the so-called Age of AI has brought into view a need to (re)consider the historically present injustices of assessment practice, the known challenges of AI, and the need for care in inst …",
+      "abstract_source": "email",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T09:05:46Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-16",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T09:05:46Z",
+      "last_seen": "2026-09-24T09:05:46Z",
+      "metadata_source": "email+crossref",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736634"
+    },
+    {
+      "id": "bdd906fd6753c4a398ec",
+      "title": "From guidance to practice: reflecting on the principles for effective, equitable classroom assessment",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5ISq36QVKbbebB-2FB0SMZmeI03bFR-2FMhOPvgNpFrCbjZ956WywkuFN0zv-2Fu77zgE5ugQ-3D-3DJcKd_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR99A5Z0MSLc0MSGAU8uO-2FWXJqWZJFaelpdcR6p48GkaiIaEwjityATCTw9IcwAogXFWkYqztX0V0A1WENT6jy1OxkUgRBmx0Cy9Y9tczj-2F7xyhKs-2BP3nzgkVGbHMQqniJ9GRKgCvz0lKGcGCtIeOWhla1nie7cSHG1AZvCCsJAy5Yc35MowdQCP-2FgHcabblL4Gc-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5ISq36QVKbbebB-2FB0SMZmeI03bFR-2FMhOPvgNpFrCbjZ956WywkuFN0zv-2Fu77zgE5ugQ-3D-3DJcKd_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR99A5Z0MSLc0MSGAU8uO-2FWXJqWZJFaelpdcR6p48GkaiIaEwjityATCTw9IcwAogXFWkYqztX0V0A1WENT6jy1OxkUgRBmx0Cy9Y9tczj-2F7xyhKs-2BP3nzgkVGbHMQqniJ9GRKgCvz0lKGcGCtIeOWhla1nie7cSHG1AZvCCsJAy5Yc35MowdQCP-2FgHcabblL4Gc-3D",
+      "doi": "10.1080/0969594x.2026.2736638",
+      "authors": [
+        "E. Caroline Wylie"
+      ],
+      "abstract": "The article, Principles for Effective, Equitable Classroom Assessment (Van Orman et al., this volume) represents a significant endeavour, completed over multiple years to develop a set of research-bas …",
+      "abstract_source": "email",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T09:05:46Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-8",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T09:05:46Z",
+      "last_seen": "2026-09-24T09:05:46Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736638"
+    },
+    {
+      "id": "22d95a7a4b1f23468b1b",
+      "title": "Promoting deeper thinking through artificial intelligence supported argumentation in Saudi English classrooms",
+      "url": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IfDLZY7qbSGT6PwnUQoN4TBNae8Wvu7B6qCB8R6orBpPsikNw1NP5xitpFFTeB-2BESw-3D-3D7GLp_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR98vwafWwWJlDRn3CKBkFcKzYwx-2F-2BjZoNrYZz3zh-2FTOutc5faNm-2FRuaH0TbmUP-2BE-2FuBFuWQy8zWWAep9yfc02ndv0s852lQy-2F88q784yydpAgVc4uQDJBXJYJtTH352vyVudn-2FU8eNyL7-2F0N-2BZEJY-2FWSiiPKMNen6C7mUOvYpI1wdoNUhRvVU06dKGitzFbAQmA-3D",
+      "guid": "https://url6649.tandfonline.com/ls/click?upn=u001.Z4WTLvhKhuNdT-2BZ6FY7pIE1qPnuAh-2BFdltgJIae950BfKiA8F5Txait-2BTEJPg7fon4huqn-2FHWPMujZ9TwOa5IfDLZY7qbSGT6PwnUQoN4TBNae8Wvu7B6qCB8R6orBpPsikNw1NP5xitpFFTeB-2BESw-3D-3D7GLp_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdaM0GDG8YfG5lq0K3pgRQEkLPpG1UpWEgTYm2VjiwR98vwafWwWJlDRn3CKBkFcKzYwx-2F-2BjZoNrYZz3zh-2FTOutc5faNm-2FRuaH0TbmUP-2BE-2FuBFuWQy8zWWAep9yfc02ndv0s852lQy-2F88q784yydpAgVc4uQDJBXJYJtTH352vyVudn-2FU8eNyL7-2F0N-2BZEJY-2FWSiiPKMNen6C7mUOvYpI1wdoNUhRvVU06dKGitzFbAQmA-3D",
+      "doi": "10.1080/0969594x.2026.2736621",
+      "authors": [
+        "Syed Naeem Ahmed",
+        "Shafiq ur Rehman",
+        "Shazia Hamid"
+      ],
+      "abstract": "As artificial intelligence becomes increasingly integrated into higher education, a key concern is whether it can foster deep reasoning rather than automate routine tasks. Addressing gaps in evidence …",
+      "abstract_source": "email",
+      "published": "2026-09-23",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-24T09:05:46Z",
+      "date_precision": "time",
+      "journal": "Assessment in Education: Principles, Policy & Practice",
+      "journal_id": "assessment-in-education-principles-policy-practice",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "1-17",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T09:05:46Z",
+      "last_seen": "2026-09-24T09:05:46Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": true,
+      "history_date": "2026-09-24",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "artificial intelligence",
+          "weight": 1.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1080/0969594x.2026.2736621"
+    },
+    {
+      "id": "5a8e6a19fe83b3b67f57",
+      "title": "Generative AI–Assisted Workflows in Architectural Conceptual Design: Performance, Creative Self-Efficacy, and Cognitive Load",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S2666920X2600144X%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0cf426495-5b026968-4b8a-488f-a0a8-bdd11b7be5fc-000000/rqALS8snpfwL4EvErSCy6OBnmvxR9D2nqf0TjuigoXk=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S2666920X2600144X%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0cf426495-5b026968-4b8a-488f-a0a8-bdd11b7be5fc-000000/rqALS8snpfwL4EvErSCy6OBnmvxR9D2nqf0TjuigoXk=452",
+      "doi": "10.1016/j.caeai.2026.100682",
+      "authors": [
+        "Yao Xiao",
+        "Han Jiang",
+        "Rachel Hurley",
+        "Shichao Liu"
+      ],
+      "abstract": "Generative AI (GenAI) is increasingly adopted in design education, yet evaluating its educational value through final outcomes provides an incomplete picture. This study compares two ecologically plausible workflows in an architectural conceptual design task: GenAI-assisted image generation and ArchDaily-based precedent search. The comparison concerns complete workflows rather than the isolated contributions. Thirty-six students completed a two-phase design task, first designing independently and then revising with their assigned workflow. Screen-recording demonstrated active engagement in both conditions. Eight judges rated design performance, while participants reported task-specific and general creative self-efficacy and cognitive load after each phase. Difference-in-differences analyses showed no significant overall differences between the GenAI and precedent-search workflows in design performance, cognitive workload, or task-specific creative self-efficacy. Beyond these null overall effects, three patterns were observed. General creative self-efficacy showed a significant relative decline under the GenAI workflow. A subgroup analysis suggested higher revision-phase performance among novice students using GenAI than among those using precedent search (F (1,32) = 4.303, p = 0.046, partial η 2 = 0.118). However, this exploratory interaction should be interpreted cautiously due to low rating reliability, small subgroup cells, and imprecise estimation. Third, exploratory prompt analyses suggested that iterative, task-specific prompting strategies (CD3, CD6) were associated with cognitive load reductions at the uncorrected level, but neither association survived multiple-comparison correction. Overall, the GenAI workflow did not produce uniform gains. Its educational value may depend on pedagogical framing, learner characteristics, and human–AI interaction structure, underscoring the need to preserve creative agency and develop prompt literacy.",
+      "abstract_source": "openalex",
+      "published": "2026-09-23",
+      "publication_text": "23 September 2026",
+      "feed_timestamp": "2026-09-23T17:13:50Z",
+      "date_precision": "time",
+      "journal": "Computers and Education: Artificial Intelligence",
+      "journal_id": "computers-and-education-artificial-intelligence",
+      "publisher": "Elsevier",
+      "volume": "",
+      "issue": "",
+      "pages": "100682",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T17:13:50Z",
+      "last_seen": "2026-09-23T17:13:50Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "generative AI",
+          "weight": 1.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1016/j.caeai.2026.100682"
+    },
+    {
+      "id": "2d966d37af93709a81da",
+      "title": "Large Language Models for L2 Italian Writing Assessment: Effects of Prompt, Fine-Tuning, and Data Balance",
+      "url": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS-2FnXUUMWR4UQI9LS6WXCvHZ9yscOWMc0naOshAtLXJOMV9VS_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdQ3W-2Fn3nVGr7YLT-2BGad-2BCMgJM0DP8pBW9cpZDpGYF39ySGrb64RPpNNmRhuWEO2c8a6tfIL9nTxOhOj4HmkV36uFochWkqE6N-2FmmjVPBJ-2Btaa8erg2w-2BKBFehCvHNYPkLR5AaCRtSJ6EB7aooQYtjoB7ELnUx-2FJAr94UebLarR3Oi7XHypbY9aYxPeH9y0-2Bw0alVhuuraIg31pkylElTGpLsR01rd-2FwMZTD-2FAowjhOd0-3D",
+      "guid": "https://url8709.sagepub.com/ls/click?upn=u001.n4cYvBS90nCICHnXBPdPXIoxkS-2BbyBlGVf7nx-2B9RTB-2Fp3GWHGiXWcORHZ9h0W8PLKzYntOVR1xWgNMr8QPulS-2FnXUUMWR4UQI9LS6WXCvHZ9yscOWMc0naOshAtLXJOMV9VS_bU-2FL4lfe1uHlKxJmlBG9Y0IE-2BgjwgyW9GpKBzxmtgDi9hPE0tuD47GU6nApSYAVdQ3W-2Fn3nVGr7YLT-2BGad-2BCMgJM0DP8pBW9cpZDpGYF39ySGrb64RPpNNmRhuWEO2c8a6tfIL9nTxOhOj4HmkV36uFochWkqE6N-2FmmjVPBJ-2Btaa8erg2w-2BKBFehCvHNYPkLR5AaCRtSJ6EB7aooQYtjoB7ELnUx-2FJAr94UebLarR3Oi7XHypbY9aYxPeH9y0-2Bw0alVhuuraIg31pkylElTGpLsR01rd-2FwMZTD-2FAowjhOd0-3D",
+      "doi": "10.1177/13621688261483334",
+      "authors": [
+        "Huang Wenqian",
+        "Yang Pengzhan",
+        "Yao Guangyuan"
+      ],
+      "abstract": "This study systematically evaluates generative pre-trained transformer (GPT)-based large language models for the automated writing evaluation of Italian as a second language (L2). Drawing on 1,832 learner texts, we compare six GPT-based experimental conditions: zero-shot and few-shot prompting with GPT-4.1 and GPT-5, and two fine-tuned GPT-4.1 models trained on either class-balanced or proportionally distributed datasets. Model performance against human common European framework of reference for languages (CEFR)-based ratings is examined using exact agreement, correlation coefficients, Quadratic Weighted Kappa, precision, recall, and F1-scores. Results reveal a clear hierarchy: the balanced fine-tuned GPT-4.1 model achieves near-operational reliability, whereas all prompting-based methods, including GPT-5, remain substantially weaker. Training data balance emerges as critical, as class-imbalanced fine-tuning was associated with weaker performance on high- and low-level texts. The findings highlight the need for balanced, language-specific corpora and task-aligned fine-tuning in L2 Italian automated writing assessment.",
+      "abstract_source": "crossref",
+      "published": "2026-09-22",
+      "publication_text": "Sep 22, 2026",
+      "feed_timestamp": "2026-09-24T05:15:42Z",
+      "date_precision": "time",
+      "journal": "Language Teaching Research",
+      "journal_id": "language-teaching-research",
+      "publisher": "SAGE",
+      "volume": "",
+      "issue": "",
+      "pages": "13621688261483334",
+      "type": "journal-article",
+      "first_seen": "2026-09-24T05:15:42Z",
+      "last_seen": "2026-09-24T05:15:42Z",
+      "metadata_source": "email+crossref",
+      "history_date": "2026-09-24",
+      "score": 6.0,
+      "matched_keywords": [
+        {
+          "keyword": "assessment",
+          "weight": 2.0,
+          "fields": [
+            "title",
+            "details"
+          ],
+          "contribution": 6.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1177/13621688261483334"
+    },
+    {
+      "id": "e01aef9142f4e0eb0ea2",
+      "title": "Agentivism: a learning theory for the age of artificial intelligence",
+      "url": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S2666920X26001463%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0cf426495-5b026968-4b8a-488f-a0a8-bdd11b7be5fc-000000/0tsN7-Slyby1_ajq6YFNbFnWHQDzp-jk5ZgTi0qb0S4=452",
+      "guid": "https://click.notification.elsevier.com/CL0/https:%2F%2Fwww.sciencedirect.com%2Fscience%3F_ob=GatewayURL%26_method=citationSearch%26_version=1%26_piikey=S2666920X26001463%26_origin=RV_SD_AIP_EMAIL%26dgcid=raven_sd_aip_email/1/010001a0cf426495-5b026968-4b8a-488f-a0a8-bdd11b7be5fc-000000/0tsN7-Slyby1_ajq6YFNbFnWHQDzp-jk5ZgTi0qb0S4=452",
+      "doi": "10.1016/j.caeai.2026.100684",
+      "authors": [
+        "Lixiang Yan",
+        "Dragan Gašević"
+      ],
+      "abstract": "Learning theories have historically changed when the conditions of learning evolved. Generative and agentic AI create a new condition by allowing learners to delegate explanation, writing, problem solving, and other cognitive work to systems that can generate, recommend, and sometimes act on the learner’s behalf. This creates a fundamental challenge for learning theory: successful performance can no longer be assumed to indicate learning. Learners may complete tasks effectively with AI support while developing less understanding, weaker judgment, and limited transferable capability. We argue that this problem is not fully captured by existing learning theories. Behaviourism, cognitivism, constructivism, and connectivism remain important, but they do not directly explain when AI-assisted performance becomes durable human capability. We propose Agentivism, a learning theory for human-AI interaction. Agentivism defines learning as durable growth in human capability through selective delegation to AI, epistemic monitoring and verification of AI contributions, reconstructive internalization of AI-assisted outputs, and transfer under reduced support. The importance of Agentivism lies in explaining how learning remains possible when intelligent delegation is easy and human-AI interaction is becoming a persistent and expanding part of human learning. The theory yields six testable propositions and suggests that teachers preserve opportunities for learner judgement while researchers distinguish AI-assisted performance from capability that endures beyond immediate support.",
+      "abstract_source": "openalex",
+      "published": "2026-09-22",
+      "publication_text": "22 September 2026",
+      "feed_timestamp": "2026-09-23T17:13:50Z",
+      "date_precision": "time",
+      "journal": "Computers and Education: Artificial Intelligence",
+      "journal_id": "computers-and-education-artificial-intelligence",
+      "publisher": "Elsevier",
+      "volume": "11",
+      "issue": "",
+      "pages": "100684",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T17:13:50Z",
+      "last_seen": "2026-09-23T17:13:50Z",
+      "metadata_source": "email+crossref+openalex",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "artificial intelligence",
+          "weight": 1.0,
+          "fields": [
+            "title"
+          ],
+          "contribution": 2.0
+        }
+      ],
+      "doi_url": "https://doi.org/10.1016/j.caeai.2026.100684"
+    },
+    {
+      "id": "6297c54be3083a347032",
+      "title": "Free play in Hong Kong kindergartens? Analyzing the correspondence between curriculum and practice",
+      "url": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2Xz84QLszZ4Et1P9z_ZJdEl720kRLGWMfC36gLJYreZaFzwAKCfmR5RSrherbIbhvVRZMvanAeHByiVHF1fIL--nGtxAobmz6D_MGnX9-SQRiS",
+      "guid": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2Xz84QLszZ4Et1P9z_ZJdEl720kRLGWMfC36gLJYreZaFzwAKCfmR5RSrherbIbhvVRZMvanAeHByiVHF1fIL--nGtxAobmz6D_MGnX9-SQRiS",
+      "doi": "",
+      "authors": [],
+      "abstract": "Xiaozi Gao, Alfredo Bautista, Yim Sheung Lai - Journal of Early Childhood Teacher Education",
+      "abstract_source": "email",
+      "published": "",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-23T23:25:40Z",
+      "date_precision": "time",
+      "journal": "Taylor & Francis",
+      "journal_id": "taylor-francis",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T23:25:40Z",
+      "last_seen": "2026-09-23T23:25:40Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 2.0,
+      "matched_keywords": [
+        {
+          "keyword": "teacher education",
+          "weight": 2.0,
+          "fields": [
+            "details"
+          ],
+          "contribution": 2.0
+        }
+      ]
+    },
+    {
+      "id": "685dd2e1f5d23fedc5f4",
+      "title": "Assessing the Scope and Alignment of Undergraduate Research Training: A Computational Analysis of Thesis Topics in a Medical University Context",
+      "url": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2V9vwgoAREqtjUGGAopjzeI_gk8cgo-uUdT7NPUeFmIUBz77KuPgIbISiDbY-i6rgpWyF1vcjeKaF4CZehhr7igxcKqChJrV4kb05FzhiAdNyx",
+      "guid": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2V9vwgoAREqtjUGGAopjzeI_gk8cgo-uUdT7NPUeFmIUBz77KuPgIbISiDbY-i6rgpWyF1vcjeKaF4CZehhr7igxcKqChJrV4kb05FzhiAdNyx",
+      "doi": "",
+      "authors": [],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-23T23:25:40Z",
+      "date_precision": "time",
+      "journal": "Taylor & Francis",
+      "journal_id": "taylor-francis",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T23:25:40Z",
+      "last_seen": "2026-09-23T23:25:40Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "4829c4facd35010898e6",
+      "title": "Activism on a Leash: National Education Policies Framing of Youth Activism in Australia, England and the United States",
+      "url": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2ZERgptWuOVW_EkP8vDqYjvKB0iJC0nfnIA-Sp39oY1O3nljo7AA9qDzG_LNSCwrTJhYu5l55KqfSLcEksjybENq857GPYC12WSUsgDNfSQ0M-",
+      "guid": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2ZERgptWuOVW_EkP8vDqYjvKB0iJC0nfnIA-Sp39oY1O3nljo7AA9qDzG_LNSCwrTJhYu5l55KqfSLcEksjybENq857GPYC12WSUsgDNfSQ0M-",
+      "doi": "",
+      "authors": [
+        "Mania Borzenko",
+        "Miri Yemini - Comparative Education"
+      ],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-23T23:25:40Z",
+      "date_precision": "time",
+      "journal": "Taylor & Francis",
+      "journal_id": "taylor-francis",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T23:25:40Z",
+      "last_seen": "2026-09-23T23:25:40Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "353910fc04fbef665722",
+      "title": "Engineering Judgment Revealed in Student Reflections: The Prominence of Metacognition during Project Work",
+      "url": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2bS9XAmEHQQ-VDN1UWNlXgRHEaj3wOeKppa3SKwQSILLMn9bzvxOUManI_e_wXxNj792VcoWFu7SIOWVez3wSxZwv-09A3IbRhHrCG98TJDrxE",
+      "guid": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2bS9XAmEHQQ-VDN1UWNlXgRHEaj3wOeKppa3SKwQSILLMn9bzvxOUManI_e_wXxNj792VcoWFu7SIOWVez3wSxZwv-09A3IbRhHrCG98TJDrxE",
+      "doi": "",
+      "authors": [],
+      "abstract": "Renee M. Clark, Samuel J. Dickerson - European Journal of Engineering Education",
+      "abstract_source": "email",
+      "published": "",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-23T23:25:40Z",
+      "date_precision": "time",
+      "journal": "Taylor & Francis",
+      "journal_id": "taylor-francis",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T23:25:40Z",
+      "last_seen": "2026-09-23T23:25:40Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "1c6d35d0721c6d3bd788",
+      "title": "Onboarding Nontraditional Learners: An Evaluation of an Asynchronous Online Orientation in a Teacher Apprenticeship Program",
+      "url": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2dwQG7IEZNKyQ-Hc08xcGfkiOaSZvR-dAG-ZO2XswkAlhh398Ed-jml2GAVgQflFPIDKswrdWcuwxuJdu_1ti4u6OvoTmDRyTQYKwkjpZrhE6i",
+      "guid": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2dwQG7IEZNKyQ-Hc08xcGfkiOaSZvR-dAG-ZO2XswkAlhh398Ed-jml2GAVgQflFPIDKswrdWcuwxuJdu_1ti4u6OvoTmDRyTQYKwkjpZrhE6i",
+      "doi": "",
+      "authors": [],
+      "abstract": "Trent W. Dawson, Michael Hack, Kenneth J. Fasching-varner - The Journal of Continuing Higher Education",
+      "abstract_source": "email",
+      "published": "",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-23T23:25:40Z",
+      "date_precision": "time",
+      "journal": "Taylor & Francis",
+      "journal_id": "taylor-francis",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T23:25:40Z",
+      "last_seen": "2026-09-23T23:25:40Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": []
+    },
+    {
+      "id": "124e975b1369c99c9624",
+      "title": "Explore our journal suggester",
+      "url": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2gw6LLqLJU3VoheuzbK-EnRJP3JYdrNPTrzBUQLST3ZTeecrEbbaMP6GDV7sLHTqjbOx4NB3J3ymig9jnk0XG557IMcdK7BaHLwBlDmX4",
+      "guid": "https://click.email.taylorandfrancis.com/?qs=ABB7InYiOjEsImQiOjUwMDh9AAYAAAAABWEYBy2gw6LLqLJU3VoheuzbK-EnRJP3JYdrNPTrzBUQLST3ZTeecrEbbaMP6GDV7sLHTqjbOx4NB3J3ymig9jnk0XG557IMcdK7BaHLwBlDmX4",
+      "doi": "",
+      "authors": [],
+      "abstract": "",
+      "abstract_source": "",
+      "published": "",
+      "publication_text": "",
+      "feed_timestamp": "2026-09-23T23:25:40Z",
+      "date_precision": "time",
+      "journal": "Taylor & Francis",
+      "journal_id": "taylor-francis",
+      "publisher": "Taylor & Francis",
+      "volume": "",
+      "issue": "",
+      "pages": "",
+      "type": "journal-article",
+      "first_seen": "2026-09-23T23:25:40Z",
+      "last_seen": "2026-09-23T23:25:40Z",
+      "metadata_source": "email",
+      "is_open_access": false,
+      "history_date": "2026-09-24",
+      "score": 0.0,
+      "matched_keywords": []
+    }
+  ]
 }
