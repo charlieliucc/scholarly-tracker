@@ -1394,6 +1394,8 @@ def _trusted_article_url(url: str, publisher: str) -> bool:
         "Taylor & Francis": ("tandfonline.com",),
         "Wiley": ("wiley.com",),
         "Nature": ("nature.com", "springernature.com"),
+        "APA": ("apa.org",),
+        "Cambridge": ("cambridge.org",),
     }.get(publisher, ())
     return any(host == domain or host.endswith("." + domain) for domain in allowed)
 

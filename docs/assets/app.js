@@ -252,7 +252,7 @@ async function initHistory() {
       $("#history-count").textContent = "0 篇论文";
       return;
     }
-    dates.forEach((date) => dateSelect.append(element("option", "", formatDate(date))));
+    dates.forEach((date) => dateSelect.append(element("option", "", formatDate(days[date].generated_at))));
     dates.forEach((date, index) => { dateSelect.options[index].value = date; });
 
     function render() {
@@ -270,8 +270,8 @@ async function initHistory() {
         const recommendedIds = new Set(recommendedArticles.map((article) => String(article.id)));
         otherArticles = articles.filter((article) => !recommendedIds.has(String(article.id)));
       }
-      $("#history-count").textContent = `${articles.length} 篇论文 · ${formatDate(date)}`;
-      $("#history-updated").textContent = day.generated_at ? `记录生成于 ${formatDate(day.generated_at, true)}` : "";
+      $("#history-count").textContent = `${articles.length} 篇论文 · ${formatDate(day.generated_at)}`;
+      $("#history-updated").textContent = day.generated_at ? `更新于 ${formatDate(day.generated_at, true)}` : "";
       recommendedList.replaceChildren();
       otherList.replaceChildren();
       if (!articles.length) {

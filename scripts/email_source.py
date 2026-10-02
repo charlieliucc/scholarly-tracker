@@ -37,6 +37,11 @@ URL_LIKE_TITLE = re.compile(
 )
 OPEN_ACCESS_LABEL = re.compile(r"^open[\s-]+access(?:\s*[-|:]\s*(?:research|review|original|full)\s+article|\s+article)?$", re.I)
 ARTICLE_TYPE_LABEL = re.compile(r"^(?:research|review|original|full)\s+article$", re.I)
+SAGE_TYPE_LABEL = re.compile(r"^(?:article|manuscript|(?:research|review|original|full)\s+article)$", re.I)
+APA_METADATA = re.compile(
+    r"^(?P<authors>.+?)\s+[-–—]\s+(?P<date>\d{1,2}/\d{1,2}/\d{4})"
+    r"\s+[-–—]\s+Volume\s+(?P<volume>\d+),\s*Issue\s+(?P<issue>\d+)\b", re.I,
+)
 
 
 def clean_text(value: Any) -> str:
@@ -308,6 +313,58 @@ class AnchorParser(HTMLParser):
             self.parts.append("\n")
 
 
+class WileyAlertParser(AnchorParser):
+    """Retain Wiley's issue-item and author containers, including leading badges."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.divs = []
+        self.items = []
+        self.author_blocks = []
+
+    def handle_starttag(self, tag, attrs):
+        super().handle_starttag(tag, attrs)
+        if tag == "div":
+            self.divs.append((len(self.parts), set((dict(attrs).get("class") or "").split())))
+
+    def handle_endtag(self, tag):
+        if tag == "div" and self.divs:
+            start, classes = self.divs.pop()
+            if "issue-item" in classes:
+                self.items.append((start, len(self.parts)))
+            if "comma__list" in classes:
+                self.author_blocks.append((start, len(self.parts)))
+        super().handle_endtag(tag)
+
+
+class NatureAlertParser(AnchorParser):
+    """Keep article cells and the title, summary and byline spans they contain."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.cells = []
+        self.spans = []
+        self.active_cells = []
+        self.active_spans = []
+
+    def handle_starttag(self, tag, attrs):
+        super().handle_starttag(tag, attrs)
+        if tag == "td":
+            self.active_cells.append(len(self.parts))
+        elif tag == "span":
+            style = dict(attrs).get("style") or ""
+            size = re.search(r"font-size\s*:\s*(10|12|14|16|18)px", style, re.I)
+            self.active_spans.append((len(self.parts), size[1] if size else ""))
+
+    def handle_endtag(self, tag):
+        if tag == "td" and self.active_cells:
+            self.cells.append((self.active_cells.pop(), len(self.parts)))
+        elif tag == "span" and self.active_spans:
+            start, size = self.active_spans.pop()
+            self.spans.append((start, len(self.parts), size))
+        super().handle_endtag(tag)
+
+
 def _author_line(value: str) -> bool:
     value = re.sub(r"^(?:by|authors?)\s*:?\s+", "", value, flags=re.I).strip(" ,;")
     if not value or len(value) > 300 or re.search(r"https?://|\d{4}|[!?…:]", value):
@@ -359,10 +416,10 @@ def _open_access_prelude_start(parts: list[str], start: int, end: int, markers: 
     return None
 
 
-def _article(journal: str, publisher: str, title: str, url: str, authors: str, snippet: str, received: datetime) -> dict[str, Any]:
+def _article(journal: str, publisher: str, title: str, url: str, authors: str, snippet: str, received: datetime, doi: str = "") -> dict[str, Any]:
     title = clean_text(title)
     url = html.unescape(url).strip()
-    doi = normalize_doi(f"{url} {title}")
+    doi = normalize_doi(doi) or normalize_doi(f"{url} {title}")
     stable = doi or url or f"{journal}|{title}"
     published, publication_text = extract_publication_date(snippet)
     return {
@@ -392,6 +449,12 @@ def _article(journal: str, publisher: str, title: str, url: str, authors: str, s
 
 
 def _subject_journal(subject: str, publisher: str) -> str:
+    if publisher == "APA":
+        match = re.match(r"APA PsycAlert\s*[-–—:]\s*(.+)$", subject, re.I)
+        return match.group(1).strip() if match else ""
+    if publisher == "Cambridge":
+        match = re.match(r"New (?:Issue|Articles?|content) (?:of|for|in)\s+(.+?)\s+available on Cambridge Core$", subject, re.I)
+        return match.group(1).strip() if match else ""
     if publisher == "Elsevier":
         return re.split(r"\s*:\s*(?:Alert|Volume)\b", subject, maxsplit=1, flags=re.IGNORECASE)[0].strip()
     if publisher == "SAGE":
@@ -403,12 +466,17 @@ def _subject_journal(subject: str, publisher: str) -> str:
     if publisher == "Wiley":
         match = re.search(r"(?:Alert|Articles Alert):\s*(.+)$", subject, re.IGNORECASE)
         return re.sub(r",\s*Vol(?:ume)?\..*$", "", match.group(1)).strip() if match else ""
-    return "Nature (Work)" if "nature" in subject.casefold() else ""
+    return "Nature" if publisher == "Nature" else ""
 
 
 def _publisher(subject: str, sender: str, body: str) -> str:
     sender = sender.casefold()
     subject_low = subject.casefold()
+    if sender == "psycalerts@info.apa.org" and subject_low.startswith("apa psycalert"):
+        return "APA"
+    if sender.endswith(("@updates.cambridge.org", "@cambridge.org")) and re.match(
+            r"new (?:issue|articles?|content) (?:of|for|in) .+ available on cambridge core$", subject_low):
+        return "Cambridge"
     if "sciencedirect@notification.elsevier.com" in sender and ("alert" in subject_low or "volume" in subject_low):
         return "Elsevier"
     if sender.endswith("@sagepub.com") and ("onlinefirst" in subject_low or "online first" in subject_low):
@@ -417,10 +485,10 @@ def _publisher(subject: str, sender: str, body: str) -> str:
         return "Taylor & Francis"
     if sender.endswith("@email.taylorandfrancis.com") and ("ready to read" in subject_low or "article" in subject_low):
         return "Taylor & Francis"
-    if "@wiley.com" in sender or sender.endswith("@email2.wiley.com"):
+    if sender.endswith(("@wiley.com", "@email2.wiley.com")):
         if "alert" in subject_low or "new article" in subject_low or "early view" in subject_low:
             return "Wiley"
-    if ("nature" in sender or "springernature.com" in sender) and "alert" in subject_low:
+    if sender.endswith(("@nature.com", "@springernature.com", "@ealerts.nature.com")) and "alert" in subject_low:
         return "Nature"
     return ""
 
@@ -429,7 +497,7 @@ def _is_usable_anchor(url: str, title: str, publisher: str) -> bool:
     if not url.startswith(("https://", "http://")) or len(title) < 12:
         return False
     low = title.casefold()
-    if URL_LIKE_TITLE.fullmatch(low) or BOILERPLATE.search(low) or low in {"read article", "read issue", "view latest articles", "editorial board", "elsevier b.v."} or low.startswith(("new articles in press", "http://", "https://")) or re.match(r"^(?:volume|issue)\s+\d", low) or any(term in low for term in ("safe senders", "forward to", "browse journals", "search all", "publish with", "view books", "add to your", "view these articles")):
+    if URL_LIKE_TITLE.fullmatch(low) or BOILERPLATE.search(low) or low in {"read article", "read issue", "view latest articles", "editorial board", "elsevier b.v.", "browse table of contents", "issue information"} or low.startswith(("new articles in press", "http://", "https://")) or re.match(r"^(?:volume|issue)\s+\d", low) or any(term in low for term in ("safe senders", "forward to", "browse journals", "search all", "publish with", "view books", "add to your", "view these articles")):
         return False
     host = (urllib.parse.urlparse(url).hostname or "").casefold()
     domains = {
@@ -438,8 +506,156 @@ def _is_usable_anchor(url: str, title: str, publisher: str) -> bool:
         "Taylor & Francis": ("tandfonline.com", "taylorandfrancis.com"),
         "Wiley": ("wiley.com",),
         "Nature": ("nature.com", "springernature.com"),
+        "APA": ("apa.org",),
+        "Cambridge": ("cambridge.org",),
     }.get(publisher, ())
     return any(host == domain or host.endswith("." + domain) for domain in domains)
+
+
+def _parse_wiley_alert(message: MailMessage, parser: WileyAlertParser, journal: str) -> list[dict[str, Any]]:
+    articles = []
+    header_end = min(start for start, _ in parser.items)
+    issue = re.search(r"\bVolume\s+(\d+),\s*Issue\s+(\d+)",
+                      clean_text("".join(parser.parts[:header_end])), re.I)
+    for item_start, item_end in sorted(parser.items):
+        titles = [anchor for anchor in parser.anchors
+                  if item_start <= anchor[2] < anchor[3] <= item_end
+                  and _is_usable_anchor(anchor[0], anchor[1], "Wiley")]
+        if not titles:
+            continue
+        url, title, start, end = titles[0]
+        block = "".join(parser.parts[end:item_end])
+        author_block = next(("".join(parser.parts[a:b]) for a, b in parser.author_blocks
+                             if end <= a < b <= item_end), "")
+        authors = clean_text(author_block).strip(" ,;") if author_block else _block_metadata("Wiley", block)[0]
+        article = _article(journal, "Wiley", title, url, authors, "", message.received_at)
+        publication = re.search(r"(?:First Published|Version of Record online):\s*(.+)", clean_text(block), re.I)
+        article["published"], article["publication_text"] = extract_publication_date(publication[1] if publication else "")
+        if issue:
+            article["volume"], article["issue"] = issue.groups()
+        pages = re.search(r"\bPages:\s*(\d+)\s*[-–]\s*(\d+)", block, re.I)
+        if pages:
+            article["pages"] = "-".join(pages.groups())
+        else:
+            locator = re.search(r"\be\d{4,}\b", block)
+            article["pages"] = locator[0] if locator else ""
+        article["is_open_access"] = bool(
+            any(OPEN_ACCESS_LABEL.fullmatch(clean_text(part)) for part in parser.parts[item_start:item_end])
+            or any(item_start <= position < item_end for position in parser.open_access_positions)
+        )
+        articles.append(article)
+    return articles
+
+
+def _parse_nature_alert(message: MailMessage, parser: NatureAlertParser, journal: str) -> list[dict[str, Any]]:
+    """Read article cards across sections, excluding roundups and promotions."""
+    articles = []
+    section = ""
+    named_sections = any(not url and title for url, title, _, _ in parser.anchors)
+    styled_cards = any(size == "18" for _, _, size in parser.spans)
+    for index, (url, title, start, end) in enumerate(parser.anchors):
+        if not url and title:
+            section = title
+            continue
+        # Also support templates whose section labels are ordinary block text.
+        previous_end = parser.anchors[index - 1][3] if index else 0
+        headings = re.findall(
+            r"(?:^|\n)\s*(Work|Career|News|News in Focus|Research|Research Highlights|Comment|"
+            r"Books(?: & Arts)?|Opinion|Editorial|World View|New Online|This week|"
+            r"Amendments & Corrections|Spotlight|Collections)\s*(?=\n|$)",
+            "".join(parser.parts[previous_end:start]), re.I,
+        )
+        if headings and not named_sections:
+            section = headings[-1]
+        if (section.casefold() in {"spotlight", "collections"}
+                or not _is_usable_anchor(url, title, "Nature")
+                or re.fullmatch(r"This (?:issue|week)'s Research Highlights", title, re.I)):
+            continue
+        cells = [(a, b) for a, b in parser.cells if a <= start < end <= b]
+        cell_end = min(cells, key=lambda cell: cell[1] - cell[0])[1] if cells else None
+        structured_title = any(a <= start < end <= b and size == "18" for a, b, size in parser.spans)
+        if cell_end is not None and structured_title:
+            summaries = [clean_text("".join(parser.parts[a:b])) for a, b, size in sorted(parser.spans)
+                         if end <= a < b <= cell_end and size in {"12", "16"}]
+            bylines = [clean_text("".join(parser.parts[a:b])) for a, b, size in sorted(parser.spans)
+                       if end <= a < b <= cell_end and size in {"10", "14"}]
+            authors, snippet = ", ".join(filter(None, bylines)), " ".join(filter(None, summaries))
+            block_end = cell_end
+        elif styled_cards:
+            continue
+        else:
+            # Older templates without styled article cards.
+            block_end = parser.anchors[index + 1][2] if index + 1 < len(parser.anchors) else len(parser.parts)
+            authors, snippet = _block_metadata("Nature", "".join(parser.parts[end:block_end]))
+            if not authors and not snippet:
+                continue
+        truncated = bool(re.search(r"\s+et al\.?$", authors))
+        authors = re.sub(r"\s+et al\.?$", "", authors)
+        article = _article(journal, "Nature", title, url, authors, snippet, message.received_at)
+        # An incidental date in the summary is not a publication date.
+        article["published"], article["publication_text"] = "", ""
+        article["section"] = section
+        article["authors_truncated"] = truncated
+        article["is_open_access"] = _has_open_access_label("".join(parser.parts[end:block_end])) or any(
+            end <= position < block_end for position in parser.open_access_positions)
+        articles.append(article)
+    return articles
+
+
+def _parse_apa_alert(message: MailMessage, parser: AnchorParser, journal: str) -> list[dict[str, Any]]:
+    articles = []
+    for index, (url, title, start, end) in enumerate(parser.anchors):
+        if not _is_usable_anchor(url, title, "APA") or normalize_title(title) == normalize_title(journal):
+            continue
+        next_start = parser.anchors[index + 1][2] if index + 1 < len(parser.anchors) else len(parser.parts)
+        # A title must be followed by APA's author/date/issue row. This excludes
+        # membership, advertisements, Read More and social/footer links.
+        metadata = APA_METADATA.match(clean_text("".join(parser.parts[end:next_start])))
+        if not metadata:
+            continue
+        try:
+            published = datetime.strptime(metadata["date"], "%m/%d/%Y").date().isoformat()
+        except ValueError:
+            continue
+        article = _article(journal, "APA", title, url, "", "", message.received_at)
+        article["authors"] = [name.strip() for name in metadata["authors"].split(";") if name.strip()]
+        if metadata["authors"].casefold() == "no authorship indicated":
+            article["authors"] = []
+        article.update(published=published, publication_text=metadata["date"],
+                       volume=metadata["volume"], issue=metadata["issue"], is_open_access=False)
+        articles.append(article)
+    return articles
+
+
+def _parse_cambridge_alert(message: MailMessage, parser: AnchorParser, journal: str) -> list[dict[str, Any]]:
+    def citation(title: str) -> bool:
+        return title.casefold().startswith(journal.casefold() + ",") and bool(re.search(r"\bVolume\s+\d+", title, re.I))
+
+    candidates = [anchor for anchor in parser.anchors
+                  if _is_usable_anchor(anchor[0], anchor[1], "Cambridge")
+                  and normalize_title(anchor[1]) != normalize_title(journal) and not citation(anchor[1])]
+    articles = []
+    for index, (url, title, start, end) in enumerate(candidates):
+        block_end = candidates[index + 1][2] if index + 1 < len(candidates) else len(parser.parts)
+        block = "".join(parser.parts[end:block_end])
+        doi_match = re.search(r"\bdoi\s*:\s*(10\.\d{4,9}/[-._;()/:A-Z0-9]+)", clean_text(block), re.I)
+        if not doi_match or re.search(r"\b(?:cover and (?:front|back) matter|front matter|back matter)\b", title, re.I):
+            continue
+        citation_start = next((a[2] for a in parser.anchors if end <= a[2] < block_end and citation(a[1])), block_end)
+        author_block = "".join(parser.parts[end:citation_start])
+        authors, _ = _block_metadata("Cambridge", author_block)
+        article = _article(journal, "Cambridge", title, url, authors, "", message.received_at, doi_match[1])
+        publication = re.search(r"Published Online(?: on)?\s+(.+)$", clean_text(block), re.I)
+        article["published"], article["publication_text"] = extract_publication_date(publication[1] if publication else "")
+        volume_issue = re.search(r"\bVolume\s+(\d+)\s*/\s*Issue\s+(\d+)", block, re.I)
+        if volume_issue:
+            article["volume"], article["issue"] = volume_issue.groups()
+        pages = re.search(r"\bpp\.?\s+([a-z]?\d+)\s*[-–]\s*([a-z]?\d+)", block, re.I)
+        if pages:
+            article["pages"] = "-".join(pages.groups())
+        article["is_open_access"] = _has_open_access_label(block) or any(end <= p < block_end for p in parser.open_access_positions)
+        articles.append(article)
+    return articles
 
 
 def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
@@ -448,7 +664,8 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
     if not publisher:
         return [], "unrecognized"
     journal = _subject_journal(message.subject, publisher)
-    parser = AnchorParser()
+    parser = (WileyAlertParser() if publisher == "Wiley" else
+              NatureAlertParser() if publisher == "Nature" else AnchorParser())
     if message.html_body:
         try:
             parser.feed(message.html_body)
@@ -462,16 +679,18 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
             if index and (line == "Early View" or re.match(r"Volume \d", line)):
                 journal = visible[index - 1]
                 break
-    section = ""
-    for index, (url, title, start, end) in enumerate(parser.anchors):
+    if publisher == "APA":
+        articles = _parse_apa_alert(message, parser, journal)
+    elif publisher == "Cambridge":
+        articles = _parse_cambridge_alert(message, parser, journal)
+    elif publisher == "Wiley" and parser.items:
+        articles = _parse_wiley_alert(message, parser, journal)
+    elif publisher == "Nature":
+        articles = _parse_nature_alert(message, parser, journal)
+    dedicated = publisher in {"APA", "Cambridge", "Nature"} or (publisher == "Wiley" and parser.items)
+    for index, (url, title, start, end) in enumerate([] if dedicated else parser.anchors):
         if not _is_usable_anchor(url, title, publisher) or normalize_title(title) == normalize_title(journal):
             continue
-        before = "".join(parser.parts[:start])
-        if publisher == "Nature":
-            headings = re.findall(r"(?:^|\n)\s*(Work|Career|News|News in Focus|Research|Research Highlights|Comment|Books|Editorial|World View|New Online)\s*(?:\n|$)", before)
-            section = headings[-1] if headings else ""
-            if section != "Work":
-                continue
         next_start = parser.anchors[index + 1][2] if index + 1 < len(parser.anchors) else len(parser.parts)
         next_prelude = _open_access_prelude_start(parser.parts, end, next_start, parser.open_access_positions)
         block_end = next_prelude if next_prelude is not None else next_start
@@ -488,13 +707,14 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
             or preceding_label
         )
         articles.append(article)
-    if publisher == "SAGE" and not articles:
+    if publisher == "SAGE":
         plain = message.text_body or "".join(parser.parts)
         lines = [clean_text(line) for line in plain.splitlines() if clean_text(line)]
         for index, line in enumerate(lines):
-            if line.casefold() != "article":
+            if not SAGE_TYPE_LABEL.fullmatch(line):
                 continue
             block = []
+            is_open_access = False
             for following in lines[index + 1:]:
                 if following.startswith(("https://", "http://")):
                     if len(block) >= 2:
@@ -504,18 +724,30 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
                         if _is_usable_anchor(following, title, publisher):
                             article = _article(journal, publisher, title, following, authors, "", message.received_at)
                             article["published"], article["publication_text"] = extract_publication_date(date)
+                            article["is_open_access"] = is_open_access
                             articles.append(article)
                     break
-                if following.casefold() == "article" or following.startswith("---"):
+                if SAGE_TYPE_LABEL.fullmatch(following) or following.startswith("---"):
                     break
+                if OPEN_ACCESS_LABEL.fullmatch(following):
+                    is_open_access = True
+                    continue
                 block.append(following)
     unique: list[dict[str, Any]] = []
-    seen: set[str] = set()
+    seen: dict[str, dict[str, Any]] = {}
     for article in articles:
         key = normalize_doi(article["doi"]) or normalize_title(article["title"])
-        if not key or key in seen:
+        if not key:
             continue
-        seen.add(key)
+        if key in seen:
+            # MIME alternatives can supply metadata missing from the HTML link.
+            previous = seen[key]
+            for field in ("authors", "published", "publication_text"):
+                if not previous.get(field) and article.get(field):
+                    previous[field] = article[field]
+            previous["is_open_access"] = bool(previous.get("is_open_access") or article.get("is_open_access"))
+            continue
+        seen[key] = article
         unique.append(article)
     return unique, ("ok" if unique else "no_articles")
 

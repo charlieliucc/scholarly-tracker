@@ -7,7 +7,13 @@
 - 历史记录：按日查看最近 7 天生成的日更批次，更早内容可在邮箱中回溯；
 - 运行状态：邮箱目录、邮件解析器、网页摘要补全和收录数量的运行记录。
 
-当前解析器覆盖 Elsevier、SAGE、Wiley、Taylor & Francis 和 Nature 的期刊提醒模板。
+当前解析器覆盖 Elsevier、SAGE、Wiley、Taylor & Francis、Nature、APA PsycAlert 和 Cambridge Core 的期刊提醒模板。SAGE 纯文本提醒支持 `Article` 和 `Manuscript`；Cambridge 按文章 DOI 提取条目并排除封面与前后附页；APA 保留以分号分隔的“姓, 名”作者格式。收录批次按邮件接收时间确定，条目另行保留实际出版日期。
+
+Wiley 支持 `Table of Contents Alert`、`New Articles Alert` 和 `Early View Alert`。按独立文章容器读取标题、作者、首次出版日期、卷期、页码或文章编号，排除目录入口和 `Issue Information`。开放获取标记只属于所在文章；`Free Access`、`Free to Read` 不直接视为开放获取。邮件未提供摘要或 DOI 时留空，再由现有元数据补全流程处理。
+
+Nature 收录全部文章栏目，包括 This week、News in Focus、Books & Arts、Opinion、Work、Research 和更正／撤稿条目，排除 Research Highlights 汇总入口、Spotlight 广告和 Collections 合集入口。按文章卡片分别读取标题、作者和摘要片段，保留 `section` 栏目；作者列表末尾的 `et al.` 以 `authors_truncated` 标记，不作为姓名。期刊统一为 `Nature`，邮件没有明确的文章出版日期时留空，不用邮件日期或摘要中提及的日期代替。
+
+上述 Wiley／Nature 规则已用 8 封 EML 样本验证；`tests/fixtures/` 仅保存脱敏 HTML，移除了邮件头、收件人地址和真实追踪标识。
 
 ## 启用 GitHub Pages
 

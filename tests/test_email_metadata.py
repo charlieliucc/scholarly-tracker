@@ -2,8 +2,10 @@ import unittest
 from datetime import datetime, timezone
 from unittest.mock import patch
 import json
-from scripts.email_source import MailMessage, parse_message, clean_legacy_email_articles
-from scripts.update import enrich_email_metadata, lookup_openalex
+from scripts.email_source import MailMessage, parse_message, parse_rfc822, clean_legacy_email_articles
+from scripts.update import enrich_email_metadata, lookup_openalex, build, _trusted_article_url
+from pathlib import Path
+import tempfile
 
 
 class MailRegressionTests(unittest.TestCase):
@@ -105,6 +107,36 @@ class MailRegressionTests(unittest.TestCase):
         self.assertEqual(articles[0]['authors'], ['Paudel Pitambar'])
         self.assertEqual(articles[0]['published'], '2026-09-01')
 
+    def test_sage_manuscript_and_article_are_independent_in_plain_and_html_mail(self):
+        # Public metadata observed in Safari Gmail; tracking tokens omitted.
+        title = ('Digital Literacy in Adult Lifelong Learning: A Systematic Review '
+                 'of Theoretical Frameworks and Pedagogical Effectiveness')
+        plain = ('View these articles online now at:\nhttps://url8709.sagepub.com/issue\n'
+                 '----------------\nManuscript\n' + title + '\n'
+                 'Ampofo Joshua, Li Jiacheng, Zou Wen and Zhu Weiwei\n'
+                 'Sep 30, 2026 | OnlineFirst\nhttps://url8709.sagepub.com/manuscript\n'
+                 '----------------\nArticle\nOpen Access\nFeedback in teacher education\n'
+                 'Jane Doe\nOct 01, 2026 | OnlineFirst\nhttps://url8709.sagepub.com/article\n'
+                 '----------------\nTo stop receiving alerts, unsubscribe here:\nhttps://url8709.sagepub.com/unsubscribe')
+        for html_body, text_body in (('', plain), ('<pre>' + plain + '</pre>', ''),
+                                      ('<a href="https://url8709.sagepub.com/article">Feedback in teacher education</a><p>Jane Doe</p>', plain)):
+            with self.subTest(html=bool(html_body), text=bool(text_body)):
+                articles, result = parse_message(MailMessage(
+                    'sage', 'INBOX', datetime(2026, 10, 1, 11, 1, tzinfo=timezone.utc),
+                    'noreply@sagepub.com', 'New OnlineFirst articles available for Review of Educational Research',
+                    html_body, text_body))
+                self.assertEqual(result, 'ok')
+                self.assertEqual(len(articles), 2)
+                manuscript = next(a for a in articles if a['title'] == title)
+                self.assertEqual(manuscript['authors'], ['Ampofo Joshua', 'Li Jiacheng', 'Zou Wen', 'Zhu Weiwei'])
+                self.assertEqual(manuscript['published'], '2026-09-30')
+                self.assertEqual(manuscript['journal'], 'Review of Educational Research')
+                self.assertEqual(manuscript['abstract'], '')
+                self.assertFalse(manuscript['is_open_access'])
+                other = next(a for a in articles if a['title'] == 'Feedback in teacher education')
+                self.assertTrue(other['is_open_access'])
+                self.assertEqual(other['published'], '2026-10-01')
+
     def test_legacy_navigation_removed_and_label_not_kept_as_abstract(self):
         base = {'metadata_source': 'email', 'abstract_source': 'email', 'publisher': 'Taylor & Francis', 'journal': 'Feedback Journal', 'url': 'https://url.tandfonline.com/a'}
         old = [dict(base, id='button', title='Read article'), dict(base, id='issue', title='Read the full issue on ScienceDirect'), dict(base, id='journal', title='Feedback Journal'), dict(base, id='domain', title='www.isatt.org'), dict(base, id='paper', title='Feedback in teaching research', abstract='Research Article')]
@@ -112,6 +144,89 @@ class MailRegressionTests(unittest.TestCase):
         self.assertEqual([a['id'] for a in result], ['paper'])
         self.assertEqual(result[0]['abstract'], '')
         self.assertEqual(old[4]['abstract'], 'Research Article')
+
+
+class NewPublisherAlertTests(unittest.TestCase):
+    RECEIVED = datetime(2026, 10, 1, 12, 35, tzinfo=timezone.utc)
+
+    def message(self, publisher):
+        sender, subject = {
+            'apa': ('psycalerts@info.apa.org', 'APA PsycAlert - Journal of Personality and Social Psychology'),
+            'cambridge': ('academic@updates.cambridge.org', 'New Issue of Language Teaching available on Cambridge Core'),
+        }[publisher]
+        body = (Path(__file__).parent / 'fixtures' / (publisher + '_alert.html')).read_text(encoding='utf-8')
+        # Exercise the production MIME decoding path without personal headers.
+        raw = ('From: ' + sender + '\nSubject: ' + subject + '\n'
+               'Content-Type: text/html; charset=utf-8\n\n' + body).encode('utf-8')
+        return parse_rfc822(raw, 'INBOX', self.RECEIVED, publisher)
+
+    def test_apa_names_dates_and_non_article_links(self):
+        articles, result = parse_message(self.message('apa'))
+        self.assertEqual(result, 'ok')
+        self.assertEqual(len(articles), 10)
+        self.assertEqual(articles[0]['authors'], ['Lu, Sirui', 'Efendić, Emir', 'Feldman, Gilad'])
+        self.assertEqual(articles[0]['published'], '2025-12-15')
+        self.assertEqual(articles[1]['published'], '2026-07-09')
+        self.assertEqual(articles[6]['authors'], [])
+        self.assertTrue(all(a['volume'] == '131' and a['issue'] == '4' for a in articles))
+        self.assertTrue(all(a['journal'] == 'Journal of Personality and Social Psychology' for a in articles))
+        self.assertTrue(all(a['abstract'] == '' for a in articles))
+
+    def test_cambridge_doi_oa_and_citation_links(self):
+        articles, result = parse_message(self.message('cambridge'))
+        self.assertEqual(result, 'ok')
+        self.assertEqual(len(articles), 9)
+        self.assertEqual(articles[0]['authors'], ['Dan Zhou'])
+        self.assertEqual(articles[2]['authors'], ['Helen Donaghue'])
+        self.assertEqual(articles[2]['doi'], '10.1017/s0261444826101165')
+        self.assertEqual(articles[2]['published'], '2026-02-25')
+        self.assertEqual(articles[2]['pages'], '429-475')
+        self.assertEqual(articles[5]['authors'], ['Pia Resnik', 'Jean-Marc Dewaele', 'Chengchen Li', 'Elouise Botes'])
+        self.assertEqual(articles[6]['authors'], ['Tomasz Róg'])
+        self.assertFalse(articles[6]['is_open_access'])
+        self.assertTrue(all(a['is_open_access'] for a in articles[:6]))
+        self.assertTrue(all(a['volume'] == '59' and a['issue'] == '4' for a in articles))
+        self.assertTrue(all(a['abstract'] == '' for a in articles))
+        self.assertEqual(len({a['id'] for a in articles}), 9)
+
+    def test_rejects_untrusted_senders_and_mismatched_templates(self):
+        for publisher in ('apa', 'cambridge'):
+            message = self.message(publisher)
+            message.sender += '.evil.example'
+            self.assertEqual(parse_message(message), ([], 'unrecognized'))
+            message = self.message(publisher)
+            message.subject = 'Join our membership today'
+            self.assertEqual(parse_message(message), ([], 'unrecognized'))
+        for publisher, domain in (('APA', 'apa.org'), ('Cambridge', 'cambridge.org')):
+            self.assertTrue(_trusted_article_url('https://click.info.' + domain + '/article', publisher))
+            self.assertFalse(_trusted_article_url('https://' + domain + '.evil.example/article', publisher))
+
+    def test_new_templates_reach_homepage_and_history_by_received_day(self):
+        messages = [self.message('apa'), self.message('cambridge'), MailMessage(
+            'sage', 'INBOX', self.RECEIVED, 'noreply@sagepub.com',
+            'New OnlineFirst articles available for Review of Educational Research', '',
+            'Manuscript\nDigital Literacy in Adult Lifelong Learning: A Systematic Review of Theoretical Frameworks and Pedagogical Effectiveness\n'
+            'Ampofo Joshua, Li Jiacheng, Zou Wen and Zhu Weiwei\nSep 30, 2026 | OnlineFirst\nhttps://url8709.sagepub.com/article')]
+        config = {'mail': {}, 'metadata_fallback': {'enabled': False}, 'doi_page': {'enabled': False},
+                  'ranking': {'keywords': [{'term': 'feedback', 'weight': 3}]},
+                  'recommendations': {'minimum_score': 1}}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / 'config.json'
+            config_path.write_text(json.dumps(config), encoding='utf-8')
+            with patch.dict('os.environ', {'GMAIL_USERNAME': 'test@example.com', 'GMAIL_APP_PASSWORD': 'test'}), patch(
+                'scripts.update.fetch_messages', return_value=(messages, {'folders': [], 'candidate_count': 3, 'duplicate_count': 0})):
+                status = build(config_path, root / 'data', now=datetime(2026, 10, 2, 0, tzinfo=timezone.utc))
+            homepage = json.loads((root / 'data/recommendations.json').read_text())
+            history = json.loads((root / 'data/history.json').read_text())
+            papers = json.loads((root / 'data/papers.json').read_text())['articles']
+        self.assertEqual(status['email']['recognized_alerts'], 3)
+        self.assertEqual(len(papers), 20)
+        self.assertEqual(len(history['days']['2026-10-01']['article_ids']), 20)
+        self.assertTrue(any(a['doi'] == '10.1017/s0261444826101165' for a in homepage['articles']))
+        self.assertTrue(any(a['title'].startswith('Digital Literacy in Adult') for a in homepage['other_articles']))
+        self.assertTrue(all(a['history_date'] == '2026-10-01' for a in papers))
+
 
 
 class MetadataFallbackTests(unittest.TestCase):
