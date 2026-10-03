@@ -232,7 +232,7 @@ def fetch_messages(
         mail.login(username, app_password.replace(" ", ""))
         folders = discover_folders(mail)
         messages: list[MailMessage] = []
-        stats = {"folders": [], "candidate_count": 0, "duplicate_count": 0}
+        stats = {"folders": [], "candidate_count": 0, "duplicate_count": 0, "read_errors": 0}
         seen: set[str] = set()
         for folder in folders:
             response, _ = mail.select(folder, readonly=True)
@@ -246,12 +246,23 @@ def fetch_messages(
                 f'(SINCE "{_imap_date(start - timedelta(days=1))}" '
                 f'BEFORE "{_imap_date(end + timedelta(days=1))}")',
             )
+            if response != "OK":
+                stats["folders"].append({"name": folder, "status": "error", "error": "SEARCH failed"})
+                continue
             uids = (data[0].split() if response == "OK" and data else [])[:max_messages]
             folder_stat = {"name": folder, "status": "ok", "candidates": len(uids), "in_window": 0}
             stats["candidate_count"] += len(uids)
             for uid in uids:
-                item = _fetch_uid(mail, uid, folder)
-                if not item or not (start <= item.received_at < end):
+                try:
+                    item = _fetch_uid(mail, uid, folder)
+                except Exception:
+                    item = None
+                if not item:
+                    stats["read_errors"] += 1
+                    folder_stat["read_errors"] = folder_stat.get("read_errors", 0) + 1
+                    folder_stat["status"] = "partial"
+                    continue
+                if not (start <= item.received_at < end):
                     continue
                 folder_stat["in_window"] += 1
                 if item.identity in seen:
@@ -774,18 +785,23 @@ def clean_legacy_email_articles(articles: Iterable[dict[str, Any]]) -> list[dict
 
 def parse_messages(messages: Iterable[MailMessage]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     articles: list[dict[str, Any]] = []
-    stats = {"messages": 0, "recognized": 0, "unrecognized": 0, "empty": 0, "errors": 0, "parsers": {}}
+    stats = {"messages": 0, "recognized": 0, "unrecognized": 0, "empty": 0, "errors": 0, "parsers": {}, "failed_messages": [], "empty_messages": []}
     for message in messages:
         stats["messages"] += 1
         try:
             current, result = parse_message(message)
-        except Exception:
+        except Exception as error:
             stats["errors"] += 1
+            stats["failed_messages"].append({
+                "subject": " ".join(message.subject.split()) or "（无主题）",
+                "reason": type(error).__name__,
+            })
             continue
         if result == "unrecognized":
             stats["unrecognized"] += 1
         elif result == "no_articles":
             stats["empty"] += 1
+            stats["empty_messages"].append({"subject": " ".join(message.subject.split()) or "（无主题）"})
         else:
             stats["recognized"] += 1
             publisher = current[0]["publisher"] if current else "unknown"

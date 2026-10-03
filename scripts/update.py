@@ -1502,6 +1502,9 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
         "unrecognized": 0,
         "empty_alerts": 0,
         "parser_errors": 0,
+        "read_errors": 0,
+        "failed_messages": [],
+        "empty_messages": [],
     }
     parser_stats: dict[str, Any] = {}
     fetched: list[dict[str, Any]] = []
@@ -1529,8 +1532,13 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
                     "candidate_count": fetch_stats.get("candidate_count", 0),
                     "duplicates": fetch_stats.get("duplicate_count", 0),
                     "messages_in_window": len(messages),
+                    "read_errors": fetch_stats.get("read_errors", 0),
                 }
             )
+            if not messages and email_status["folders"] and all(
+                folder.get("status") in {"error", "partial"} for folder in email_status["folders"]
+            ):
+                raise RuntimeError("No mailbox folder could be read completely")
             fetched, parsed_stats = parse_messages(messages)
             parser_stats = parsed_stats.get("parsers", {})
             email_status.update(
@@ -1539,9 +1547,11 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
                     "unrecognized": parsed_stats.get("unrecognized", 0),
                     "empty_alerts": parsed_stats.get("empty", 0),
                     "parser_errors": parsed_stats.get("errors", 0),
+                    "failed_messages": parsed_stats.get("failed_messages", []),
+                    "empty_messages": parsed_stats.get("empty_messages", []),
                 }
             )
-            if any(folder.get("status") == "error" for folder in email_status["folders"]):
+            if email_status["read_errors"] or any(folder.get("status") in {"error", "partial"} for folder in email_status["folders"]):
                 email_status["status"] = "partial"
         except Exception as error:
             fetch_error = f"{type(error).__name__}: {error}"
@@ -1651,8 +1661,9 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
             "all_articles": len(articles),
         },
     }
-    if fetch_error:
-        status_payload["email"]["error"] = fetch_error
+    if fetch_error or offline:
+        if fetch_error:
+            status_payload["email"]["error"] = fetch_error
         write_json(output_dir / "status.json", status_payload)
         return status_payload
     write_json(output_dir / "papers.json", {"generated_at": run_at, "articles": articles})
@@ -1672,6 +1683,38 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
     return status_payload
 
 
+def update_site_stats(output_dir: Path, status: dict[str, Any], offline: bool = False) -> None:
+    """Count each completed build once; separate Actions attempts count separately."""
+    if offline or status.get("outcome") not in {"success", "partial"}:
+        return
+    generated_at = status["generated_at"]
+    path = output_dir / "site-stats.json"
+    payload = load_json(path, {})
+    runs = payload.get("runs", {})
+    github_run = os.environ.get("GITHUB_RUN_ID")
+    run_key = (
+        f"github:{github_run}:{os.environ.get('GITHUB_RUN_ATTEMPT', '1')}"
+        if github_run else f"local:{generated_at}"
+    )
+    counts = status.get("counts", {})
+    runs[run_key] = {
+        "generated_at": generated_at,
+        "identified": int(counts.get("items_in_window", 0)),
+        "recommended": int(counts.get("recommended_today", 0)),
+    }
+    write_json(path, {
+        "version": 1,
+        "started_on": payload.get("started_on", generated_at[:10]),
+        "generated_at": generated_at,
+        "counting_method": "all_runs_including_repeated_processing",
+        "totals": {
+            "identified": sum(run["identified"] for run in runs.values()),
+            "recommended": sum(run["recommended"] for run in runs.values()),
+        },
+        "runs": runs,
+    })
+
+
 def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, offline: bool = False) -> dict[str, Any]:
     """Build using Gmail when the config contains ``mail``.
 
@@ -1680,8 +1723,20 @@ def build(config_path: Path, output_dir: Path, now: Optional[datetime] = None, o
     """
     config = load_json(config_path, {})
     if isinstance(config, dict) and "mail" in config:
-        return _email_build(config_path, output_dir, now, offline)
-    return _build_legacy(config_path, output_dir, now, offline)
+        status = _email_build(config_path, output_dir, now, offline)
+    else:
+        status = _build_legacy(config_path, output_dir, now, offline)
+    recommendations = load_json(output_dir / "recommendations.json", {})
+    status["content_updated_at"] = recommendations.get("generated_at", "")
+    status["freshness_max_age_hours"] = float(config.get("status_max_age_hours", 36))
+    github_run = os.environ.get("GITHUB_RUN_ID")
+    github_repository = os.environ.get("GITHUB_REPOSITORY")
+    if github_run and github_repository:
+        server = os.environ.get("GITHUB_SERVER_URL", "https://github.com").rstrip("/")
+        status["run_url"] = f"{server}/{github_repository}/actions/runs/{github_run}"
+    write_json(output_dir / "status.json", status)
+    update_site_stats(output_dir, status, offline)
+    return status
 
 
 def parse_args() -> argparse.Namespace:

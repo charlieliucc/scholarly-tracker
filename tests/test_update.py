@@ -20,12 +20,53 @@ from scripts.update import (
     parse_feed,
     prune_history_window,
     score_article,
+    update_site_stats,
 )
 from scripts.email_source import MailMessage, fetch_messages, parse_message, parse_rfc822, parse_messages
 
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / "tests" / "fixtures"
+
+
+class SiteStatsTests(unittest.TestCase):
+    def test_preserves_history_and_counts_actions_attempts_once(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "site-stats.json"
+            baseline = json.loads((ROOT / "docs/data/site-stats.json").read_text())
+            path.write_text(json.dumps(baseline))
+            status = {"generated_at": "2026-10-03T20:00:00Z", "outcome": "partial",
+                      "counts": {"items_in_window": 5, "recommended_today": 2}}
+            with patch.dict("os.environ", {"GITHUB_RUN_ID": "test-run", "GITHUB_RUN_ATTEMPT": "1"}):
+                update_site_stats(root, status)
+                update_site_stats(root, status)
+            result = json.loads(path.read_text())
+            self.assertEqual(result["totals"], {
+                "identified": baseline["totals"]["identified"] + 5,
+                "recommended": baseline["totals"]["recommended"] + 2,
+            })
+            self.assertEqual(result["started_on"], "2026-08-31")
+            self.assertEqual(len(result["runs"]), len(baseline["runs"]) + 1)
+            with patch.dict("os.environ", {"GITHUB_RUN_ID": "test-run", "GITHUB_RUN_ATTEMPT": "2"}):
+                update_site_stats(root, status)
+            self.assertEqual(json.loads(path.read_text())["totals"], {
+                "identified": baseline["totals"]["identified"] + 10,
+                "recommended": baseline["totals"]["recommended"] + 4,
+            })
+
+    def test_failed_and_offline_builds_leave_totals_unchanged(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "site-stats.json"
+            original = (ROOT / "docs/data/site-stats.json").read_text()
+            path.write_text(original)
+            for outcome, offline in [("success", True), ("stale", False), ("error", False)]:
+                update_site_stats(root, {
+                    "generated_at": "2026-10-03T20:00:00Z", "outcome": outcome,
+                    "counts": {"items_in_window": 5, "recommended_today": 2},
+                }, offline)
+                self.assertEqual(path.read_text(), original)
 
 
 class HistoryRetentionTests(unittest.TestCase):
@@ -157,6 +198,25 @@ class EmailParserTests(unittest.TestCase):
     def test_unknown_or_marketing_mail_is_not_an_alert(self) -> None:
         message = self.message("promo@example.com", "Publish with us", "Buy this service")
         self.assertEqual(parse_message(message), ([], "unrecognized"))
+        _, stats = parse_messages([message])
+        self.assertEqual(stats["errors"], 0)
+        self.assertEqual(stats["failed_messages"], [])
+
+    def test_parser_failure_records_subject_without_private_message_data(self) -> None:
+        message = self.message("private@example.com", "期刊更新 <2026>", "private body")
+        with patch("scripts.email_source.parse_message", side_effect=ValueError("private body")):
+            articles, stats = parse_messages([message])
+        self.assertEqual(articles, [])
+        self.assertEqual(stats["errors"], 1)
+        self.assertEqual(stats["failed_messages"], [{"subject": "期刊更新 <2026>", "reason": "ValueError"}])
+        self.assertNotIn("private", json.dumps(stats))
+
+    def test_empty_alert_is_distinct_from_parser_failure(self) -> None:
+        message = self.message("alerts@example.com", "期刊目录", "")
+        with patch("scripts.email_source.parse_message", return_value=([], "no_articles")):
+            _, stats = parse_messages([message])
+        self.assertEqual(stats["empty_messages"], [{"subject": "期刊目录"}])
+        self.assertEqual(stats["errors"], 0)
 
     def test_rfc822_decodes_multipart_headers_without_side_effects(self) -> None:
         raw = ("From: alerts@tandfonline.com\n"
@@ -277,21 +337,94 @@ class EmailBuildTests(unittest.TestCase):
             self.assertIn("2026-09-04", history["days"])
 
     def test_email_failure_keeps_existing_public_data(self) -> None:
-        config = {"mail": {}, "ranking": {"keywords": []}, "recommendations": {"minimum_score": 1}}
+        config = {"mail": {}, "status_max_age_hours": 48, "ranking": {"keywords": []}, "recommendations": {"minimum_score": 1}}
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             config_path = root / "config.json"
             config_path.write_text(json.dumps(config), encoding="utf-8")
             output = root / "data"
             output.mkdir()
-            old = {"generated_at": "old", "articles": [{"id": "old", "title": "Old"}]}
+            old = {"generated_at": "2026-09-03T20:00:00Z", "articles": [{"id": "old", "title": "Old"}]}
             (output / "papers.json").write_text(json.dumps(old), encoding="utf-8")
-            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+            (output / "recommendations.json").write_text(json.dumps(old), encoding="utf-8")
+            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret",
+                                           "GITHUB_RUN_ID": "123", "GITHUB_REPOSITORY": "charlieliucc/scholarly-tracker"}), patch(
                 "scripts.update.fetch_messages", side_effect=RuntimeError("temporary IMAP failure")
             ):
                 status = build(config_path, output, now=datetime(2026, 9, 5, tzinfo=timezone.utc))
             self.assertEqual(status["outcome"], "stale")
             self.assertEqual(json.loads((output / "papers.json").read_text(encoding="utf-8"))["articles"][0]["id"], "old")
+            self.assertEqual(json.loads((output / "recommendations.json").read_text()), old)
+            self.assertEqual(status["content_updated_at"], old["generated_at"])
+            self.assertEqual(status["freshness_max_age_hours"], 48)
+            self.assertEqual(status["run_url"], "https://github.com/charlieliucc/scholarly-tracker/actions/runs/123")
+
+    def test_failed_subjects_reach_public_status(self) -> None:
+        config = {"mail": {}, "ranking": {"keywords": []}, "recommendations": {"minimum_score": 1}}
+        message = MailMessage("m1", "INBOX", datetime(2026, 9, 4, 12, tzinfo=timezone.utc),
+                              "private@example.com", "期刊更新", "private body", "")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = root / "config.json"
+            config_path.write_text(json.dumps(config))
+            with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+                "scripts.update.fetch_messages", return_value=([message], {"folders": []})
+            ), patch("scripts.email_source.parse_message", side_effect=ValueError("private body")):
+                status = build(config_path, root / "data", now=datetime(2026, 9, 5, tzinfo=timezone.utc))
+            self.assertEqual(status["outcome"], "partial")
+            self.assertEqual(status["email"]["failed_messages"], [{"subject": "期刊更新", "reason": "ValueError"}])
+            self.assertNotIn("private", (root / "data/status.json").read_text())
+
+    def test_offline_and_unreadable_folders_preserve_content_and_its_date(self) -> None:
+        config = {"mail": {}, "ranking": {"keywords": []}, "recommendations": {"minimum_score": 1}}
+        for offline in (False, True):
+            with self.subTest(offline=offline), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                config_path = root / "config.json"
+                config_path.write_text(json.dumps(config))
+                output = root / "data"
+                output.mkdir()
+                old = {"generated_at": "2026-09-03T20:00:00Z", "articles": [{"id": "old", "title": "Old"}]}
+                for name in ("papers.json", "recommendations.json"):
+                    (output / name).write_text(json.dumps(old))
+                with patch.dict("os.environ", {"GMAIL_USERNAME": "user@example.com", "GMAIL_APP_PASSWORD": "secret"}), patch(
+                    "scripts.update.fetch_messages", return_value=([], {"folders": [{"name": "INBOX", "status": "error"}]})
+                ):
+                    status = build(config_path, output, now=datetime(2026, 9, 5, tzinfo=timezone.utc), offline=offline)
+                self.assertEqual(status["email"]["status"], "offline" if offline else "error")
+                self.assertEqual(status["content_updated_at"], old["generated_at"])
+                for name in ("papers.json", "recommendations.json"):
+                    self.assertEqual(json.loads((output / name).read_text()), old)
+
+    def test_imap_tracks_failed_search_and_individual_reads(self) -> None:
+        class FakeIMAP:
+            def __init__(self, host, port):
+                self.folder = ""
+
+            def login(self, username, password):
+                return "OK", []
+
+            def list(self):
+                return "OK", [b'* LIST () "/" "INBOX"', b'* LIST (\\Junk) "/" "[Gmail]/Spam"']
+
+            def select(self, folder, readonly=False):
+                self.folder = folder
+                return "OK", []
+
+            def uid(self, command, *args):
+                if command == "search":
+                    return ("NO", []) if self.folder == "[Gmail]/Spam" else ("OK", [b"1"])
+                return "NO", []
+
+            def logout(self):
+                return "OK", []
+
+        messages, stats = fetch_messages("user@example.com", "secret",
+            datetime(2026, 9, 2, tzinfo=timezone.utc), datetime(2026, 9, 3, tzinfo=timezone.utc), client_factory=FakeIMAP)
+        self.assertEqual(messages, [])
+        self.assertEqual(stats["read_errors"], 1)
+        self.assertEqual(stats["folders"][0]["status"], "partial")
+        self.assertEqual(stats["folders"][1]["error"], "SEARCH failed")
 
     def test_imap_fetch_is_read_only_and_filters_exact_internal_date(self) -> None:
         class FakeIMAP:

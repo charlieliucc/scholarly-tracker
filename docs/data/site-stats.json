@@ -1,0 +1,277 @@
+{
+  "version": 1,
+  "started_on": "2026-08-31",
+  "generated_at": "2026-10-02T20:15:14Z",
+  "counting_method": "all_runs_including_repeated_processing",
+  "totals": {
+    "identified": 421,
+    "recommended": 92
+  },
+  "runs": {
+    "local:2026-08-31T02:01:39Z": {
+      "generated_at": "2026-08-31T02:01:39Z",
+      "identified": 2,
+      "recommended": 1
+    },
+    "github:33626816103:1": {
+      "generated_at": "2026-09-02T11:51:58Z",
+      "identified": 0,
+      "recommended": 0
+    },
+    "github:33627263120:1": {
+      "generated_at": "2026-09-02T11:57:08Z",
+      "identified": 0,
+      "recommended": 0
+    },
+    "github:33627477811:1": {
+      "generated_at": "2026-09-02T11:59:36Z",
+      "identified": 15,
+      "recommended": 10
+    },
+    "github:33627679410:1": {
+      "generated_at": "2026-09-02T12:01:45Z",
+      "identified": 15,
+      "recommended": 10
+    },
+    "github:33633255770:1": {
+      "generated_at": "2026-09-02T13:01:33Z",
+      "identified": 15,
+      "recommended": 3
+    },
+    "github:33637568911:1": {
+      "generated_at": "2026-09-02T13:44:25Z",
+      "identified": 23,
+      "recommended": 4
+    },
+    "github:33638088890:1": {
+      "generated_at": "2026-09-02T13:49:28Z",
+      "identified": 15,
+      "recommended": 3
+    },
+    "github:33640408459:1": {
+      "generated_at": "2026-09-02T14:11:22Z",
+      "identified": 5,
+      "recommended": 0
+    },
+    "github:33643275945:1": {
+      "generated_at": "2026-09-02T14:37:54Z",
+      "identified": 4,
+      "recommended": 0
+    },
+    "github:33644330260:1": {
+      "generated_at": "2026-09-02T14:47:29Z",
+      "identified": 4,
+      "recommended": 0
+    },
+    "github:33644501917:1": {
+      "generated_at": "2026-09-02T14:49:02Z",
+      "identified": 4,
+      "recommended": 0
+    },
+    "github:33645009532:1": {
+      "generated_at": "2026-09-02T14:53:44Z",
+      "identified": 4,
+      "recommended": 0
+    },
+    "github:33700918396:1": {
+      "generated_at": "2026-09-03T00:46:30Z",
+      "identified": 5,
+      "recommended": 0
+    },
+    "github:33759935421:1": {
+      "generated_at": "2026-09-03T13:14:30Z",
+      "identified": 0,
+      "recommended": 0
+    },
+    "github:33760368655:1": {
+      "generated_at": "2026-09-03T13:18:37Z",
+      "identified": 0,
+      "recommended": 0
+    },
+    "github:33793727098:1": {
+      "generated_at": "2026-09-03T18:59:09Z",
+      "identified": 0,
+      "recommended": 0
+    },
+    "github:33907388068:1": {
+      "generated_at": "2026-09-04T18:43:14Z",
+      "identified": 4,
+      "recommended": 2
+    },
+    "github:33966077418:1": {
+      "generated_at": "2026-09-05T12:27:24Z",
+      "identified": 2,
+      "recommended": 1
+    },
+    "github:33982144637:1": {
+      "generated_at": "2026-09-05T17:49:26Z",
+      "identified": 4,
+      "recommended": 1
+    },
+    "github:34003427518:1": {
+      "generated_at": "2026-09-06T01:15:45Z",
+      "identified": 3,
+      "recommended": 1
+    },
+    "github:34050013143:1": {
+      "generated_at": "2026-09-06T17:53:55Z",
+      "identified": 22,
+      "recommended": 4
+    },
+    "github:34092881380:1": {
+      "generated_at": "2026-09-07T06:54:07Z",
+      "identified": 21,
+      "recommended": 4
+    },
+    "github:34155801824:1": {
+      "generated_at": "2026-09-07T19:30:05Z",
+      "identified": 19,
+      "recommended": 0
+    },
+    "github:34267267405:1": {
+      "generated_at": "2026-09-08T19:09:12Z",
+      "identified": 32,
+      "recommended": 5
+    },
+    "github:34392117590:1": {
+      "generated_at": "2026-09-09T18:57:13Z",
+      "identified": 53,
+      "recommended": 11
+    },
+    "github:34516772253:1": {
+      "generated_at": "2026-09-10T18:50:29Z",
+      "identified": 7,
+      "recommended": 1
+    },
+    "github:34603328159:1": {
+      "generated_at": "2026-09-11T13:16:07Z",
+      "identified": 7,
+      "recommended": 1
+    },
+    "github:34635806245:1": {
+      "generated_at": "2026-09-11T18:53:28Z",
+      "identified": 7,
+      "recommended": 0
+    },
+    "github:34709812043:1": {
+      "generated_at": "2026-09-12T17:59:04Z",
+      "identified": 5,
+      "recommended": 0
+    },
+    "github:34774601578:1": {
+      "generated_at": "2026-09-13T18:26:07Z",
+      "identified": 4,
+      "recommended": 0
+    },
+    "github:34890681677:1": {
+      "generated_at": "2026-09-14T20:04:27Z",
+      "identified": 0,
+      "recommended": 0
+    },
+    "github:35013254386:1": {
+      "generated_at": "2026-09-15T19:22:47Z",
+      "identified": 2,
+      "recommended": 0
+    },
+    "github:35067683439:1": {
+      "generated_at": "2026-09-16T07:16:28Z",
+      "identified": 2,
+      "recommended": 0
+    },
+    "github:35139284374:1": {
+      "generated_at": "2026-09-16T19:13:55Z",
+      "identified": 6,
+      "recommended": 2
+    },
+    "github:35264835046:1": {
+      "generated_at": "2026-09-17T19:25:59Z",
+      "identified": 7,
+      "recommended": 0
+    },
+    "github:35382004543:1": {
+      "generated_at": "2026-09-18T18:45:16Z",
+      "identified": 2,
+      "recommended": 0
+    },
+    "github:35460761056:1": {
+      "generated_at": "2026-09-19T18:18:25Z",
+      "identified": 2,
+      "recommended": 0
+    },
+    "github:35528902796:1": {
+      "generated_at": "2026-09-20T18:23:36Z",
+      "identified": 4,
+      "recommended": 0
+    },
+    "github:35649563390:1": {
+      "generated_at": "2026-09-21T20:12:09Z",
+      "identified": 4,
+      "recommended": 1
+    },
+    "github:35672947800:1": {
+      "generated_at": "2026-09-22T00:40:59Z",
+      "identified": 4,
+      "recommended": 2
+    },
+    "github:35773629610:1": {
+      "generated_at": "2026-09-22T19:24:59Z",
+      "identified": 7,
+      "recommended": 4
+    },
+    "github:35908694599:1": {
+      "generated_at": "2026-09-23T19:20:58Z",
+      "identified": 11,
+      "recommended": 3
+    },
+    "github:36049481154:1": {
+      "generated_at": "2026-09-24T19:38:19Z",
+      "identified": 18,
+      "recommended": 6
+    },
+    "github:36181396080:1": {
+      "generated_at": "2026-09-25T19:43:22Z",
+      "identified": 3,
+      "recommended": 1
+    },
+    "github:36264084237:1": {
+      "generated_at": "2026-09-26T18:52:44Z",
+      "identified": 5,
+      "recommended": 3
+    },
+    "github:36344279148:1": {
+      "generated_at": "2026-09-27T19:25:23Z",
+      "identified": 1,
+      "recommended": 0
+    },
+    "github:36486347890:1": {
+      "generated_at": "2026-09-28T21:28:50Z",
+      "identified": 5,
+      "recommended": 1
+    },
+    "github:36625690502:1": {
+      "generated_at": "2026-09-29T20:21:28Z",
+      "identified": 7,
+      "recommended": 1
+    },
+    "github:36772469902:1": {
+      "generated_at": "2026-09-30T20:25:10Z",
+      "identified": 3,
+      "recommended": 2
+    },
+    "github:36923500769:1": {
+      "generated_at": "2026-10-01T20:42:16Z",
+      "identified": 4,
+      "recommended": 1
+    },
+    "github:36983463706:1": {
+      "generated_at": "2026-10-02T08:20:29Z",
+      "identified": 14,
+      "recommended": 2
+    },
+    "github:37059359476:1": {
+      "generated_at": "2026-10-02T20:15:14Z",
+      "identified": 9,
+      "recommended": 1
+    }
+  }
+}

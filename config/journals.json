@@ -3,6 +3,7 @@
   "request_timeout_seconds": 30,
   "max_articles": 2000,
   "history_retention_days": 7,
+  "status_max_age_hours": 36,
   "window": { "enabled": true, "timezone": "Asia/Shanghai" },
   "mail": { "host": "imap.gmail.com", "port": 993, "max_messages": 500 },
   "doi_page": { "enabled": true, "max_lookups_per_run": 20, "max_bytes": 524288 },

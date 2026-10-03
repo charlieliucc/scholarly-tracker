@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#fafaf8">
   <title>运行状态 · Scholarly Tracker</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="assets/style.css?v=1.3.2">
-  <script src="assets/app.js?v=1.3.2" defer></script>
+  <link rel="stylesheet" href="assets/style.css?v=1.26-20261003">
+  <script src="assets/app.js?v=1.26-20261003" defer></script>
 </head>
 <body data-page="status">
   <header class="site-header">
@@ -18,32 +18,55 @@
     </a>
     <nav aria-label="主导航">
       <a href="index.html">今日推荐</a>
-      <a href="history.html">历史</a>
-      <a href="status.html" aria-current="page">运行状态</a>
+      <a href="history.html">历史记录</a>
       <a href="https://github.com/charlieliucc/scholarly-tracker" target="_blank" rel="noopener noreferrer">我要定制</a>
     </nav>
   </header>
 
   <main>
     <section class="page-title status-title">
-      <div><h1>运行状态</h1><p>昨日邮件窗口、解析器、摘要补全和数据规模一览。</p></div>
+      <div><h1>运行状态</h1><p>查看最近一次文献更新及需要关注的情况。</p></div>
       <div id="overall-status" class="status-orb pending"><span></span><strong>读取中</strong></div>
     </section>
     <section id="status-summary" class="status-summary" aria-live="polite"></section>
+    <div id="status-notices" aria-live="polite"></div>
     <section class="content-section compact">
-      <div class="section-heading"><div><h2>邮箱读取</h2></div></div>
-      <div id="feed-status" class="feed-grid"><div class="loading">正在读取运行记录…</div></div>
+      <div class="section-heading"><div><h2>更新环节</h2></div></div>
+      <div id="update-stages" class="update-stage-grid"><div class="loading">正在读取运行记录…</div></div>
     </section>
-    <section class="content-section compact">
-      <div class="section-heading"><div><h2>解析与网页摘要</h2></div></div>
-      <div id="crossref-status" class="crossref-panel"></div>
+    <section id="mail-issues" class="content-section compact" hidden>
+      <div class="section-heading"><div><h2>需要核查的邮件</h2></div></div>
+      <div id="mail-issue-list" class="mail-issue-list"></div>
     </section>
-    <aside class="manual-note">
-      <span aria-hidden="true">↻</span>
-      <div><strong>需要立即更新？</strong><p>在仓库的 Actions 页面打开 “Update scholarly tracker”，点击 “Run workflow” 即可手动重新运行。</p></div>
-    </aside>
+    <div id="status-actions" class="status-actions"></div>
+    <details class="technical-details">
+      <summary>技术详情</summary>
+      <p id="run-details" class="run-details"></p>
+      <p class="run-details">此页展示最后发布的运行记录；后续任务是否失败或尚未完成，请查看 Actions。</p>
+      <section class="content-section compact">
+        <div class="section-heading"><div><h2>邮件统计</h2></div></div>
+        <div id="feed-status" class="feed-grid"></div>
+      </section>
+      <section class="content-section compact">
+        <div class="section-heading"><div><h2>解析与补全统计</h2></div></div>
+        <div id="crossref-status" class="crossref-panel"></div>
+      </section>
+      <aside class="manual-note">
+        <span aria-hidden="true">↻</span>
+        <div><strong>需要手动重新运行？</strong><p>仓库维护者可在 Actions 页面打开 “Update scholarly tracker”，点击 “Run workflow”。</p></div>
+      </aside>
+    </details>
   </main>
 
-  <footer><span>Scholarly Tracker</span><span>每日期刊资讯</span></footer>
+  <footer class="site-footer">
+    <span id="site-copyright">© 2026 Charlieliucc</span>
+    <div class="site-footer-stats">
+      <span id="site-runtime">自 2026-08-31 运行</span>
+      <span id="site-paper-count" title="累计所有运行记录，包含同一天重跑。">累计识别与推荐统计读取中…</span>
+      <span class="site-version">v1.26-20261003</span>
+      <a href="status.html" aria-current="page">运行状态</a>
+      <a href="https://github.com/charlieliucc" target="_blank" rel="noopener noreferrer">GitHub 主页</a>
+    </div>
+  </footer>
 </body>
 </html>
