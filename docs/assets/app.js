@@ -48,6 +48,8 @@ function updateFooterRuntime(now = new Date()) {
   const elapsedDays = Math.max(0, Math.floor((today - Date.parse(`${SITE_STARTED_ON}T00:00:00Z`)) / 86400000));
   $("#site-copyright").textContent = `© ${values.year === "2026" ? "2026" : `2026–${values.year}`} Charlieliucc`;
   $("#site-runtime").textContent = `自 2026-08-31 · 已运行 ${elapsedDays} 天`;
+  const aboutDays = $("#about-runtime-days");
+  if (aboutDays) aboutDays.textContent = elapsedDays;
 }
 
 async function initFooter() {
@@ -66,14 +68,28 @@ async function initFooter() {
       throw new Error("Missing article counts");
     }
     count.textContent = `共识别 ${identified.toLocaleString("zh-CN")} 篇次 · 推荐 ${recommended.toLocaleString("zh-CN")} 篇次`;
+    const aboutIdentified = $("#about-identified");
+    const aboutRecommended = $("#about-recommended");
+    if (aboutIdentified && aboutRecommended) {
+      aboutIdentified.textContent = identified.toLocaleString("zh-CN");
+      aboutRecommended.textContent = recommended.toLocaleString("zh-CN");
+    }
     if (stats.generated_at) {
       const updated = new Intl.DateTimeFormat("zh-CN", {
         timeZone: "Asia/Shanghai", dateStyle: "medium", timeStyle: "short", hour12: false,
       }).format(new Date(stats.generated_at));
       count.title = `累计所有运行记录，包含同一天重跑。统计更新于 ${updated}（北京时间）`;
+      const aboutNote = $("#about-stats-note");
+      if (aboutNote) aboutNote.textContent = count.title;
     }
   } catch {
     count.textContent = "累计统计暂不可用";
+    const aboutNote = $("#about-stats-note");
+    if (aboutNote) {
+      $("#about-identified").textContent = "—";
+      $("#about-recommended").textContent = "—";
+      aboutNote.textContent = "累计统计暂不可用，请稍后刷新。";
+    }
   }
 }
 

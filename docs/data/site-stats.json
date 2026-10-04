@@ -1,11 +1,11 @@
 {
   "version": 1,
   "started_on": "2026-08-31",
-  "generated_at": "2026-10-02T20:15:14Z",
+  "generated_at": "2026-10-03T18:54:17Z",
   "counting_method": "all_runs_including_repeated_processing",
   "totals": {
-    "identified": 421,
-    "recommended": 92
+    "identified": 436,
+    "recommended": 96
   },
   "runs": {
     "local:2026-08-31T02:01:39Z": {
@@ -272,6 +272,16 @@
       "generated_at": "2026-10-02T20:15:14Z",
       "identified": 9,
       "recommended": 1
+    },
+    "github:37126425897:1": {
+      "generated_at": "2026-10-03T13:30:47Z",
+      "identified": 9,
+      "recommended": 1
+    },
+    "github:37145935861:1": {
+      "generated_at": "2026-10-03T18:54:17Z",
+      "identified": 6,
+      "recommended": 3
     }
   }
 }

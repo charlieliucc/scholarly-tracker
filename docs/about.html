@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="一个由个人需求出发的文献追踪小项目，以及如何定制自己的文献监测。">
+  <meta name="theme-color" content="#fafaf8">
+  <title>关于 · Scholarly Tracker</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="assets/style.css?v=1.27-20261004">
+  <script src="assets/app.js?v=1.27-20261004" defer></script>
+</head>
+<body data-page="about">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Scholarly Tracker 首页">
+      <span class="brand-mark" aria-hidden="true">ST</span>
+      <span><strong>Scholarly Tracker</strong><small>期刊追踪</small></span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="index.html">今日推荐</a>
+      <a href="history.html">历史记录</a>
+      <a href="about.html" aria-current="page">关于</a>
+    </nav>
+  </header>
+
+  <main class="about-main">
+    <section class="page-title about-title">
+      <h1>关于</h1>
+      <p>这是一个由个人需求出发的小项目。</p>
+    </section>
+
+    <article class="about-story" aria-label="项目缘起">
+      <p>我是一名博士生，日常研究中需要持续跟踪最新发表的期刊论文。最开始，我使用期刊和数据库提供的邮件 Alert 来获取更新，但很快发现两个问题：一是我并没有养成每天检查邮件的习惯；二是传统 Alert 往往只能按照期刊、主题等较宽泛的条件订阅，很难真正做到按照自己关心的关键词进行精准筛选和推送。</p>
+      <p>后来，随着 AI Agent 的发展，我开始尝试用 Agent + Mail 的方式，让 Agent 每天自动进入邮箱筛选期刊alert。它确实解决了“自动化”的问题，但也带来了新的成本和限制：如果每天都需要 Agent 主动执行检索、判断和推送，就会持续消耗 Token；同时，这套流程依赖本地电脑运行，只有电脑开机时才能完成推送。一旦电脑没有打开，自动化也就随之中断，而且在手机等其他设备上也无法方便地查看结果。</p>
+      <p>于是我开始想：<strong>有没有一种不需要每天调用 AI、不依赖某一台设备，也可以自动完成文献监测的方法？</strong></p>
+      <p>最终，我选择了另一条思路——直接读取论文 Alert 邮件，对邮件中的文献信息进行自动整理、关键词匹配和筛选，再把真正相关的内容呈现出来。</p>
+      <p>这样既保留了期刊和数据库 Alert 本身稳定、及时的信息来源，又能够在其基础上增加更精细的关键词过滤，同时避免为了完成重复性的日常监测而持续消耗 Token，也不再依赖本地电脑持续开机。</p>
+      <p>现在，只要能够联网，无论使用电脑、手机还是其他设备，都可以随时查看最新筛选出的文献。</p>
+      <p>这个项目由此诞生。</p>
+      <p>项目自 <strong>2026 年 8 月 31 日</strong> 起持续稳定运行，并在实际使用中不断调整和完善。目前项目已经开源，希望它不仅能解决我自己的文献追踪需求，也能为有类似需求的研究者提供一种简单、低成本、可持续的选择。</p>
+      <p class="about-goal">它的目标其实很简单：<strong>让真正值得关注的新文献，主动来到你面前。</strong></p>
+    </article>
+
+    <section class="about-stats" aria-label="项目累计统计">
+      <p class="about-runtime">自 2026-08-31 · 已运行 <strong id="about-runtime-days">34</strong> 天</p>
+      <div class="about-stat-grid">
+        <div class="about-stat"><span>共识别</span><p><strong id="about-identified">436</strong><span>篇次</span></p></div>
+        <div class="about-stat"><span>推荐</span><p><strong id="about-recommended">96</strong><span>篇次</span></p></div>
+      </div>
+      <p id="about-stats-note" class="about-stats-note">累计所有运行记录，包含同一天重跑。</p>
+    </section>
+
+    <section class="about-customize" aria-labelledby="customize-title">
+      <div class="about-customize-heading">
+        <div><h2 id="customize-title">我要定制</h2><p>用自己的邮箱和关键词，搭建一份专属的文献追踪。</p></div>
+        <a class="customize-link" href="https://github.com/charlieliucc/scholarly-tracker" target="_blank" rel="noopener noreferrer">前往 GitHub <span aria-hidden="true">↗</span></a>
+      </div>
+      <ol class="customize-steps">
+        <li><h3>复制项目</h3><p>登录 GitHub，打开项目仓库并点击 Fork，将项目复制到自己的账号下。</p></li>
+        <li><h3>订阅论文 Alert</h3><p>准备一个专用 Gmail 邮箱，在期刊或数据库中订阅你关注的论文 Alert。目前支持 Elsevier、SAGE、Wiley、Taylor &amp; Francis、Nature、APA PsycAlert 和 Cambridge Core 的提醒模板。</p></li>
+        <li><h3>设置邮箱与筛选规则</h3><p>在仓库 Settings → Secrets and variables → Actions 中添加 <code>GMAIL_USERNAME</code> 和 <code>GMAIL_APP_PASSWORD</code>，分别填写邮箱地址和 Gmail 应用专用密码。编辑 <a href="https://github.com/charlieliucc/scholarly-tracker/blob/main/config/journals.json" target="_blank" rel="noopener noreferrer">config/journals.json</a>：在 <code>ranking.keywords</code> 中设置关键词和权重，正数提高得分、负数降低得分；用 <code>recommendations.minimum_score</code> 和 <code>recommendations.limit</code> 调整推荐门槛与数量。</p></li>
+        <li><h3>启用自动运行与网页</h3><p>在自己仓库的 Actions 页面启用工作流，再到 Settings → Pages，将 Source 设为 GitHub Actions。打开 Actions → Update scholarly tracker → Run workflow，完成首次更新。之后每天北京时间 00:00 自动读取昨日邮件并更新网页，电脑和手机都可以访问。</p></li>
+      </ol>
+      <p class="customize-more">完整配置与运行说明见 <a href="https://github.com/charlieliucc/scholarly-tracker#readme" target="_blank" rel="noopener noreferrer">项目 README</a>。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span id="site-copyright">© 2026 Charlieliucc</span>
+    <div class="site-footer-stats">
+      <span id="site-runtime">自 2026-08-31 运行</span>
+      <span id="site-paper-count" title="累计所有运行记录，包含同一天重跑。">累计识别与推荐统计读取中…</span>
+      <span class="site-version">v1.27-20261004</span>
+      <a href="status.html">运行状态</a>
+      <a href="https://github.com/charlieliucc" target="_blank" rel="noopener noreferrer">GitHub 主页</a>
+    </div>
+  </footer>
+</body>
+</html>
