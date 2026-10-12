@@ -129,6 +129,14 @@ function articleTags(article) {
   return tags;
 }
 
+function authorDisplayText(article) {
+  // An empty email byline is intentional; API authors must not override it.
+  if (Object.prototype.hasOwnProperty.call(article, "authors_text")) {
+    return String(article.authors_text || "").trim();
+  }
+  return (article.authors || []).join(" · ");
+}
+
 function articleCard(article, index) {
   const card = element("article", "paper-card");
   const rank = element("div", "paper-rank", String(index + 1).padStart(2, "0"));
@@ -143,17 +151,16 @@ function articleCard(article, index) {
   const title = element("h3");
   const articleUrl = article.url || article.doi_url;
   title.append(articleUrl ? externalLink(articleUrl, article.title) : document.createTextNode(article.title));
-  const rawAuthors = (article.authors || []).join(" · ") || "作者信息待补全";
-  const authorText = rawAuthors.length > 260 ? `${rawAuthors.slice(0, 257).trim()}…` : rawAuthors;
-  const authors = element("p", "authors", authorText);
-  if (authorText !== rawAuthors) authors.title = rawAuthors;
+  const authorText = authorDisplayText(article);
+  const authors = authorText ? element("p", "authors", authorText) : null;
   const actions = element("div", "paper-actions");
   const doi = doiLink(article);
   if (doi) actions.append(doi);
   const score = element("span", `score ${Number(article.score) < 0 ? "negative" : ""}`, `${scoreLabel(article.score)} 分`);
   actions.append(score);
 
-  body.append(meta, title, authors);
+  body.append(meta, title);
+  if (authors) body.append(authors);
   if (hasCompleteAbstract(article)) {
     const details = element("details", "abstract");
     details.append(element("summary", "", "查看摘要"), element("p", "", article.abstract));
@@ -188,7 +195,8 @@ function todayPaperMeta(article) {
 
 function todayPaperInfo(article) {
   const info = element("div", "today-paper-info");
-  info.append(element("span", "today-authors", `作者：${(article.authors || []).join(" · ") || "作者信息待补全"}`));
+  const authors = authorDisplayText(article);
+  if (authors) info.append(element("span", "today-authors", `作者：${authors}`));
   if (article.published) info.append(element("span", "today-publication", `发表：${formatPublicationDate(article)}`));
   if (article.is_open_access === true) info.append(element("span", "today-open-access", "Open access"));
   return info;
@@ -380,7 +388,6 @@ async function initToday() {
     const sameBatch = generatedAt === status.generated_at;
     $("#new-count").textContent = sameBatch ? status.counts?.items_in_window ?? articles.length + otherArticles.length : articles.length + otherArticles.length;
     $("#recommend-count").textContent = articles.length;
-    $("#seven-day-count").textContent = status.counts?.all_articles ?? "—";
     list.replaceChildren();
     if (!articles.length) {
       const health = updateHealth(status, generatedAt);

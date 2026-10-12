@@ -290,6 +290,7 @@ class AnchorParser(HTMLParser):
         self.active = None
         self.skip = 0
         self.open_access_positions = []
+        self.preformatted = 0
 
     def handle_starttag(self, tag, attrs):
         if tag in {"head", "script", "style"}:
@@ -301,6 +302,8 @@ class AnchorParser(HTMLParser):
             for name in ("alt", "aria-label", "title")
         ):
             self.open_access_positions.append(len(self.parts))
+        if tag == "pre":
+            self.preformatted += 1
         if tag in self.BLOCKS:
             self.parts.append("\n")
         if tag == "a":
@@ -308,7 +311,8 @@ class AnchorParser(HTMLParser):
 
     def handle_data(self, data):
         if not self.skip:
-            self.parts.append(data)
+            # Source wrapping is whitespace, not a visible author/summary boundary.
+            self.parts.append(data if self.preformatted else SPACE_RE.sub(" ", data))
 
     def handle_endtag(self, tag):
         if tag in {"head", "script", "style"}:
@@ -316,6 +320,8 @@ class AnchorParser(HTMLParser):
             return
         if self.skip:
             return
+        if tag == "pre":
+            self.preformatted = max(0, self.preformatted - 1)
         if tag == "a" and self.active:
             url, start = self.active
             self.anchors.append((url, clean_text("".join(self.parts[start:])), start, len(self.parts)))
@@ -376,40 +382,42 @@ class NatureAlertParser(AnchorParser):
         super().handle_endtag(tag)
 
 
-def _author_line(value: str) -> bool:
-    value = re.sub(r"^(?:by|authors?)\s*:?\s+", "", value, flags=re.I).strip(" ,;")
-    if not value or len(value) > 300 or re.search(r"https?://|\d{4}|[!?…:]", value):
-        return False
-    words = re.findall(r"[^\W\d_]+(?:[’'-][^\W\d_]+)*", value, flags=re.UNICODE)
-    particles = {"and", "de", "del", "van", "von", "da", "di", "la", "et", "al"}
-    return len(words) >= 2 and all(w[0].isupper() or w in particles for w in words)
-
-
 def _block_metadata(publisher: str, block: str) -> tuple[str, str]:
+    """Read the publisher's byline position; never validate personal names."""
     lines = [clean_text(line) for line in block.splitlines() if clean_text(line)]
     if publisher == "Elsevier":
-        for index, line in enumerate(lines):
-            if re.search(r"Available Online", line, re.I):
-                lines = lines[index + 1:]
-                break
-    authors = []
-    abstract = []
+        marker = next((index for index, line in enumerate(lines)
+                       if re.match(r"^(?:Available Online|Article Number)\b", line, re.I)), None)
+        if marker is not None:
+            lines = lines[marker + 1:]
+    content = []
     for line in lines:
-        if OPEN_ACCESS_LABEL.fullmatch(line):
+        if (line.startswith("|") or BOILERPLATE.search(line)
+                or (publisher == "SAGE" and re.search(r"OnlineFirst|Online First", line, re.I))
+                or re.match(
+                r"^(?:Read article|New Articles in Press|First Published|Version of Record|"
+                r"Online Version|You are receiving|To update|Published Online|e\d{4,})\b", line, re.I)):
+            break
+        if (OPEN_ACCESS_LABEL.fullmatch(line) or ARTICLE_TYPE_LABEL.fullmatch(line)
+                or re.fullmatch(r"Editorial|Book Review|Correction|Regular Articles", line, re.I)
+                or re.match(r"^(?:Available Online|Article Number)\b", line, re.I)):
             continue
-        if re.search(r"^(?:Read article|New Articles in Press|First Published|Version of Record|Online Version|Manage|Unsubscribe|You are receiving|To update|Open Access|Research article|Full Article|Original Article|\||e\d{4,})\b", line, re.I):
-            break
-        if _author_line(line) and (not abstract or publisher == "Nature"):
-            if publisher == "Nature" and authors:
-                break
-            authors.append(re.sub(r"^(?:by|authors?)\s*:?\s+", "", line, flags=re.I).strip(" ,;"))
-        elif publisher in {"Taylor & Francis", "Nature"} and len(line) >= 60:
-            abstract.append(re.sub(r"^Abstract\s*:?\s*", "", line, flags=re.I))
-        elif line.casefold().startswith("abstract"):
-            abstract.append(re.sub(r"^Abstract\s*:?\s*", "", line, flags=re.I))
-        elif authors:
-            break
-    return ", ".join(authors), " ".join(abstract)
+        content.append(line)
+    if not content:
+        return "", ""
+    if publisher == "Nature":
+        # Legacy cards place the summary before the byline. Modern cards use
+        # explicit summary/byline spans in _parse_nature_alert.
+        return (content[-1], " ".join(content[:-1])) if len(content) > 1 else ("", content[0])
+    if publisher == "Taylor & Francis":
+        # This template puts a byline directly after the title/OA badge,
+        # followed by the summary paragraph.
+        if content[0].casefold().startswith("abstract"):
+            return "", re.sub(r"^Abstract\s*:?\s*", "", " ".join(content), flags=re.I)
+        return content[0], " ".join(content[1:])
+    # Elsevier has publication/article-number rows before the byline;
+    # Wiley and Cambridge have publication/citation rows after it.
+    return " ".join(content), ""
 
 
 def _has_open_access_label(block: str) -> bool:
@@ -439,6 +447,7 @@ def _article(journal: str, publisher: str, title: str, url: str, authors: str, s
         "url": url,
         "guid": doi or url,
         "doi": doi,
+        "authors_text": clean_text(authors),
         "authors": [clean_text(part) for part in re.split(r",|\s+and\s+|\s*&\s*", authors) if clean_text(part)],
         "abstract": clean_text(snippet),
         "abstract_source": "email" if clean_text(snippet) else "",
@@ -538,7 +547,7 @@ def _parse_wiley_alert(message: MailMessage, parser: WileyAlertParser, journal: 
         block = "".join(parser.parts[end:item_end])
         author_block = next(("".join(parser.parts[a:b]) for a, b in parser.author_blocks
                              if end <= a < b <= item_end), "")
-        authors = clean_text(author_block).strip(" ,;") if author_block else _block_metadata("Wiley", block)[0]
+        authors = clean_text(author_block) if author_block else _block_metadata("Wiley", block)[0]
         article = _article(journal, "Wiley", title, url, authors, "", message.received_at)
         publication = re.search(r"(?:First Published|Version of Record online):\s*(.+)", clean_text(block), re.I)
         article["published"], article["publication_text"] = extract_publication_date(publication[1] if publication else "")
@@ -600,11 +609,13 @@ def _parse_nature_alert(message: MailMessage, parser: NatureAlertParser, journal
             authors, snippet = _block_metadata("Nature", "".join(parser.parts[end:block_end]))
             if not authors and not snippet:
                 continue
+        authors_text = authors
         truncated = bool(re.search(r"\s+et al\.?$", authors))
         authors = re.sub(r"\s+et al\.?$", "", authors)
         article = _article(journal, "Nature", title, url, authors, snippet, message.received_at)
         # An incidental date in the summary is not a publication date.
         article["published"], article["publication_text"] = "", ""
+        article["authors_text"] = authors_text
         article["section"] = section
         article["authors_truncated"] = truncated
         article["is_open_access"] = _has_open_access_label("".join(parser.parts[end:block_end])) or any(
@@ -629,9 +640,11 @@ def _parse_apa_alert(message: MailMessage, parser: AnchorParser, journal: str) -
         except ValueError:
             continue
         article = _article(journal, "APA", title, url, "", "", message.received_at)
+        article["authors_text"] = metadata["authors"]
         article["authors"] = [name.strip() for name in metadata["authors"].split(";") if name.strip()]
         if metadata["authors"].casefold() == "no authorship indicated":
             article["authors"] = []
+            article["authors_text"] = ""
         article.update(published=published, publication_text=metadata["date"],
                        volume=metadata["volume"], issue=metadata["issue"], is_open_access=False)
         articles.append(article)
@@ -719,7 +732,7 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
         )
         articles.append(article)
     if publisher == "SAGE":
-        plain = message.text_body or "".join(parser.parts)
+        plain = message.text_body or (message.html_body if not re.search(r"<[^>]+>", message.html_body) else "".join(parser.parts))
         lines = [clean_text(line) for line in plain.splitlines() if clean_text(line)]
         for index, line in enumerate(lines):
             if not SAGE_TYPE_LABEL.fullmatch(line):
@@ -753,7 +766,7 @@ def parse_message(message: MailMessage) -> tuple[list[dict[str, Any]], str]:
         if key in seen:
             # MIME alternatives can supply metadata missing from the HTML link.
             previous = seen[key]
-            for field in ("authors", "published", "publication_text"):
+            for field in ("authors_text", "authors", "published", "publication_text"):
                 if not previous.get(field) and article.get(field):
                     previous[field] = article[field]
             previous["is_open_access"] = bool(previous.get("is_open_access") or article.get("is_open_access"))

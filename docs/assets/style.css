@@ -276,7 +276,7 @@ body:is([data-page="today"], [data-page="history"], [data-page="status"], [data-
 body:is([data-page="today"], [data-page="history"], [data-page="status"], [data-page="about"]) nav a[aria-current="page"] { background: var(--green-soft); color: var(--green); font-weight: 600; }
 body[data-page="today"] .today-header { padding: 32px 0 0; border: 0; }
 body[data-page="today"] .today-header h1 { font: 650 30px/1.3 -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; letter-spacing: 0; }
-body[data-page="today"] .stat-cards { max-width: 620px; margin-top: 22px; gap: 14px; }
+body[data-page="today"] .stat-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 420px; margin-top: 22px; gap: 14px; }
 body[data-page="today"] .stat-card { min-height: 108px; padding: 16px 18px; border-radius: 16px; flex-direction: column; align-items: flex-start; justify-content: space-between; box-shadow: none; transition: none; }
 body[data-page="today"] .stat-card::after { display: none; }
 body[data-page="today"] .stat-card:hover { transform: none; box-shadow: none; }

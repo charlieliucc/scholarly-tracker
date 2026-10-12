@@ -14,6 +14,8 @@ Wiley 支持 `Table of Contents Alert`、`New Articles Alert` 和 `Early View Al
 
 Nature 收录全部文章栏目，包括 This week、News in Focus、Books & Arts、Opinion、Work、Research 和更正／撤稿条目，排除 Research Highlights 汇总入口、Spotlight 广告和 Collections 合集入口。按文章卡片分别读取标题、作者和摘要片段，保留 `section` 栏目；作者列表末尾的 `et al.` 以 `authors_truncated` 标记，不作为姓名。期刊统一为 `Nature`，邮件没有明确的文章出版日期时留空，不用邮件日期或摘要中提及的日期代替。
 
+作者展示优先使用 `authors_text` 保存的邮件作者行原文，只清理 HTML 和多余空白，保留原来的标点、连接词及 `& others`／`et al.`。解析器根据各出版社模板的作者位置或容器提取，不用姓名大小写、词典或长度来判断。邮件未提供作者时，首页和历史记录隐藏作者行，不显示“作者信息待补全”，也不通过元数据 API 填入作者。旧数据缺少这个字段时，正常在线更新会额外以只读 IMAP 重读保留窗口内的历史提醒，仅恢复已收录文章的作者行并纠正混入作者的邮件摘要；保留论文 ID、收录日期和时间，不计作新邮件或新增论文。成功恢复的记录不会重复重读。
+
 上述 Wiley／Nature 规则已用 8 封 EML 样本验证；`tests/fixtures/` 仅保存脱敏 HTML，移除了邮件头、收件人地址和真实追踪标识。
 
 ## 启用 GitHub Pages
@@ -49,7 +51,7 @@ Nature 收录全部文章栏目，包括 This week、News in Focus、Books & Art
 - `recommendations.limit`：今日推荐最多显示的篇数。
 - `recommendations.json` 的 `articles` 保存完整推荐卡片数据，`other_articles` 保存同批次未推荐论文数据。
 - `doi_page`：设置只对高匹配文章读取论文页 `<head>` 摘要的上限和最大 HTML 字节数；不读取正文或 PDF。
-- `metadata_fallback`：对本次邮件条目按相关度排序，在限额内使用 Crossref、OpenAlex 补齐作者、DOI 和摘要；按 DOI 或高置信度标题及期刊匹配，不修改邮件原始链接。
+- `metadata_fallback`：对本次邮件条目按相关度排序，在限额内使用 Crossref、OpenAlex 补齐 DOI 和摘要；作者以原邮件为准；按 DOI 或高置信度标题及期刊匹配，不修改邮件原始链接。
 
 ## 本地运行
 
@@ -59,6 +61,7 @@ Nature 收录全部文章栏目，包括 This week、News in Focus、Books & Art
 python3 scripts/update.py --config config/journals.json --output docs/data
 python3 -m unittest discover -s tests -v
 node tests/test_status_ui.js
+node tests/test_author_ui.js
 python3 -m http.server 8000 --directory docs
 ```
 

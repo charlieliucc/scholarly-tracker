@@ -926,6 +926,10 @@ def merge_articles(previous: Iterable[dict[str, Any]], incoming: Iterable[dict[s
             for key, value in article.items():
                 if value not in (None, "", []):
                     merged[key] = value
+            if "authors_text" in article:
+                # The explicit empty byline must survive reruns and old API data.
+                merged["authors_text"] = article["authors_text"]
+                merged["authors"] = article.get("authors", [])
             merged["is_open_access"] = bool(old.get("is_open_access") or article.get("is_open_access"))
             merged["first_seen"] = first_seen
             records[position] = merged
@@ -1444,7 +1448,7 @@ def enrich_email_metadata(articles: list[dict[str, Any]], config: dict[str, Any]
     for article in sorted(articles, key=lambda value: value.get("score", 0), reverse=True):
         if status["attempted"] >= int(cfg.get("max_lookups_per_run", 20)):
             break
-        if article.get("authors") and article.get("doi") and not abstract_needs_fallback(article.get("abstract", "")):
+        if ("authors_text" in article or article.get("authors")) and article.get("doi") and not abstract_needs_fallback(article.get("abstract", "")):
             continue
         status["attempted"] += 1
         for source in ("crossref", "openalex"):
@@ -1457,16 +1461,46 @@ def enrich_email_metadata(articles: list[dict[str, Any]], config: dict[str, Any]
                     continue
                 status["matched"] += 1
                 for field in ("doi", "authors", "published", "volume", "issue", "pages"):
+                    if field == "authors" and "authors_text" in article:
+                        continue
                     if not article.get(field) and metadata.get(field):
                         article[field] = metadata[field]
                 if merge_abstract(article, metadata.get("abstract", ""), source):
                     status["abstracts_replaced"] += 1
                 article["metadata_source"] = article.get("metadata_source", "email") + "+" + source
-                if article.get("authors") and not abstract_needs_fallback(article.get("abstract", "")):
+                if ("authors_text" in article or article.get("authors")) and not abstract_needs_fallback(article.get("abstract", "")):
                     break
             except (urllib.error.URLError, TimeoutError, UnicodeError, ValueError, OSError):
                 status["errors"] += 1
     return status
+
+
+def restore_email_bylines(
+    articles: list[dict[str, Any]], messages: Iterable[Any],
+) -> int:
+    """Migrate retained email records without changing their identity or batch."""
+    wanted = {
+        (normalized_text(article.get("journal", "")), normalized_text(article.get("title", ""))): article
+        for article in articles
+        if str(article.get("metadata_source", "")).startswith("email") and "authors_text" not in article
+    }
+    reparsed, _ = parse_messages(messages)
+    restored = 0
+    for fresh in reparsed:
+        key = (normalized_text(fresh.get("journal", "")), normalized_text(fresh.get("title", "")))
+        old = wanted.pop(key, None)
+        if old is None:
+            continue
+        old["authors_text"] = fresh["authors_text"]
+        old["authors"] = fresh["authors"]
+        if "authors_truncated" in fresh:
+            old["authors_truncated"] = fresh["authors_truncated"]
+        # Old byline heuristics sometimes put the author row into the summary.
+        if old.get("abstract_source") in {"email", ""}:
+            old["abstract"] = fresh["abstract"]
+            old["abstract_source"] = fresh["abstract_source"]
+        restored += 1
+    return restored
 
 
 def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], offline: bool) -> dict[str, Any]:
@@ -1571,9 +1605,31 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
         article["history_date"] = batch_date.isoformat()
     processed_keys = {key for article in fetched for key in identity_keys(article)}
     articles = merge_articles(previous, fetched)
+    byline_status = {"attempted": 0, "restored": 0, "errors": 0}
+    if not offline and not fetch_error:
+        cutoff = (batch_date - timedelta(days=max(1, int(config.get("history_retention_days", 7))) - 1)).isoformat()
+        legacy = [article for article in articles
+                  if str(article.get("metadata_source", "")).startswith("email")
+                  and "authors_text" not in article
+                  and cutoff <= str(article.get("history_date", "")) < batch_date.isoformat()]
+        if legacy:
+            byline_status["attempted"] = len(legacy)
+            try:
+                oldest = min(article["history_date"] for article in legacy)
+                repair_start = datetime.combine(date.fromisoformat(oldest), datetime_time.min, tzinfo=zone)
+                repair_messages, repair_stats = fetch_messages(
+                    username, app_password, repair_start.astimezone(timezone.utc), window_start.astimezone(timezone.utc),
+                    host=str(mail_cfg.get("host", "imap.gmail.com")), port=int(mail_cfg.get("port", 993)),
+                    max_messages=int(mail_cfg.get("max_messages", 500)),
+                )
+                byline_status["restored"] = restore_email_bylines(legacy, repair_messages)
+                byline_status["errors"] = repair_stats.get("read_errors", 0) + sum(
+                    folder.get("status") in {"error", "partial"} for folder in repair_stats.get("folders", []))
+            except Exception:
+                byline_status["errors"] += 1
     processed_articles = [article for article in articles if any(key in processed_keys for key in identity_keys(article))]
     ranking = config.get("ranking", {})
-    for article in processed_articles:
+    for article in articles:
         article["score"], article["matched_keywords"] = score_article(article, ranking)
 
     metadata_status = enrich_email_metadata(processed_articles, config) if not offline and not fetch_error else {"attempted": 0, "matched": 0, "abstracts_replaced": 0, "errors": 0}
@@ -1590,6 +1646,7 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
         "skipped_low_score": sum(1 for article in processed_articles if article.get("score", 0) < float(config.get("recommendations", {}).get("minimum_score", 1))),
     }
     abstract_status["metadata_fallback"] = metadata_status
+    email_status["byline_restore"] = byline_status
     if not offline and not fetch_error and abstract_cfg.get("enabled", True):
         limit = int(abstract_cfg.get("max_lookups_per_run", 20))
         max_bytes = int(abstract_cfg.get("max_bytes", 524288))
@@ -1638,7 +1695,7 @@ def _email_build(config_path: Path, output_dir: Path, now: Optional[datetime], o
 
     if fetch_error:
         outcome = "stale" if previous else "error"
-    elif email_status["status"] == "partial" or email_status["parser_errors"] or abstract_status["errors"] or metadata_status["errors"]:
+    elif email_status["status"] == "partial" or email_status["parser_errors"] or abstract_status["errors"] or metadata_status["errors"] or byline_status["errors"]:
         outcome = "partial"
     else:
         outcome = "success" if not offline else "stale"
