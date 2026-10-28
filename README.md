@@ -14,6 +14,8 @@ Wiley 支持 `Table of Contents Alert`、`New Articles Alert` 和 `Early View Al
 
 Nature 收录全部文章栏目，包括 This week、News in Focus、Books & Arts、Opinion、Work、Research 和更正／撤稿条目，排除 Research Highlights 汇总入口、Spotlight 广告和 Collections 合集入口。按文章卡片分别读取标题、作者和摘要片段，保留 `section` 栏目；作者列表末尾的 `et al.` 以 `authors_truncated` 标记，不作为姓名。期刊统一为 `Nature`，邮件没有明确的文章出版日期时留空，不用邮件日期或摘要中提及的日期代替。
 
+`Nature` 文章按原有得分门槛和数量上限参与推荐，入选后排在推荐区末尾；未入选的排在其他文章区末尾。各区内其他期刊及 Nature 内部仍按原有得分和日期排序。首页与历史记录采用相同规则，不显示额外提示。此规则只匹配期刊名 `Nature`，不扩展到其他 Nature 系列期刊。
+
 作者展示优先使用 `authors_text` 保存的邮件作者行原文，只清理 HTML 和多余空白，保留原来的标点、连接词及 `& others`／`et al.`。解析器根据各出版社模板的作者位置或容器提取，不用姓名大小写、词典或长度来判断。邮件未提供作者时，首页和历史记录隐藏作者行，不显示“作者信息待补全”，也不通过元数据 API 填入作者。旧数据缺少这个字段时，正常在线更新会额外以只读 IMAP 重读保留窗口内的历史提醒，仅恢复已收录文章的作者行并纠正混入作者的邮件摘要；保留论文 ID、收录日期和时间，不计作新邮件或新增论文。成功恢复的记录不会重复重读。
 
 上述 Wiley／Nature 规则已用 8 封 EML 样本验证；`tests/fixtures/` 仅保存脱敏 HTML，移除了邮件头、收件人地址和真实追踪标识。

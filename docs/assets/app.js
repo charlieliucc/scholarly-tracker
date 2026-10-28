@@ -106,6 +106,22 @@ function scoreLabel(score) {
   return `${value > 0 ? "+" : ""}${Number.isInteger(value) ? value : value.toFixed(1)}`;
 }
 
+function isNatureArticle(article) {
+  return String(article.journal || "").trim().toLowerCase() === "nature";
+}
+
+function orderArticleGroups(recommended, other) {
+  // Apply the current journal ordering to saved batches as well.
+  const natureLast = (articles) => [
+    ...articles.filter((article) => !isNatureArticle(article)),
+    ...articles.filter(isNatureArticle),
+  ];
+  return {
+    recommended: natureLast(recommended),
+    other: natureLast(other),
+  };
+}
+
 function hasCompleteAbstract(article) {
   const abstract = String(article.abstract || "").trim();
   return Boolean(abstract) && !abstract.endsWith("...") && !abstract.endsWith("…");
@@ -374,8 +390,8 @@ async function initToday() {
   const otherList = $("#other-list");
   try {
     const [recommendations, status] = await Promise.all([fetchJson("data/recommendations.json"), fetchJson("data/status.json")]);
-    const articles = recommendations.articles || [];
-    const otherArticles = recommendations.other_articles || [];
+    const { recommended: articles, other: otherArticles } = orderArticleGroups(
+      recommendations.articles || [], recommendations.other_articles || []);
     const generatedAt = recommendations.generated_at || status.content_updated_at
       || (!["error", "stale", "pending"].includes(status.outcome) ? status.generated_at : "");
     $("#today-label").textContent = generatedAt ? formatUpdatedAt(generatedAt) : "时间待更新";
@@ -444,6 +460,7 @@ async function initHistory() {
         const recommendedIds = new Set(recommendedArticles.map((article) => String(article.id)));
         otherArticles = articles.filter((article) => !recommendedIds.has(String(article.id)));
       }
+      ({ recommended: recommendedArticles, other: otherArticles } = orderArticleGroups(recommendedArticles, otherArticles));
       $("#history-count").textContent = `${articles.length} 篇论文 · ${formatDate(day.generated_at)}`;
       $("#history-updated").textContent = day.generated_at ? `更新于 ${formatDate(day.generated_at, true)}` : "";
       recommendedList.replaceChildren();

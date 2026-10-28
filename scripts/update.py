@@ -106,6 +106,10 @@ def normalized_text(value: str) -> str:
     return SPACE_RE.sub(" ", value).strip()
 
 
+def is_nature_article(article: dict[str, Any]) -> bool:
+    return str(article.get("journal") or "").strip().casefold() == "nature"
+
+
 def split_recommendations(
     articles: Iterable[dict[str, Any]], recommendation_config: dict[str, Any]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -121,12 +125,14 @@ def split_recommendations(
         reverse=True,
     )
     recommended = recommended[: int(recommendation_config.get("limit", 12))]
+    recommended.sort(key=is_nature_article)
     recommended_ids = {str(article.get("id", "")) for article in recommended}
     other_articles = [
         article for article in values if str(article.get("id", "")) not in recommended_ids
     ]
     other_articles.sort(
         key=lambda article: (
+            not is_nature_article(article),
             article.get("score", 0),
             article.get("feed_timestamp") or article.get("published", ""),
         ),
